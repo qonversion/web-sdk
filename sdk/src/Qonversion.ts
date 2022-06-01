@@ -6,11 +6,11 @@ let backingInstance: QonversionInstance | undefined = undefined
 
 /**
  * Use this method to get a current initialized instance of the Qonversion SDK.
- * Please, use the method only after calling Qonversion.initialize().
+ * Please, use the method only after calling {@link Qonversion.initialize}.
  * Otherwise, calling the method will cause an exception.
  *
  * @return Current initialized instance of the Qonversion SDK.
- * @throws [QonversionException] with [QonversionErrorCode.NotInitialized]
+ * @throws a {@link QonversionError} with {@link QonversionErrorCode.NotInitialized}.
  */
 function getSharedInstance(): QonversionInstance {
   if (!backingInstance) {
@@ -25,10 +25,16 @@ function getSharedInstance(): QonversionInstance {
  * You still have an option to set a part of additional configs later via calling separated setters.
  *
  * @param config a config that contains key SDK settings.
- * Call [QonversionConfigBuilder.build] to configure and create a QonversionConfig instance.
+ * Call {@link QonversionConfigBuilder.build} to configure and create a {@link QonversionConfig} instance.
  * @return Initialized instance of the Qonversion SDK.
  */
 function initialize(config: QonversionConfig): QonversionInstance {
-  backingInstance = {};
-  return backingInstance;
+  throw Error("not initialized");
 }
+
+const Qonversion = {
+  getSharedInstance,
+  initialize,
+};
+
+export default Qonversion;

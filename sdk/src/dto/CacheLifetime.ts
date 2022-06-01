@@ -1,20 +1,17 @@
 /**
  * The Qonversion SDK caches some information from the billing library or API.
  * This enum contains different available settings for cache lifetime.
- * Provide it to the configuration object via [Qonversion.initialize] while initializing the SDK
- * or via [Qonversion.setCacheLifetime] after initializing the SDK.
- * The provided value is used for background requests (when the app is
- * in the background) or for case when user internet connection is not stable.
- * Cache lifetime for foreground requests is much less than
- * for background ones and is not configurable. Let's say we have user info
- * loaded and cached a day before yesterday. If the cache lifetime is set
- * to [CacheLifetime.ThreeDays] and you request user info when the app is in
- * the background (or internet connection is not stable) then the cached value will be returned.
- * But if you request it from the foreground app
- * or the cache lifetime is set to [CacheLifetime.OneDay],
+ * Provide it to the configuration object via {@link Qonversion.initialize} while initializing the SDK
+ * or via {@link QonversionInstance.setCacheLifetime} after initializing the SDK.
+ * The provided value is used for case when user internet connection is not stable.
+ * Cache lifetime for normal cases is much less and is not configurable.
+ * Let's say we have user info loaded and cached a day before yesterday.
+ * If the cache lifetime is set to {@link CacheLifetime.ThreeDays} and you request user info when
+ * the internet connection is not stable, then the cached value will be returned.
+ * But if the internet connection is okay or the cache lifetime is set to {@link CacheLifetime.OneDay},
  * then cached data will be renewed and then returned.
  *
- * The default value is [CacheLifetime.ThreeDays].
+ * The default value is {@link CacheLifetime.ThreeDays}.
  */
 export enum CacheLifetime {
   OneDay = SEC_IN_DAY,

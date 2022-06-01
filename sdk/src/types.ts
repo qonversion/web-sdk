@@ -28,11 +28,11 @@ export type QonversionConfig = {
 
 export type QonversionInstance = {
   /**
-   * Set current application [Environment]. Used to distinguish sandbox and production users.
+   * Set current application {@link Environment}. Used to distinguish sandbox and production users.
    *
-   * You may call this function to set an environment separately from [Qonversion.initialize].
+   * You may call this function to set an environment separately from {@link Qonversion.initialize}.
    * Call this function only in case you are sure you need to set an environment after the SDK initialization.
-   * Otherwise, set an environment via [Qonversion.initialize].
+   * Otherwise, set an environment via {@link Qonversion.initialize}.
    *
    * @param environment current environment.
    */
@@ -40,13 +40,13 @@ export type QonversionInstance = {
 
   /**
    * Define the level of the logs that the SDK prints.
-   * The more strict the level is, the less logs will be written.
+   * The more strict the level is, the fewer logs will be written.
    * For example, setting the log level as Warning will disable all info and verbose logs.
    *
-   * You may set log level both *after* Qonversion SDK initializing with [Qonversion.setLogLevel]
-   * and *while* Qonversion initializing with [Qonversion.initialize]
+   * You may set log level both *after* Qonversion SDK initializing with {@link QonversionInstance.setLogLevel}
+   * and *while* Qonversion initializing with {@link Qonversion.initialize}.
    *
-   * See [LogLevel] for details.
+   * See {@link LogLevel} for details.
    *
    * @param logLevel the desired allowed log level.
    */
@@ -56,8 +56,8 @@ export type QonversionInstance = {
    * Define the log tag that the Qonversion SDK will print with every log message.
    * For example, you can use it to filter the Qonversion SDK logs and your app own logs together.
    *
-   * You may set log tag both *after* Qonversion SDK initializing with [Qonversion.setLogTag]
-   * and *while* Qonversion initializing with [Qonversion.initialize]
+   * You may set log tag both *after* Qonversion SDK initializing with {@link QonversionInstance.setLogTag}
+   * and *while* Qonversion initializing with {@link Qonversion.initialize}.
    *
    * @param logTag the desired log tag.
    */
@@ -72,8 +72,9 @@ export type QonversionInstance = {
    * Provide as bigger value as possible for you taking into account, among other things,
    * how long may your users remain without the internet connection and so on.
    *
-   * You may set cache lifetime both *after* Qonversion SDK initializing with [Qonversion.setCacheLifetime]
-   * and *while* Qonversion initializing with [Qonversion.initialize]
+   * You may set cache lifetime both *after* Qonversion SDK initializing
+   * with {@link QonversionInstance.setCacheLifetime} and *while* Qonversion initializing
+   * with {@link Qonversion.initialize}.
    *
    * @param cacheLifetime a preferred cache lifetime.
    */

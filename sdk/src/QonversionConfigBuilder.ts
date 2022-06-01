@@ -1,15 +1,3 @@
-/**
- * The builder of Qonversion configuration instance.
- *
- * This class contains a variety of methods to customize the Qonversion SDK behavior.
- * You can call them sequentially and call [build] finally to get the configuration instance.
- *
- * @constructor creates an instance of a builder
- * @param context the current context
- * @param projectKey your Project Key from Qonversion Dashboard
- * @param launchMode launch mode of the Qonversion SDK todo add link
- * @param store the store used for purchases (only [Store.GooglePlay] is supported for now)
- */
 import {QonversionError} from './exception/QonversionError';
 import {QonversionErrorCode} from './exception/QonversionErrorCode';
 import {CacheLifetime} from './dto/CacheLifetime';
@@ -21,6 +9,12 @@ import {LoggerConfig, NetworkConfig, PrimaryConfig, QonversionConfig} from './ty
 const packageJson = require('./package.json');
 const DEFAULT_LOG_TAG = "Qonversion";
 
+/**
+ * The builder of Qonversion configuration instance.
+ *
+ * This class contains a variety of methods to customize the Qonversion SDK behavior.
+ * You can call them sequentially and call {@link build} finally to get the configuration instance.
+ */
 export class QonversionConfigBuilder {
   private readonly projectKey: string;
   private readonly launchMode: LaunchMode;
@@ -29,13 +23,18 @@ export class QonversionConfigBuilder {
   private logTag = DEFAULT_LOG_TAG;
   private cacheLifetime = CacheLifetime.ThreeDays;
 
+  /**
+   * Creates an instance of a builder
+   * @param projectKey your Project Key from Qonversion Dashboard
+   * @param launchMode launch mode of the Qonversion SDK todo add link
+   */
   constructor(projectKey: string, launchMode: LaunchMode) {
     this.projectKey = projectKey;
     this.launchMode = launchMode;
   };
 
   /**
-   * Set current application [Environment]. Used to distinguish sandbox and production users.
+   * Set current application {@link Environment}. Used to distinguish sandbox and production users.
    *
    * @param environment current environment.
    * @return builder instance for chain calls.
@@ -64,7 +63,7 @@ export class QonversionConfigBuilder {
 
   /**
    * Define the level of the logs that the SDK prints.
-   * The more strict the level is, the less logs will be written.
+   * The more strict the level is, the fewer logs will be written.
    * For example, setting the log level as Warning will disable all info and verbose logs.
    *
    * @param logLevel the desired allowed log level.
@@ -88,11 +87,10 @@ export class QonversionConfigBuilder {
   };
 
   /**
-   * Generate [QonversionConfig] instance with all the provided configurations.
-   * This method also validates some of the provided data.
+   * Generate {@link QonversionConfig} instance with all the provided configurations.
    *
-   * @throws QonversionException if unacceptable configuration was provided.
-   * @return the complete [QonversionConfig] instance.
+   * @throws a {@link QonversionError} if unacceptable configuration was provided.
+   * @return the complete {@link QonversionConfig} instance.
    */
   build(): QonversionConfig {
     if (!this.projectKey) {
