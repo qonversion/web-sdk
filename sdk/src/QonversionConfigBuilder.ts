@@ -10,17 +10,15 @@
  * @param launchMode launch mode of the Qonversion SDK todo add link
  * @param store the store used for purchases (only [Store.GooglePlay] is supported for now)
  */
-import {QonversionConfig} from './QonversionConfig';
 import {QonversionError} from './exception/QonversionError';
 import {QonversionErrorCode} from './exception/QonversionErrorCode';
 import {CacheLifetime} from './dto/CacheLifetime';
 import {Environment} from './dto/Environment';
 import {LaunchMode} from './dto/LaunchMode';
 import {LogLevel} from './dto/LogLevel';
-import {PrimaryConfig} from './config/PrimaryConfig';
-import {LoggerConfig} from './config/LoggerConfig';
-import {NetworkConfig} from './config/NetworkConfig';
+import {LoggerConfig, NetworkConfig, PrimaryConfig, QonversionConfig} from './types';
 
+const packageJson = require('./package.json');
 const DEFAULT_LOG_TAG = "Qonversion";
 
 export class QonversionConfigBuilder {
@@ -101,15 +99,27 @@ export class QonversionConfigBuilder {
       throw new QonversionError(QonversionErrorCode.ConfigPreparation, "Project key is empty");
     }
 
-    let primaryConfig = new PrimaryConfig(this.projectKey, this.launchMode, this.environment);
-    let loggerConfig = new LoggerConfig(this.logLevel, this.logTag);
-    let networkConfig = new NetworkConfig();
+    let primaryConfig: PrimaryConfig = {
+      projectKey: this.projectKey,
+      launchMode: this.launchMode,
+      environment: this.environment,
+      sdkVersion: packageJson.version,
+    };
 
-    return new QonversionConfig(
+    let loggerConfig: LoggerConfig = {
+      logLevel: this.logLevel,
+      logTag: this.logTag,
+    };
+
+    let networkConfig: NetworkConfig = {
+      canSendRequests: true,
+    };
+
+    return {
       primaryConfig,
       loggerConfig,
       networkConfig,
-      this.cacheLifetime
-    )
+      cacheLifetime: this.cacheLifetime,
+    };
   }
 }

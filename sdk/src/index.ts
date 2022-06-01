@@ -1,5 +1,5 @@
 export * from './QonversionConfigBuilder';
-export * from './QonversionConfig';
+export {QonversionConfig} from './types';
 export * from './dto/CacheLifetime'
 export * from './dto/Environment'
 export * from './dto/LaunchMode'
