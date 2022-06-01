@@ -6,7 +6,7 @@ import {LaunchMode} from './dto/LaunchMode';
 import {LogLevel} from './dto/LogLevel';
 import {LoggerConfig, NetworkConfig, PrimaryConfig, QonversionConfig} from './types';
 
-const packageJson = require('./package.json');
+const packageJson = require('../package.json');
 const DEFAULT_LOG_TAG = "Qonversion";
 
 /**

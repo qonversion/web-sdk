@@ -1,3 +1,5 @@
+import {DAYS_IN_MONTH, DAYS_IN_WEEK, SEC_IN_DAY} from "../internal/utils/dateUtils";
+
 /**
  * The Qonversion SDK caches some information from the billing library or API.
  * This enum contains different available settings for cache lifetime.

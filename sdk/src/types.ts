@@ -3,29 +3,6 @@ import {LaunchMode} from './dto/LaunchMode';
 import {Environment} from './dto/Environment';
 import {CacheLifetime} from './dto/CacheLifetime';
 
-export type LoggerConfig = {
-  readonly logLevel: LogLevel;
-  readonly logTag: string;
-};
-
-export type NetworkConfig = {
-  canSendRequests: boolean;
-};
-
-export type PrimaryConfig = {
-  readonly projectKey: string;
-  readonly launchMode: LaunchMode;
-  readonly environment: Environment;
-  readonly sdkVersion: string;
-};
-
-export type QonversionConfig = {
-  readonly primaryConfig: PrimaryConfig;
-  readonly loggerConfig: LoggerConfig;
-  readonly networkConfig: NetworkConfig;
-  readonly cacheLifetime: CacheLifetime;
-};
-
 export type QonversionInstance = {
   /**
    * Set current application {@link Environment}. Used to distinguish sandbox and production users.
@@ -88,4 +65,27 @@ export type QonversionInstance = {
    * for the most part of use cases.
    */
   finish: () => void;
+};
+
+export type LoggerConfig = {
+  readonly logLevel: LogLevel;
+  readonly logTag: string;
+};
+
+export type NetworkConfig = {
+  canSendRequests: boolean;
+};
+
+export type PrimaryConfig = {
+  readonly projectKey: string;
+  readonly launchMode: LaunchMode;
+  readonly environment: Environment;
+  readonly sdkVersion: string;
+};
+
+export type QonversionConfig = {
+  readonly primaryConfig: PrimaryConfig;
+  readonly loggerConfig: LoggerConfig;
+  readonly networkConfig: NetworkConfig;
+  readonly cacheLifetime: CacheLifetime;
 };
