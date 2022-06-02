@@ -38,7 +38,7 @@ export type QonversionInstance = {
    *
    * @param logTag the desired log tag.
    */
-  setLogTag: (logTag: String) => void;
+  setLogTag: (logTag: string) => void;
 
   /**
    * Define the maximum lifetime of the data cached by Qonversion.

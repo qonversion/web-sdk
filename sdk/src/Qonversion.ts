@@ -1,6 +1,9 @@
 import {QonversionConfig, QonversionInstance} from './types';
 import {QonversionError} from './exception/QonversionError';
 import {QonversionErrorCode} from './exception/QonversionErrorCode';
+import {InternalConfig} from './internal/InternalConfig';
+import {DependenciesAssemblyBuilder} from './internal/di/DependenciesAssembly';
+import {QonversionInternal} from './internal/QonversionInternal';
 
 let backingInstance: QonversionInstance | undefined = undefined
 
@@ -29,7 +32,11 @@ function getSharedInstance(): QonversionInstance {
  * @return Initialized instance of the Qonversion SDK.
  */
 function initialize(config: QonversionConfig): QonversionInstance {
-  throw Error("not initialized");
+  const internalConfig = new InternalConfig(config);
+  const dependenciesAssembly = new DependenciesAssemblyBuilder(internalConfig).build();
+  const instance = new QonversionInternal(internalConfig, dependenciesAssembly);
+  backingInstance = instance;
+  return instance;
 }
 
 const Qonversion = {
