@@ -2,7 +2,6 @@ import {QonversionInstance} from '../types';
 import {InternalConfig} from './InternalConfig';
 import {LogLevel} from '../dto/LogLevel';
 import {Environment} from '../dto/Environment';
-import {CacheLifetime} from '../dto/CacheLifetime';
 import {DependenciesAssembly} from './di/DependenciesAssembly';
 import Qonversion from '../Qonversion';
 
@@ -19,10 +18,6 @@ export class QonversionInternal implements QonversionInstance {
     if (Qonversion["backingInstance"] == this) {
       Qonversion["backingInstance"] = undefined
     }
-  }
-
-  setCacheLifetime(cacheLifetime: CacheLifetime) {
-    // todo
   }
 
   setEnvironment(environment: Environment) {

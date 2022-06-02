@@ -11,7 +11,6 @@ test('get non-initialized backing instance', () => {
 test('initialize and get shared instance', () => {
   // given
   const mockQonversionConfig: QonversionConfig = {
-    cacheLifetime: undefined,
     loggerConfig: undefined,
     networkConfig: undefined,
     primaryConfig: undefined,

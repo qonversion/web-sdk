@@ -34,7 +34,7 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-  const qonversionConfig: QonversionConfig = {cacheLifetime: undefined, loggerConfig, networkConfig, primaryConfig};
+  const qonversionConfig: QonversionConfig = {loggerConfig, networkConfig, primaryConfig};
   internalConfig = new InternalConfig(qonversionConfig);
 });
 

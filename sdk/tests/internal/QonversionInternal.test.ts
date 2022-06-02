@@ -2,7 +2,7 @@ import {InternalConfig} from '../../src/internal/InternalConfig';
 import {QonversionInternal} from '../../src/internal/QonversionInternal';
 import {DependenciesAssembly} from '../../src/internal/di/DependenciesAssembly';
 import {LoggerConfig, NetworkConfig, PrimaryConfig} from '../../src/types';
-import Qonversion, {CacheLifetime, Environment, LaunchMode, LogLevel} from '../../src';
+import Qonversion, {Environment, LaunchMode, LogLevel} from '../../src';
 
 jest.mock('../../src/internal/di/DependenciesAssembly', () => {
   const originalModule = jest.requireActual('../../src/internal/di/DependenciesAssembly');
@@ -26,7 +26,6 @@ let internalConfig: InternalConfig = new InternalConfig({
   primaryConfig,
   networkConfig,
   loggerConfig,
-  cacheLifetime: CacheLifetime.Week,
 });
 let dependenciesAssembly: jest.Mocked<DependenciesAssembly> = new (DependenciesAssembly as any)();
 let qonversionInternal: QonversionInternal;
