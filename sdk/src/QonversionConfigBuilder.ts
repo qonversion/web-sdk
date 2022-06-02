@@ -1,6 +1,5 @@
 import {QonversionError} from './exception/QonversionError';
 import {QonversionErrorCode} from './exception/QonversionErrorCode';
-import {CacheLifetime} from './dto/CacheLifetime';
 import {Environment} from './dto/Environment';
 import {LaunchMode} from './dto/LaunchMode';
 import {LogLevel} from './dto/LogLevel';
@@ -21,7 +20,6 @@ export class QonversionConfigBuilder {
   private environment = Environment.Production;
   private logLevel = LogLevel.Info;
   private logTag = DEFAULT_LOG_TAG;
-  private cacheLifetime = CacheLifetime.ThreeDays;
 
   /**
    * Creates an instance of a builder
@@ -41,23 +39,6 @@ export class QonversionConfigBuilder {
    */
   setEnvironment(environment: Environment): QonversionConfigBuilder {
     this.environment = environment;
-    return this;
-  };
-
-  /**
-   * Define the maximum lifetime of the data cached by Qonversion.
-   * It means that cached data won't be used if it is older than the provided duration.
-   * By the way it doesn't mean that cache will live exactly the provided time.
-   * It may be updated earlier.
-   *
-   * Provide as bigger value as possible for you taking into account, among other things,
-   * how long may your users remain without the internet connection and so on.
-   *
-   * @param cacheLifetime the desired lifetime of Qonversion caches.
-   * @return builder instance for chain calls.
-   */
-  setCacheLifetime(cacheLifetime: CacheLifetime): QonversionConfigBuilder {
-    this.cacheLifetime = cacheLifetime;
     return this;
   };
 
@@ -117,7 +98,6 @@ export class QonversionConfigBuilder {
       primaryConfig,
       loggerConfig,
       networkConfig,
-      cacheLifetime: this.cacheLifetime,
     };
   }
 }
