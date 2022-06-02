@@ -12,7 +12,7 @@ export type LoggerConfigProvider = {
   getLogTag: () => string;
 };
 
-export type NetworkConfigProvider = {
+export type NetworkConfigHolder = {
   canSendRequests: () => boolean;
   setCanSendRequests: (canSend: boolean) => void;
 };

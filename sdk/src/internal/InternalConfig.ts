@@ -1,9 +1,9 @@
-import {EnvironmentProvider, LoggerConfigProvider, NetworkConfigProvider, PrimaryConfigProvider} from './types';
+import {EnvironmentProvider, LoggerConfigProvider, NetworkConfigHolder, PrimaryConfigProvider} from './types';
 import {Environment} from '../dto/Environment';
 import {LoggerConfig, NetworkConfig, PrimaryConfig, QonversionConfig} from '../types';
 import {LogLevel} from '../dto/LogLevel';
 
-export class InternalConfig implements PrimaryConfigProvider, NetworkConfigProvider, LoggerConfigProvider, EnvironmentProvider {
+export class InternalConfig implements PrimaryConfigProvider, NetworkConfigHolder, LoggerConfigProvider, EnvironmentProvider {
   primaryConfig: PrimaryConfig;
   readonly networkConfig: NetworkConfig;
   loggerConfig: LoggerConfig;
