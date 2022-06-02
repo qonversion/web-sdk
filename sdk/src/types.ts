@@ -1,7 +1,6 @@
 import {LogLevel} from './dto/LogLevel';
 import {LaunchMode} from './dto/LaunchMode';
 import {Environment} from './dto/Environment';
-import {CacheLifetime} from './dto/CacheLifetime';
 
 export type QonversionInstance = {
   /**
@@ -41,23 +40,6 @@ export type QonversionInstance = {
   setLogTag: (logTag: String) => void;
 
   /**
-   * Define the maximum lifetime of the data cached by Qonversion.
-   * It means that cached data won't be used if it is older than the provided duration.
-   * By the way it doesn't mean that cache will live exactly the provided time.
-   * It may be updated earlier.
-   *
-   * Provide as bigger value as possible for you taking into account, among other things,
-   * how long may your users remain without the internet connection and so on.
-   *
-   * You may set cache lifetime both *after* Qonversion SDK initializing
-   * with {@link QonversionInstance.setCacheLifetime} and *while* Qonversion initializing
-   * with {@link Qonversion.initialize}.
-   *
-   * @param cacheLifetime a preferred cache lifetime.
-   */
-  setCacheLifetime: (cacheLifetime: CacheLifetime) => void;
-
-  /**
    * Call this function when you are done with the current instance of the Qonversion SDK.
    *
    * Please, make sure you have a reason to finish the current instance and initialize the new one.
@@ -87,5 +69,4 @@ export type QonversionConfig = {
   readonly primaryConfig: PrimaryConfig;
   readonly loggerConfig: LoggerConfig;
   readonly networkConfig: NetworkConfig;
-  readonly cacheLifetime: CacheLifetime;
 };
