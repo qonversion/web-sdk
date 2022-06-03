@@ -5,6 +5,8 @@ import {QonversionErrorCode} from './exception/QonversionErrorCode';
 class Qonversion {
   private static backingInstance: QonversionInstance | undefined = undefined
 
+  private constructor() {}
+
   /**
    * Use this method to get a current initialized instance of the Qonversion SDK.
    * Please, use the method only after calling {@link Qonversion.initialize}.
