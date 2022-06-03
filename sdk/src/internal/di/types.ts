@@ -1,4 +1,7 @@
+import {ILogger} from '../logger/types';
+
 export type IMiscAssembly = {
+  logger: () => ILogger;
 };
 
 export type INetworkAssembly = {

@@ -4,6 +4,7 @@ import {MiscAssembly} from './MiscAssembly';
 import {NetworkAssembly} from './NetworkAssembly';
 import {ServicesAssembly} from './ServicesAssembly';
 import {ControllersAssembly} from './ControllersAssembly';
+import {ILogger} from '../logger/types';
 
 export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IServicesAssembly, IControllersAssembly {
   private readonly networkAssembly: INetworkAssembly;
@@ -22,6 +23,10 @@ export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IS
     this.servicesAssembly = servicesAssembly;
     this.controllersAssembly = controllersAssembly;
   };
+
+  logger(): ILogger {
+    return this.miscAssembly.logger();
+  }
 }
 
 export class DependenciesAssemblyBuilder {
@@ -32,7 +37,7 @@ export class DependenciesAssemblyBuilder {
   };
 
   build(): DependenciesAssembly {
-    const miscAssembly = new MiscAssembly();
+    const miscAssembly = new MiscAssembly(this.internalConfig);
     const networkAssembly = new NetworkAssembly();
     const servicesAssembly = new ServicesAssembly();
     const controllersAssembly = new ControllersAssembly();
