@@ -1,6 +1,9 @@
 import {QonversionConfig, QonversionInstance} from './types';
 import {QonversionError} from './exception/QonversionError';
 import {QonversionErrorCode} from './exception/QonversionErrorCode';
+import {InternalConfig} from './internal/InternalConfig';
+import {DependenciesAssemblyBuilder} from './internal/di/DependenciesAssembly';
+import {QonversionInternal} from './internal/QonversionInternal';
 
 class Qonversion {
   private static backingInstance: QonversionInstance | undefined = undefined
@@ -32,7 +35,11 @@ class Qonversion {
    * @return Initialized instance of the Qonversion SDK.
    */
   static initialize(config: QonversionConfig): QonversionInstance {
-    throw Error("not initialized");
+    const internalConfig = new InternalConfig(config);
+    const dependenciesAssembly = new DependenciesAssemblyBuilder(internalConfig).build();
+    const instance = new QonversionInternal(internalConfig, dependenciesAssembly);
+    Qonversion.backingInstance = instance;
+    return instance;
   }
 }
 

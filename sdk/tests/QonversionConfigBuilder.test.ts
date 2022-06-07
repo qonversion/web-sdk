@@ -1,5 +1,4 @@
 import {
-  CacheLifetime,
   Environment,
   LaunchMode,
   LogLevel,
@@ -60,23 +59,10 @@ test('setting log tag', () => {
   expect(builder["logTag"]).toBe(logTag);
 });
 
-test('setting cache lifetime', () => {
-  // given
-  const builder = new QonversionConfigBuilder('test', LaunchMode.InfrastructureMode);
-  const cacheLifetime = CacheLifetime.TwoWeeks;
-
-  // when
-  builder.setCacheLifetime(cacheLifetime);
-
-  // then
-  expect(builder["cacheLifetime"]).toBe(cacheLifetime);
-});
-
 test('successful build with full list of arguments', () => {
   // given
   const mockLogLevel = LogLevel.Warning;
   const mockLogTag = "test tag";
-  const mockCacheLifetime = CacheLifetime.Week;
   const mockEnvironment = Environment.Sandbox;
   const projectKey = "test key";
   const launchMode = LaunchMode.InfrastructureMode;
@@ -84,7 +70,6 @@ test('successful build with full list of arguments', () => {
   const builder = new QonversionConfigBuilder(projectKey, launchMode);
   builder["logLevel"] = mockLogLevel;
   builder["logTag"] = mockLogTag;
-  builder["cacheLifetime"] = mockCacheLifetime;
   builder["environment"] = mockEnvironment;
 
   const expPrimaryConfig: PrimaryConfig = {
@@ -104,7 +89,6 @@ test('successful build with full list of arguments', () => {
     primaryConfig: expPrimaryConfig,
     loggerConfig: expLoggerConfig,
     networkConfig: expNetworkConfig,
-    cacheLifetime: mockCacheLifetime,
   };
 
   // when
@@ -118,7 +102,6 @@ test('successful build without full list of arguments', () => {
   // given
   const defaultLogLevel = LogLevel.Info;
   const defaultLogTag = "Qonversion";
-  const defaultCacheLifetime = CacheLifetime.ThreeDays;
   const defaultEnvironment = Environment.Production;
   const defaultCanSendRequests = true;
   const projectKey = "test key";
@@ -143,7 +126,6 @@ test('successful build without full list of arguments', () => {
     primaryConfig: expPrimaryConfig,
     loggerConfig: expLoggerConfig,
     networkConfig: expNetworkConfig,
-    cacheLifetime: defaultCacheLifetime,
   };
 
   // when
