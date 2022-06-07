@@ -1,0 +1,123 @@
+import {QonversionError} from './exception/QonversionError';
+import {QonversionErrorCode} from './exception/QonversionErrorCode';
+import {CacheLifetime} from './dto/CacheLifetime';
+import {Environment} from './dto/Environment';
+import {LaunchMode} from './dto/LaunchMode';
+import {LogLevel} from './dto/LogLevel';
+import {LoggerConfig, NetworkConfig, PrimaryConfig, QonversionConfig} from './types';
+
+const packageJson = require('../package.json');
+const DEFAULT_LOG_TAG = "Qonversion";
+
+/**
+ * The builder of Qonversion configuration instance.
+ *
+ * This class contains a variety of methods to customize the Qonversion SDK behavior.
+ * You can call them sequentially and call {@link build} finally to get the configuration instance.
+ */
+export class QonversionConfigBuilder {
+  private readonly projectKey: string;
+  private readonly launchMode: LaunchMode;
+  private environment = Environment.Production;
+  private logLevel = LogLevel.Info;
+  private logTag = DEFAULT_LOG_TAG;
+  private cacheLifetime = CacheLifetime.ThreeDays;
+
+  /**
+   * Creates an instance of a builder
+   * @param projectKey your Project Key from Qonversion Dashboard
+   * @param launchMode launch mode of the Qonversion SDK todo add link
+   */
+  constructor(projectKey: string, launchMode: LaunchMode) {
+    this.projectKey = projectKey;
+    this.launchMode = launchMode;
+  };
+
+  /**
+   * Set current application {@link Environment}. Used to distinguish sandbox and production users.
+   *
+   * @param environment current environment.
+   * @return builder instance for chain calls.
+   */
+  setEnvironment(environment: Environment): QonversionConfigBuilder {
+    this.environment = environment;
+    return this;
+  };
+
+  /**
+   * Define the maximum lifetime of the data cached by Qonversion.
+   * It means that cached data won't be used if it is older than the provided duration.
+   * By the way it doesn't mean that cache will live exactly the provided time.
+   * It may be updated earlier.
+   *
+   * Provide as bigger value as possible for you taking into account, among other things,
+   * how long may your users remain without the internet connection and so on.
+   *
+   * @param cacheLifetime the desired lifetime of Qonversion caches.
+   * @return builder instance for chain calls.
+   */
+  setCacheLifetime(cacheLifetime: CacheLifetime): QonversionConfigBuilder {
+    this.cacheLifetime = cacheLifetime;
+    return this;
+  };
+
+  /**
+   * Define the level of the logs that the SDK prints.
+   * The more strict the level is, the fewer logs will be written.
+   * For example, setting the log level as Warning will disable all info and verbose logs.
+   *
+   * @param logLevel the desired allowed log level.
+   * @return builder instance for chain calls.
+   */
+  setLogLevel(logLevel: LogLevel): QonversionConfigBuilder {
+    this.logLevel = logLevel;
+    return this;
+  };
+
+  /**
+   * Define the log tag that the Qonversion SDK will print with every log message.
+   * For example, you can use it to filter the Qonversion SDK logs and your app own logs together.
+   *
+   * @param logTag the desired log tag.
+   * @return builder instance for chain calls.
+   */
+  setLogTag(logTag: string): QonversionConfigBuilder {
+    this.logTag = logTag;
+    return this;
+  };
+
+  /**
+   * Generate {@link QonversionConfig} instance with all the provided configurations.
+   *
+   * @throws a {@link QonversionError} if unacceptable configuration was provided.
+   * @return the complete {@link QonversionConfig} instance.
+   */
+  build(): QonversionConfig {
+    if (!this.projectKey) {
+      throw new QonversionError(QonversionErrorCode.ConfigPreparation, "Project key is empty");
+    }
+
+    let primaryConfig: PrimaryConfig = {
+      projectKey: this.projectKey,
+      launchMode: this.launchMode,
+      environment: this.environment,
+      sdkVersion: packageJson.version,
+    };
+
+    let loggerConfig: LoggerConfig = {
+      logLevel: this.logLevel,
+      logTag: this.logTag,
+    };
+
+    let networkConfig: NetworkConfig = {
+      canSendRequests: true,
+    };
+
+    return {
+      primaryConfig,
+      loggerConfig,
+      networkConfig,
+      cacheLifetime: this.cacheLifetime,
+    };
+  }
+}
