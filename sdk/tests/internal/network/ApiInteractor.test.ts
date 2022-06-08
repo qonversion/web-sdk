@@ -44,16 +44,6 @@ describe('execute tests', () => {
     headers: {},
     type: RequestType.GET,
     url: '',
-    // headers: {
-    //   [ApiHeader.Authorization]: 'Bearer PV77YHL7qnGvsdmpTs7gimsxUvY-Znl2',
-    //   [ApiHeader.Source]: 'android',
-    //   [ApiHeader.SourceVersion]: '3.2.7',
-    //   [ApiHeader.Platform]: 'android',
-    //   [ApiHeader.PlatformVersion]: '12',
-    //   [ApiHeader.UserID]: 'QON_0e5731570488428a8b477f1095102e08',
-    // },
-    // type: RequestType.GET,
-    // url: BASE_API_URL + '/v3/users/QON_0e5731570488428a8b477f1095102e08',
   };
 
   let testResponseCode = 200;
