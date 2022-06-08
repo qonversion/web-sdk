@@ -15,7 +15,7 @@ import {
 } from '../../../src/internal/network';
 import {NetworkConfigHolder} from '../../../src/internal/types';
 import {QonversionError, QonversionErrorCode} from '../../../src';
-import spyOn = jest.spyOn;
+import * as NetworkUtils from '../../../src/internal/network/utils';
 
 let apiInteractor: ApiInteractor;
 let delayCalculator: ExponentialDelayCalculator;
@@ -61,7 +61,7 @@ describe('execute tests', () => {
     a: 'a',
     b: 'b',
   };
-  let rawResponse: RawNetworkResponse = {
+  let rawSuccessResponse: RawNetworkResponse = {
     code: testResponseCode,
     payload: testPayload,
   };
@@ -73,11 +73,10 @@ describe('execute tests', () => {
   }
   let retryConfig: NetworkRetryConfig;
 
-  let savedDelay, savedGetErrorResponse;
+  let savedGetErrorResponse;
 
   beforeAll(() => {
-    savedDelay = global.delay;
-    global.delay = jest.fn(async () => {});
+    jest.spyOn(NetworkUtils, 'delay').mockImplementation(async () => {});
 
     savedGetErrorResponse = ApiInteractor.getErrorResponse;
   });
@@ -89,13 +88,12 @@ describe('execute tests', () => {
       shouldRetry: false,
     };
 
-    networkClient.execute = jest.fn(async () => {return rawResponse});
+    networkClient.execute = jest.fn(async () => {return rawSuccessResponse});
     apiInteractor.prepareRetryConfig = jest.fn(() => retryConfig);
     ApiInteractor.getErrorResponse = jest.fn(() => errorResponse);
   });
 
   afterAll(() => {
-    global.delay = savedDelay;
     ApiInteractor.getErrorResponse = savedGetErrorResponse;
   });
 
@@ -141,7 +139,7 @@ describe('execute tests', () => {
     }).rejects.toThrow(expectedError);
   });
 
-  test('network client throws retryable error', () => {
+  test('network client throws retryable error', async () => {
     // given
     const retryCount = 3;
     const expectedError = new QonversionError(QonversionErrorCode.ConfigPreparation);
@@ -150,11 +148,11 @@ describe('execute tests', () => {
     apiInteractor.prepareRetryConfig = jest.fn((retryPolicy, attemptIndex) => ({
       attemptIndex: attemptIndex + 1,
       delay: 1,
-      shouldRetry: true,
+      shouldRetry: attemptIndex < retryCount,
     }));
 
     // when and then
-    expect(async () => {
+    await expect(async () => {
       await apiInteractor.execute(request, new RetryPolicyExponential(retryCount));
     }).rejects.toThrow(expectedError);
 
@@ -162,20 +160,43 @@ describe('execute tests', () => {
     expect(ApiInteractor.getErrorResponse).toBeCalledTimes(1);
   });
 
-  test('error response without retry', () => {
+  test('retryable error response without retry config', async () => {
+    // given
+    testResponseCode = 555;
+    networkClient.execute = jest.fn(async () => ({...rawSuccessResponse, code: testResponseCode}));
 
+    // when and then
+    const response = await apiInteractor.execute(request);
+
+    expect(response).toStrictEqual(errorResponse);
+    expect(networkClient.execute).toBeCalledTimes(1);
+    expect(ApiInteractor.getErrorResponse).toBeCalledTimes(1);
   });
 
-  test('error response with limited retries', () => {
+  test('error response with limited retries', async () => {
+    const retryCount = 2;
+    testResponseCode = 555;
+    networkClient.execute = jest.fn(async () => ({...rawSuccessResponse, code: testResponseCode}));
+    apiInteractor.prepareRetryConfig = jest.fn((retryPolicy, attemptIndex) => ({
+      attemptIndex: attemptIndex + 1,
+      delay: 1,
+      shouldRetry: attemptIndex < retryCount,
+    }));
 
+    // when and then
+    const response = await apiInteractor.execute(request, new RetryPolicyExponential(retryCount));
+
+    expect(response).toStrictEqual(errorResponse);
+    expect(networkClient.execute).toBeCalledTimes(retryCount + 1);
+    expect(ApiInteractor.getErrorResponse).toBeCalledTimes(1);
   });
 
   test('error response which shouldn\'t be retried', async () => {
     // given
-    rawResponse = {
+    rawSuccessResponse = {
       code: 400, payload: undefined
     };
-    const configHolderSpy = spyOn(networkConfigHolder, 'setCanSendRequests');
+    const configHolderSpy = jest.spyOn(networkConfigHolder, 'setCanSendRequests');
 
     // when
     const result = await apiInteractor.execute(request);
@@ -190,10 +211,10 @@ describe('execute tests', () => {
 
   test('error response with code, blocking further executions', async () => {
     // given
-    rawResponse = {
+    rawSuccessResponse = {
       code: 402, payload: undefined
     };
-    const configHolderSpy = spyOn(networkConfigHolder, 'setCanSendRequests');
+    const configHolderSpy = jest.spyOn(networkConfigHolder, 'setCanSendRequests');
 
     // when
     const result = await apiInteractor.execute(request);
@@ -377,4 +398,32 @@ describe('getErrorResponse tests', () => {
       ApiInteractor.getErrorResponse();
     }).toThrow();
   });
+});
+
+class OtherTest {
+  async mockFn() {}
+}
+class Test {
+  readonly other;
+
+  constructor(other) {
+    this.other = other;
+  }
+
+  fun = async (index: number) => {
+    if (index == 5) return;
+    try {
+      await this.other.mockFn();
+    } catch (e) {
+
+    }
+    await this.fun(index + 1);
+  };
+}
+test('',  async () => {
+  const other = new OtherTest();
+  const t = new Test(other);
+  other.mockFn = jest.fn(async () => {throw new Error()});
+  await t.fun(1);
+  expect(other.mockFn).toBeCalledTimes(4);
 });
