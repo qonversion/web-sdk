@@ -1,3 +1,5 @@
+import {MS_IN_SEC} from '../utils/dateUtils';
+
 export type RetryDelayCalculator = {
   countDelay: (minDelay: number, retriesCount: number) => number;
 };
@@ -12,7 +14,7 @@ export class ExponentialDelayCalculator implements RetryDelayCalculator {
   private readonly maxDelayMS = MAX_DELAY_MS;
 
   countDelay(minDelay: number, retriesCount: number): number {
-    let delay = Math.floor(minDelay + Math.pow(this.factor, retriesCount))
+    let delay = Math.floor(minDelay + Math.pow(this.factor, retriesCount) * MS_IN_SEC)
     const delta = Math.round(delay * this.jitter);
 
     delay += Math.floor(Math.random() * (delta + 1));

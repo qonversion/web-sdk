@@ -47,8 +47,20 @@ export type NetworkResponseError = NetworkResponse & {
   apiCode?: string;
 };
 
-export type NetworkResponseSuccess = NetworkResponse & {
-  data: any;
+export type NetworkResponseSuccess<T> = NetworkResponse & {
+  data: T;
+};
+
+export type ApiError = {
+  message: string;
+  type?: string;
+  code?: string;
+};
+
+export type NetworkRetryConfig = {
+  shouldRetry: boolean;
+  attemptIndex: number;
+  delay: number;
 };
 
 export type INetworkClient = {
@@ -56,7 +68,7 @@ export type INetworkClient = {
 };
 
 export type IApiInteractor = {
-  execute: (request: NetworkRequest, retryPolicy?: RetryPolicy) => Promise<NetworkResponseSuccess | NetworkResponseError>;
+  execute: <T>(request: NetworkRequest, retryPolicy?: RetryPolicy) => Promise<NetworkResponseSuccess<T> | NetworkResponseError>;
 };
 
 export type IRequestConfigurator = {

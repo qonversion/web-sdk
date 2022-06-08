@@ -31,12 +31,7 @@ export class NetworkAssembly implements INetworkAssembly {
   }
 
   requestConfigurator(): IRequestConfigurator {
-    return new RequestConfigurator(
-      this.headerBuilder(),
-      API_URL,
-      this.internalConfig,
-      this.storageAssembly.userDataProvider(),
-    );
+    return new RequestConfigurator(this.headerBuilder(), API_URL);
   }
 
   headerBuilder(): IHeaderBuilder {

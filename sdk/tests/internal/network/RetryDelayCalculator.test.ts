@@ -21,7 +21,7 @@ describe('ExponentialDelayCalculator tests', () => {
 
   test('every next attempt is delayed more then previous ones', () => {
     // given
-    const minDelay = 1;
+    const minDelay = 1000;
 
     // when
     const delay1 = delayCalculator.countDelay(minDelay, 0)

@@ -5,19 +5,10 @@ import {IUserDataProvider} from '../user';
 export class RequestConfigurator implements IRequestConfigurator {
   private readonly headerBuilder: IHeaderBuilder;
   private readonly baseUrl: string;
-  private readonly primaryConfigProvider: PrimaryConfigProvider;
-  private readonly userDataProvider: IUserDataProvider;
 
-  constructor(
-    headerBuilder: IHeaderBuilder,
-    baseUrl: string,
-    primaryConfigProvider: PrimaryConfigProvider,
-    userDataProvider: IUserDataProvider
-  ) {
+  constructor(headerBuilder: IHeaderBuilder, baseUrl: string) {
     this.headerBuilder = headerBuilder;
     this.baseUrl = baseUrl;
-    this.primaryConfigProvider = primaryConfigProvider;
-    this.userDataProvider = userDataProvider;
   }
 
   configureUserRequest(id: string): NetworkRequest {
