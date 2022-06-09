@@ -1,5 +1,7 @@
 import {UserPropertiesService} from './types';
 import {IApiInteractor, IRequestConfigurator} from '../network';
+import {QonversionError} from '../../exception/QonversionError';
+import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
 
 export class UserPropertiesServiceImpl implements UserPropertiesService {
   private readonly requestConfigurator: IRequestConfigurator;
@@ -14,6 +16,11 @@ export class UserPropertiesServiceImpl implements UserPropertiesService {
     const request = this.requestConfigurator.configureUserPropertiesRequest(properties);
     const response = await this.apiInteractor.execute<{processed: string[]}>(request);
 
-    return Promise.resolve([]);
+    if (response.isSuccess) {
+      return response.data.processed;
+    }
+
+    const errorMessage = "Response code " + response.code + ", message: " + response.message;
+    throw new QonversionError(QonversionErrorCode.BackendError, errorMessage);
   }
 }

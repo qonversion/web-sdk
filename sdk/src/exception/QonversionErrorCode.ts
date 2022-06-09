@@ -3,4 +3,5 @@ export enum QonversionErrorCode {
   NotInitialized = "Qonversion has not been initialized. You should call " +
     "the initialize method before accessing the shared instance of Qonversion.",
   RequestDenied = "Request denied",
+  BackendError = "Qonversion API returned an error",
 }

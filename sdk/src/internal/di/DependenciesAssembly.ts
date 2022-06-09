@@ -9,7 +9,7 @@ import {IApiInteractor, IHeaderBuilder, INetworkClient, IRequestConfigurator, Re
 import {IUserDataProvider} from '../user';
 import {ILogger} from '../logger';
 import {LocalStorage} from '../common';
-import {UserPropertiesStorage} from '../userProperties';
+import {UserPropertiesService, UserPropertiesStorage} from '../userProperties';
 
 export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IServicesAssembly, IControllersAssembly, IStorageAssembly {
   private readonly networkAssembly: INetworkAssembly;
@@ -75,6 +75,10 @@ export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IS
   pendingUserPropertiesStorage(): UserPropertiesStorage {
     return this.storageAssembly.pendingUserPropertiesStorage();
   }
+
+  userPropertiesService(): UserPropertiesService {
+    return this.servicesAssembly.userPropertiesService();
+  }
 }
 
 export class DependenciesAssemblyBuilder {
@@ -86,10 +90,10 @@ export class DependenciesAssemblyBuilder {
 
   build(): DependenciesAssembly {
     const miscAssembly = new MiscAssembly(this.internalConfig);
-    const servicesAssembly = new ServicesAssembly();
     const controllersAssembly = new ControllersAssembly();
     const storageAssembly = new StorageAssembly();
     const networkAssembly = new NetworkAssembly(this.internalConfig, storageAssembly, miscAssembly);
+    const servicesAssembly = new ServicesAssembly(networkAssembly);
 
     return new DependenciesAssembly(
       networkAssembly, miscAssembly, servicesAssembly, controllersAssembly, storageAssembly
