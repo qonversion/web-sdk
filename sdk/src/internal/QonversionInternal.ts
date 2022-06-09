@@ -4,6 +4,7 @@ import {LogLevel} from '../dto/LogLevel';
 import {Environment} from '../dto/Environment';
 import {DependenciesAssembly} from './di/DependenciesAssembly';
 import Qonversion from '../Qonversion';
+import {UserProperty} from '../dto/UserProperty';
 
 export class QonversionInternal implements QonversionInstance {
   private readonly internalConfig: InternalConfig;
@@ -12,6 +13,15 @@ export class QonversionInternal implements QonversionInstance {
   constructor(internalConfig: InternalConfig, dependenciesAssembly: DependenciesAssembly) {
     this.internalConfig = internalConfig;
     this.dependenciesAssembly = dependenciesAssembly;
+  }
+
+  setCustomUserProperty(key: string, value: string): void {
+  }
+
+  setUserProperties(userProperties: Record<string, string>): void {
+  }
+
+  setUserProperty(property: UserProperty, value: string): void {
   }
 
   finish() {

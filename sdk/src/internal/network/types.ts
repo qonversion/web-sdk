@@ -13,7 +13,7 @@ export enum ApiHeader {
 }
 
 export enum ApiEndpoint {
-  Users = "users",
+  Users = "v3/users",
   Properties = "properties",
 }
 
@@ -73,6 +73,8 @@ export type IApiInteractor = {
 
 export type IRequestConfigurator = {
   configureUserRequest: (id: string) => NetworkRequest;
+
+  configureUserPropertiesRequest: (properties: Record<string, string>) => NetworkRequest;
 };
 
 export type IHeaderBuilder = {

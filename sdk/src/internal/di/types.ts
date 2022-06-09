@@ -1,6 +1,8 @@
 import {ILogger} from '../logger';
 import {IApiInteractor, IHeaderBuilder, INetworkClient, IRequestConfigurator, RetryDelayCalculator} from '../network';
 import {IUserDataProvider} from '../user';
+import {LocalStorage} from '../common';
+import {UserPropertiesStorage} from '../userProperties';
 
 export type IMiscAssembly = {
   logger: () => ILogger;
@@ -24,5 +26,8 @@ export type IControllersAssembly = {
 };
 
 export type IStorageAssembly = {
+  localStorage: () => LocalStorage;
   userDataProvider: () => IUserDataProvider;
+  sentUserPropertiesStorage: () => UserPropertiesStorage;
+  pendingUserPropertiesStorage: () => UserPropertiesStorage;
 };

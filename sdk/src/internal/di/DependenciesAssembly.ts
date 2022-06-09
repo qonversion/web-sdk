@@ -8,6 +8,8 @@ import {StorageAssembly} from './StorageAssembly';
 import {IApiInteractor, IHeaderBuilder, INetworkClient, IRequestConfigurator, RetryDelayCalculator} from '../network';
 import {IUserDataProvider} from '../user';
 import {ILogger} from '../logger';
+import {LocalStorage} from '../common';
+import {UserPropertiesStorage} from '../userProperties';
 
 export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IServicesAssembly, IControllersAssembly, IStorageAssembly {
   private readonly networkAssembly: INetworkAssembly;
@@ -58,8 +60,20 @@ export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IS
     return this.networkAssembly.requestConfigurator();
   }
 
+  localStorage(): LocalStorage {
+    return this.storageAssembly.localStorage();
+  }
+
   userDataProvider(): IUserDataProvider {
     return this.storageAssembly.userDataProvider();
+  }
+
+  sentUserPropertiesStorage(): UserPropertiesStorage {
+    return this.storageAssembly.sentUserPropertiesStorage();
+  }
+
+  pendingUserPropertiesStorage(): UserPropertiesStorage {
+    return this.storageAssembly.pendingUserPropertiesStorage();
   }
 }
 
