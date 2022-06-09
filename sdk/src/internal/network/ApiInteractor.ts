@@ -60,6 +60,7 @@ export class ApiInteractor implements IApiInteractor {
       return {
         code: response.code,
         data: response.payload,
+        isSuccess: true,
       };
     }
 
@@ -88,6 +89,7 @@ export class ApiInteractor implements IApiInteractor {
         message: apiError.message,
         type: apiError.type,
         apiCode: apiError.code,
+        isSuccess: false,
       };
     } else if (executionError) {
       throw executionError;
