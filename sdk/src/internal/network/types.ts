@@ -45,10 +45,12 @@ export type NetworkResponseError = NetworkResponse & {
   message: string;
   type?: string;
   apiCode?: string;
+  isSuccess: false;
 };
 
 export type NetworkResponseSuccess<T> = NetworkResponse & {
   data: T;
+  isSuccess: true;
 };
 
 export type ApiError = {

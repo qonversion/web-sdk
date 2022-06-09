@@ -60,6 +60,7 @@ describe('execute tests', () => {
     code: 0,
     message: '',
     type: '',
+    isSuccess: false,
   }
   let retryConfig: NetworkRetryConfig;
 
@@ -92,6 +93,7 @@ describe('execute tests', () => {
     const expResponse: NetworkResponseSuccess<typeof testPayload> = {
       code: testResponseCode,
       data: testPayload,
+      isSuccess: true,
     };
 
     // when
@@ -361,6 +363,7 @@ describe('getErrorResponse tests', () => {
       code: testErrorCode,
       message: testErrorMessage,
       type: testErrorType,
+      isSuccess: false,
     };
 
     // when
