@@ -1,9 +1,14 @@
-import {UserPropertiesService, UserPropertiesServiceImpl} from '../../../src/internal/userProperties';
+import {
+  UserPropertiesService,
+  UserPropertiesServiceImpl
+} from '../../../src/internal/userProperties';
 import {
   IApiInteractor,
   IRequestConfigurator,
-  NetworkRequest, NetworkResponseError,
+  NetworkRequest,
+  NetworkResponseError,
   NetworkResponseSuccess,
+  RequestConfigurator,
   RequestType
 } from '../../../src/internal/network';
 import {QonversionError} from '../../../src';
@@ -24,10 +29,8 @@ describe('UserPropertiesService tests', () => {
   };
 
   beforeEach(() => {
-    // @ts-ignore
-    requestConfigurator = {
-      configureUserPropertiesRequest: jest.fn(() => testRequest),
-    };
+    requestConfigurator = new (RequestConfigurator as any)();
+    requestConfigurator.configureUserPropertiesRequest = jest.fn(() => testRequest);
     apiInteractor = {
       execute: jest.fn(),
     };
@@ -65,7 +68,6 @@ describe('UserPropertiesService tests', () => {
       type: '',
       isSuccess: false
     };
-    // @ts-ignore
     apiInteractor.execute = jest.fn(async () => response);
 
     // when
