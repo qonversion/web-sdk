@@ -2,11 +2,13 @@ import {ILogger} from '../logger';
 import {IApiInteractor, IHeaderBuilder, INetworkClient, IRequestConfigurator, RetryDelayCalculator} from '../network';
 import {IUserDataProvider} from '../user';
 import {LocalStorage} from '../common';
-import {UserPropertiesService, UserPropertiesStorage} from '../userProperties';
+import {UserPropertiesController, UserPropertiesService, UserPropertiesStorage} from '../userProperties';
+import {DelayedWorker} from '../utils/DelayedWorker';
 
 export type IMiscAssembly = {
   logger: () => ILogger;
   exponentialDelayCalculator: () => RetryDelayCalculator;
+  delayedWorker: () => DelayedWorker;
 };
 
 export type INetworkAssembly = {
@@ -22,7 +24,7 @@ export type IServicesAssembly = {
 };
 
 export type IControllersAssembly = {
-
+  userPropertiesController: () => UserPropertiesController;
 };
 
 export type IStorageAssembly = {
