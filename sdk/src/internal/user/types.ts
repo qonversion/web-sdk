@@ -11,3 +11,7 @@ export type UserDataStorage = IUserDataProvider & {
 
   clearIdentityUserId: () => void;
 };
+
+export type UserIdGenerator = {
+  generate: () => string;
+};

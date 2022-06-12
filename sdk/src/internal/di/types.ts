@@ -1,6 +1,6 @@
 import {ILogger} from '../logger';
 import {IApiInteractor, IHeaderBuilder, INetworkClient, IRequestConfigurator, RetryDelayCalculator} from '../network';
-import {IUserDataProvider, UserDataStorage} from '../user';
+import {IUserDataProvider, UserDataStorage, UserIdGenerator} from '../user';
 import {LocalStorage} from '../common';
 import {UserPropertiesController, UserPropertiesService, UserPropertiesStorage} from '../userProperties';
 import {DelayedWorker} from '../utils/DelayedWorker';
@@ -9,6 +9,7 @@ export type IMiscAssembly = {
   logger: () => ILogger;
   exponentialDelayCalculator: () => RetryDelayCalculator;
   delayedWorker: () => DelayedWorker;
+  userIdGenerator: () => UserIdGenerator;
 };
 
 export type INetworkAssembly = {

@@ -3,6 +3,7 @@ import {InternalConfig} from '../InternalConfig';
 import Logger, {ILogger} from '../logger';
 import {ExponentialDelayCalculator, RetryDelayCalculator} from '../network';
 import {DelayedWorker, DelayedWorkerImpl} from '../utils/DelayedWorker';
+import {UserIdGenerator, UserIdGeneratorImpl} from '../user';
 
 export class MiscAssembly implements IMiscAssembly {
   private readonly internalConfig: InternalConfig;
@@ -21,5 +22,9 @@ export class MiscAssembly implements IMiscAssembly {
 
   delayedWorker(): DelayedWorker {
     return new DelayedWorkerImpl();
+  }
+
+  userIdGenerator(): UserIdGenerator {
+    return new UserIdGeneratorImpl();
   }
 }
