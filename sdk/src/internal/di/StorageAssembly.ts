@@ -1,5 +1,5 @@
 import {IStorageAssembly} from './types';
-import {IUserDataProvider} from '../user';
+import {IUserDataProvider, UserDataStorage, UserDataStorageImpl} from '../user';
 import {LocalStorage, LocalStorageImpl, StorageConstants} from '../common';
 import {UserPropertiesStorage, UserPropertiesStorageImpl} from '../userProperties';
 
@@ -9,9 +9,13 @@ export class StorageAssembly implements IStorageAssembly {
   }
 
   userDataProvider(): IUserDataProvider {
-    // todo
-    return {getUserId: () => 'test', requireUserId: () => 'test'};
+    return this.userDataStorage();
   }
+
+  userDataStorage(): UserDataStorage {
+    return new UserDataStorageImpl(this.localStorage());
+  }
+
 
   pendingUserPropertiesStorage(): UserPropertiesStorage {
     return this.userPropertiesStorage(StorageConstants.PendingUserProperties);

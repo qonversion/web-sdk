@@ -6,7 +6,7 @@ import {ServicesAssembly} from './ServicesAssembly';
 import {ControllersAssembly} from './ControllersAssembly';
 import {StorageAssembly} from './StorageAssembly';
 import {IApiInteractor, IHeaderBuilder, INetworkClient, IRequestConfigurator, RetryDelayCalculator} from '../network';
-import {IUserDataProvider} from '../user';
+import {IUserDataProvider, UserDataStorage} from '../user';
 import {ILogger} from '../logger';
 import {LocalStorage} from '../common';
 import {UserPropertiesController, UserPropertiesService, UserPropertiesStorage} from '../userProperties';
@@ -71,6 +71,10 @@ export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IS
 
   userDataProvider(): IUserDataProvider {
     return this.storageAssembly.userDataProvider();
+  }
+
+  userDataStorage(): UserDataStorage {
+    return this.storageAssembly.userDataStorage();
   }
 
   sentUserPropertiesStorage(): UserPropertiesStorage {
