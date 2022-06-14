@@ -14,6 +14,7 @@ export enum ApiHeader {
 
 export enum ApiEndpoint {
   Users = "v3/users",
+  Identity = "v3/identities",
   Properties = "properties",
 }
 
@@ -76,7 +77,13 @@ export type IApiInteractor = {
 export type IRequestConfigurator = {
   configureUserRequest: (id: string) => NetworkRequest;
 
+  configureCreateUserRequest: (id: string) => NetworkRequest;
+
   configureUserPropertiesRequest: (properties: Record<string, string>) => NetworkRequest;
+
+  configureIdentityRequest: (identityId: string) => NetworkRequest;
+
+  configureCreateIdentityRequest: (qonversionId: string, identityId: string) => NetworkRequest;
 };
 
 export type IHeaderBuilder = {

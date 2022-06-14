@@ -4,6 +4,7 @@ export * from './dto/Environment';
 export * from './dto/LaunchMode';
 export * from './dto/LogLevel';
 export * from './dto/UserProperty';
+export * from './dto/User';
 export * from './exception/QonversionError';
 export * from './exception/QonversionErrorCode';
 export * from './UserPropertiesBuilder';

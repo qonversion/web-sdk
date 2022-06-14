@@ -5,4 +5,5 @@ export enum QonversionErrorCode {
   RequestDenied = "Request denied",
   BackendError = "Qonversion API returned an error",
   UserNotFound = "Qonversion user not found",
+  IdentityNotFound = "User with requested identity not found",
 }

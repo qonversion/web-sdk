@@ -4,6 +4,21 @@ import {Environment} from './dto/Environment';
 import {UserProperty} from './dto/UserProperty';
 
 export type QonversionInstance = {
+  /**
+   * Call this function to link a user to his unique id in your system and share purchase data.
+   * If you want to check identified user permissions await for returned promise to resolve and
+   * call [todo checkEntitlements link] then.
+   *
+   * @param userId - unique user id in your system
+   */
+  identify: (userId: string) => Promise<void>;
+
+  /**
+   * Call this function to unlink a user from his unique ID in your system and his purchase data.
+   * If you want to check logged out user permissions await for returned promise to resolve and
+   * call [todo checkEntitlements link] then.
+   */
+  logout: () => Promise<void>;
 
   /**
    * Add property value for the current user to use it then for segmentation or analytics

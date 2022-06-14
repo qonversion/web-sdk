@@ -6,7 +6,14 @@ import {ServicesAssembly} from './ServicesAssembly';
 import {ControllersAssembly} from './ControllersAssembly';
 import {StorageAssembly} from './StorageAssembly';
 import {IApiInteractor, IHeaderBuilder, INetworkClient, IRequestConfigurator, RetryDelayCalculator} from '../network';
-import {IUserDataProvider, UserDataStorage, UserIdGenerator} from '../user';
+import {
+  IdentityService,
+  IUserDataProvider,
+  UserController,
+  UserDataStorage,
+  UserIdGenerator,
+  UserService
+} from '../user';
 import {ILogger} from '../logger';
 import {LocalStorage} from '../common';
 import {UserPropertiesController, UserPropertiesService, UserPropertiesStorage} from '../userProperties';
@@ -93,8 +100,24 @@ export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IS
     return this.servicesAssembly.userPropertiesService();
   }
 
+  userService(): UserService {
+    return this.servicesAssembly.userService();
+  }
+
+  userServiceDecorator(): UserService {
+    return this.servicesAssembly.userServiceDecorator();
+  }
+
+  identityService(): IdentityService {
+    return this.servicesAssembly.identityService();
+  }
+
   userPropertiesController(): UserPropertiesController {
     return this.controllersAssembly.userPropertiesController();
+  }
+
+  userController(): UserController {
+    return this.controllersAssembly.userController();
   }
 }
 

@@ -20,7 +20,7 @@ export class UserPropertiesServiceImpl implements UserPropertiesService {
       return response.data.processed;
     }
 
-    const errorMessage = "Response code " + response.code + ", message: " + response.message;
+    const errorMessage = `Response code ${response.code}, message: ${response.message}`;
     throw new QonversionError(QonversionErrorCode.BackendError, errorMessage);
   }
 }

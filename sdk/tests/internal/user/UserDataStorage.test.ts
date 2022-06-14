@@ -67,6 +67,30 @@ describe('UserDataStorage tests', () => {
     expect(res).toBeUndefined();
   });
 
+  test('get original user id', () => {
+    // given
+    userDataStorage['originalId'] = testOriginalId;
+    userDataStorage['identityId'] = undefined;
+
+    // when
+    const res = userDataStorage.getOriginalUserId();
+
+    // then
+    expect(res).toBe(testOriginalId);
+  });
+
+  test('get identity user id', () => {
+    // given
+    userDataStorage['originalId'] = undefined;
+    userDataStorage['identityId'] = testIdentityId;
+
+    // when
+    const res = userDataStorage.getIdentityUserId();
+
+    // then
+    expect(res).toBe(testIdentityId);
+  });
+
   test('require user id when both original and identity id exist', () => {
     // given
     userDataStorage['originalId'] = testOriginalId;

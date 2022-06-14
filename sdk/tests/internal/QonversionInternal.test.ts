@@ -4,6 +4,7 @@ import {DependenciesAssembly} from '../../src/internal/di/DependenciesAssembly';
 import {LoggerConfig, NetworkConfig, PrimaryConfig} from '../../src/types';
 import Qonversion, {Environment, LaunchMode, LogLevel, UserProperty} from '../../src';
 import {UserPropertiesController, UserPropertiesControllerImpl} from '../../src/internal/userProperties';
+import {UserController} from '../../src/internal/user';
 
 jest.mock('../../src/internal/di/DependenciesAssembly', () => {
   const originalModule = jest.requireActual('../../src/internal/di/DependenciesAssembly');
@@ -15,6 +16,7 @@ let networkConfig: NetworkConfig;
 let loggerConfig: LoggerConfig;
 let internalConfig: InternalConfig;
 let userPropertyController: UserPropertiesController;
+let userController: UserController;
 let dependenciesAssembly: jest.Mocked<DependenciesAssembly>;
 let qonversionInternal: QonversionInternal;
 
@@ -38,8 +40,11 @@ beforeEach(() => {
     loggerConfig,
   });
   userPropertyController = new (UserPropertiesControllerImpl as any)();
+  // @ts-ignore
+  userController = {};
   dependenciesAssembly = new (DependenciesAssembly as any)();
   dependenciesAssembly.userPropertiesController = jest.fn(() => userPropertyController);
+  dependenciesAssembly.userController = jest.fn(() => userController);
   qonversionInternal = new QonversionInternal(internalConfig, dependenciesAssembly);
 });
 
@@ -107,6 +112,35 @@ describe('finish tests', function () {
 
     // then
     expect(Qonversion['backingInstance']).toBe(anotherInstance);
+  });
+});
+
+describe('UserController usage tests', () => {
+  test('identify', () => {
+    // given
+    const identityId = 'test identity id';
+    const promiseReturned = new Promise<void>(() => {});
+    userController.identify = jest.fn(async () => promiseReturned);
+
+    // when
+    const res = qonversionInternal.identify(identityId);
+
+    // then
+    expect(res).toStrictEqual(promiseReturned);
+    expect(userController.identify).toBeCalledWith(identityId);
+  });
+
+  test('logout', () => {
+    // given
+    const promiseReturned = new Promise<void>(() => {});
+    userController.logout = jest.fn(async () => promiseReturned);
+
+    // when
+    const res = qonversionInternal.logout();
+
+    // then
+    expect(res).toStrictEqual(promiseReturned);
+    expect(userController.logout).toBeCalled();
   });
 });
 

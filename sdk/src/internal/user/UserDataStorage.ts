@@ -21,6 +21,14 @@ export class UserDataStorageImpl implements UserDataStorage {
     return this.identityId ?? this.originalId;
   }
 
+  getIdentityUserId(): string | undefined {
+    return this.identityId;
+  }
+
+  getOriginalUserId(): string | undefined {
+    return this.originalId;
+  }
+
   requireUserId(): string {
     const id = this.getUserId();
     if (id) {
