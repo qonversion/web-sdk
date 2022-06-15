@@ -84,6 +84,8 @@ export type IRequestConfigurator = {
   configureIdentityRequest: (identityId: string) => NetworkRequest;
 
   configureCreateIdentityRequest: (qonversionId: string, identityId: string) => NetworkRequest;
+
+  configureEntitlementsRequest: (id: string) => NetworkRequest;
 };
 
 export type IHeaderBuilder = {

@@ -1,6 +1,7 @@
 import {INetworkAssembly, IServicesAssembly} from './types';
 import {UserPropertiesService, UserPropertiesServiceImpl} from '../userProperties';
 import {IdentityService, IdentityServiceImpl, UserService, UserServiceDecorator, UserServiceImpl} from '../user';
+import {EntitlementsService, EntitlementsServiceImpl} from '../entitlements';
 
 export class ServicesAssembly implements IServicesAssembly {
   private readonly networkAssembly: INetworkAssembly;
@@ -31,6 +32,13 @@ export class ServicesAssembly implements IServicesAssembly {
 
   identityService(): IdentityService {
     return new IdentityServiceImpl(
+      this.networkAssembly.requestConfigurator(),
+      this.networkAssembly.exponentialApiInteractor(),
+    );
+  }
+
+  entitlementsService(): EntitlementsService {
+    return new EntitlementsServiceImpl(
       this.networkAssembly.requestConfigurator(),
       this.networkAssembly.exponentialApiInteractor(),
     );

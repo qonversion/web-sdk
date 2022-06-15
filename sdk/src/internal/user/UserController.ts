@@ -37,7 +37,7 @@ export class UserControllerImpl implements UserController {
     try {
       const userId = this.userDataStorage.requireUserId();
       const apiUser = await this.userService.getUser(userId);
-      this.logger.info('User info was successfully received from API')
+      this.logger.info('User info was successfully received from API', apiUser);
       return apiUser;
     } catch (error) {
       this.logger.error('Failed to get User from API', error)
@@ -85,7 +85,7 @@ export class UserControllerImpl implements UserController {
     }
   }
 
-  private async createUser(): Promise<User> {
+  async createUser(): Promise<User> {
     this.userDataStorage.clearIdentityUserId();
     const newOriginalId = this.userIdGenerator.generate();
     this.userDataStorage.setOriginalUserId(newOriginalId);

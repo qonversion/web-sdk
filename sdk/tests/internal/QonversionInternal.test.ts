@@ -2,9 +2,11 @@ import {InternalConfig} from '../../src/internal/InternalConfig';
 import {QonversionInternal} from '../../src/internal/QonversionInternal';
 import {DependenciesAssembly} from '../../src/internal/di/DependenciesAssembly';
 import {LoggerConfig, NetworkConfig, PrimaryConfig} from '../../src/types';
-import Qonversion, {Environment, LaunchMode, LogLevel, UserProperty} from '../../src';
+import Qonversion, {Entitlement, Environment, LaunchMode, LogLevel, UserProperty} from '../../src';
 import {UserPropertiesController, UserPropertiesControllerImpl} from '../../src/internal/userProperties';
 import {UserController} from '../../src/internal/user';
+import {EntitlementsController} from '../../src/internal/entitlements';
+import {EntitlementsControllerImpl} from '../../src/internal/entitlements/EntitlementsController';
 
 jest.mock('../../src/internal/di/DependenciesAssembly', () => {
   const originalModule = jest.requireActual('../../src/internal/di/DependenciesAssembly');
@@ -17,6 +19,7 @@ let loggerConfig: LoggerConfig;
 let internalConfig: InternalConfig;
 let userPropertyController: UserPropertiesController;
 let userController: UserController;
+let entitlementsController: EntitlementsController;
 let dependenciesAssembly: jest.Mocked<DependenciesAssembly>;
 let qonversionInternal: QonversionInternal;
 
@@ -40,11 +43,13 @@ beforeEach(() => {
     loggerConfig,
   });
   userPropertyController = new (UserPropertiesControllerImpl as any)();
+  entitlementsController = new (EntitlementsControllerImpl as any)();
   // @ts-ignore
   userController = {};
   dependenciesAssembly = new (DependenciesAssembly as any)();
   dependenciesAssembly.userPropertiesController = jest.fn(() => userPropertyController);
   dependenciesAssembly.userController = jest.fn(() => userController);
+  dependenciesAssembly.entitlementsController = jest.fn(() => entitlementsController);
   qonversionInternal = new QonversionInternal(internalConfig, dependenciesAssembly);
 });
 
@@ -185,5 +190,20 @@ describe('UserPropertiesController usage tests', () => {
 
     // then
     expect(userPropertyController.setProperties).toBeCalledWith(properties);
+  });
+});
+
+describe('EntitlementsController usage tests', () => {
+  test('getEntitlements', () => {
+    // given
+    const promiseReturned = new Promise<Entitlement[]>(() => []);
+    entitlementsController.getEntitlements = jest.fn(async () => promiseReturned);
+
+    // when
+    const res = qonversionInternal.getEntitlements();
+
+    // then
+    expect(res).toStrictEqual(promiseReturned);
+    expect(entitlementsController.getEntitlements).toBeCalled();
   });
 });

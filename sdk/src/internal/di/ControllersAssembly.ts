@@ -1,11 +1,15 @@
 import {IControllersAssembly, IMiscAssembly, IServicesAssembly, IStorageAssembly} from './types';
 import {UserPropertiesController, UserPropertiesControllerImpl} from '../userProperties';
 import {UserController, UserControllerImpl} from '../user';
+import {EntitlementsController} from '../entitlements';
+import {EntitlementsControllerImpl} from '../entitlements/EntitlementsController';
 
 export class ControllersAssembly implements IControllersAssembly {
   private readonly miscAssembly: IMiscAssembly;
   private readonly storageAssembly: IStorageAssembly;
   private readonly servicesAssembly: IServicesAssembly;
+
+  private sharedUserController: UserController | undefined;
 
   constructor(miscAssembly: IMiscAssembly, storageAssembly: IStorageAssembly, servicesAssembly: IServicesAssembly) {
     this.miscAssembly = miscAssembly;
@@ -24,11 +28,25 @@ export class ControllersAssembly implements IControllersAssembly {
   }
 
   userController(): UserController {
-    return new UserControllerImpl(
+    if (this.sharedUserController) {
+      return this.sharedUserController;
+    }
+
+    this.sharedUserController = new UserControllerImpl(
       this.servicesAssembly.userServiceDecorator(),
       this.servicesAssembly.identityService(),
       this.storageAssembly.userDataStorage(),
       this.miscAssembly.userIdGenerator(),
+      this.miscAssembly.logger(),
+    );
+    return this.sharedUserController;
+  }
+
+  entitlementsController(): EntitlementsController {
+    return new EntitlementsControllerImpl(
+      this.userController(),
+      this.servicesAssembly.entitlementsService(),
+      this.storageAssembly.userDataStorage(),
       this.miscAssembly.logger(),
     );
   }

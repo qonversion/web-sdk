@@ -2,8 +2,18 @@ import {LogLevel} from './dto/LogLevel';
 import {LaunchMode} from './dto/LaunchMode';
 import {Environment} from './dto/Environment';
 import {UserProperty} from './dto/UserProperty';
+import {Entitlement} from './dto/Entitlement';
 
 export type QonversionInstance = {
+  /**
+   * Call this function to receive all entitlements of the current user. If you initiated user changing
+   * actions like {@link identify} or {@link logout} be sure to await their ending and only after it request
+   * entitlements.
+   *
+   * @returns a list of current user entitlements.
+   */
+  getEntitlements: () => Promise<Entitlement[]>;
+
   /**
    * Call this function to link a user to his unique id in your system and share purchase data.
    * If you want to check identified user permissions await for returned promise to resolve and

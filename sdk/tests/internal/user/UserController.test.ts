@@ -91,7 +91,7 @@ describe('getUser tests', function () {
     expect(res).toStrictEqual(testUser);
     expect(userDataStorage.requireUserId).toBeCalled();
     expect(userService.getUser).toBeCalledWith(testQonversionUserId);
-    expect(logger.info).toBeCalledWith('User info was successfully received from API');
+    expect(logger.info).toBeCalledWith('User info was successfully received from API', testUser);
     expect(logger.error).not.toBeCalled();
   });
 

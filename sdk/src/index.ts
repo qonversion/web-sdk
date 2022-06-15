@@ -1,5 +1,6 @@
 export * from './QonversionConfigBuilder';
 export {QonversionConfig, QonversionInstance} from './types';
+export * from './dto/Entitlement';
 export * from './dto/Environment';
 export * from './dto/LaunchMode';
 export * from './dto/LogLevel';

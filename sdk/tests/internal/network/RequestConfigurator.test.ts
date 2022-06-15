@@ -35,10 +35,8 @@ describe('RequestConfigurator tests', () => {
         return primaryConfig;
       }
     };
+    // @ts-ignore
     const userDataProvider: IUserDataProvider = {
-      requireUserId(): string {
-        return testUserId;
-      },
       getUserId(): string | undefined {
         return testUserId;
       }
@@ -129,6 +127,21 @@ describe('RequestConfigurator tests', () => {
 
     // when
     const request = requestConfigurator.configureCreateIdentityRequest(testUserId, testIdentityId);
+
+    // then
+    expect(request).toStrictEqual(expResult);
+  });
+
+  test('entitlements request', () => {
+    // given
+    const expResult: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.GET,
+      url: `${testBaseUrl}/${ApiEndpoint.Users}/${testUserId}/entitlements`,
+    };
+
+    // when
+    const request = requestConfigurator.configureEntitlementsRequest(testUserId);
 
     // then
     expect(request).toStrictEqual(expResult);

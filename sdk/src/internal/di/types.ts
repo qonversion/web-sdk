@@ -11,6 +11,7 @@ import {
 import {LocalStorage} from '../common';
 import {UserPropertiesController, UserPropertiesService, UserPropertiesStorage} from '../userProperties';
 import {DelayedWorker} from '../utils/DelayedWorker';
+import {EntitlementsController, EntitlementsService} from '../entitlements';
 
 export type IMiscAssembly = {
   logger: () => ILogger;
@@ -32,11 +33,13 @@ export type IServicesAssembly = {
   userService: () => UserService;
   userServiceDecorator: () => UserService;
   identityService: () => IdentityService;
+  entitlementsService: () => EntitlementsService;
 };
 
 export type IControllersAssembly = {
   userPropertiesController: () => UserPropertiesController;
   userController: () => UserController;
+  entitlementsController: () => EntitlementsController;
 };
 
 export type IStorageAssembly = {
