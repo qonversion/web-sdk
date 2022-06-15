@@ -27,8 +27,6 @@ export class UserControllerImpl implements UserController {
 
     const existingUserId = userDataStorage.getUserId();
     if (!existingUserId || existingUserId == TEST_USER_ID) {
-      const userId = userIdGenerator.generate();
-      userDataStorage.setOriginalUserId(userId);
       this.createUser()
         .then(() => this.logger.info('New user created on initialization'))
         .catch(error => this.logger.error('Failed to create new user on initialization', error));
@@ -39,10 +37,10 @@ export class UserControllerImpl implements UserController {
     try {
       const userId = this.userDataStorage.requireUserId();
       const apiUser = await this.userService.getUser(userId);
-      this.logger.info("User info was successfully received from API")
+      this.logger.info('User info was successfully received from API')
       return apiUser;
     } catch (error) {
-      this.logger.error("Failed to get User from API", error)
+      this.logger.error('Failed to get User from API', error)
       throw error;
     }
   }
@@ -63,10 +61,11 @@ export class UserControllerImpl implements UserController {
           const newOriginalId = await this.identityService.createIdentity(originalId, identityId);
           this.handleSuccessfulIdentity(newOriginalId, identityId);
         } catch (secondaryError) {
-          this.logger.error("Failed to create user identity", secondaryError);
+          this.logger.error(`Failed to create user identity for id ${identityId}`, secondaryError);
           throw secondaryError;
         }
       } else {
+        this.logger.error(`Failed to identify user with id ${identityId}`, error)
         throw error;
       }
     }
@@ -79,9 +78,9 @@ export class UserControllerImpl implements UserController {
 
     try {
       await this.createUser();
-      this.logger.info("Logout is completed. A new user is successfully created.")
+      this.logger.info('Logout is completed. A new user is successfully created.');
     } catch (error) {
-      this.logger.error("Failed to create new user after logout", error);
+      this.logger.error('Failed to create new user after logout.', error);
       throw error;
     }
   }
@@ -95,7 +94,7 @@ export class UserControllerImpl implements UserController {
   }
 
   private handleSuccessfulIdentity(originalId: string, identityId: string) {
-    this.logger.info("User identification is completed.");
+      this.logger.info(`User with id ${identityId} is successfully identified.`);
 
     this.userDataStorage.setOriginalUserId(originalId);
     this.userDataStorage.setIdentityUserId(identityId);
