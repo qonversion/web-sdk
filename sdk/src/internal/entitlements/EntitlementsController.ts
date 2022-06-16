@@ -1,7 +1,7 @@
 import {EntitlementsController, EntitlementsService} from './types';
 import {Entitlement} from '../../dto/Entitlement';
 import {UserController, UserDataStorage} from '../user';
-import {ILogger} from '../logger';
+import {Logger} from '../logger';
 import {QonversionError} from '../../exception/QonversionError';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
 
@@ -9,9 +9,9 @@ export class EntitlementsControllerImpl implements EntitlementsController {
   private readonly userController: UserController;
   private readonly entitlementsService: EntitlementsService;
   private readonly userDataStorage: UserDataStorage;
-  private readonly logger: ILogger;
+  private readonly logger: Logger;
 
-  constructor(userController: UserController, entitlementsService: EntitlementsService, userDataStorage: UserDataStorage, logger: ILogger) {
+  constructor(userController: UserController, entitlementsService: EntitlementsService, userDataStorage: UserDataStorage, logger: Logger) {
     this.userController = userController;
     this.entitlementsService = entitlementsService;
     this.userDataStorage = userDataStorage;

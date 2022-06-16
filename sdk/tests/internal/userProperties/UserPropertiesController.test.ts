@@ -4,7 +4,7 @@ import {
   UserPropertiesStorage
 } from '../../../src/internal/userProperties';
 import {DelayedWorker} from '../../../src/internal/utils/DelayedWorker';
-import {ILogger} from '../../../src/internal/logger';
+import {Logger} from '../../../src/internal/logger';
 import {QonversionError, QonversionErrorCode, UserProperty} from '../../../src';
 
 let userPropertiesController: UserPropertiesControllerImpl;
@@ -12,7 +12,7 @@ let pendingUserPropertiesStorage: UserPropertiesStorage;
 let sentUserPropertiesStorage: UserPropertiesStorage;
 let userPropertiesService: UserPropertiesService;
 let delayedWorker: DelayedWorker;
-let logger: ILogger;
+let logger: Logger;
 const testSendingDelayMs = 10000;
 
 beforeEach(() => {

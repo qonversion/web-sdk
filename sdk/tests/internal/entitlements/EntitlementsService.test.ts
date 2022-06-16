@@ -1,6 +1,6 @@
 import {
-  IApiInteractor,
-  IRequestConfigurator,
+  ApiInteractor,
+  RequestConfigurator,
   NetworkRequest,
   NetworkResponseError,
   NetworkResponseSuccess
@@ -14,8 +14,8 @@ import {
   EntitlementsServiceImpl
 } from '../../../src/internal/entitlements';
 
-let requestConfigurator: IRequestConfigurator;
-let apiInteractor: IApiInteractor;
+let requestConfigurator: RequestConfigurator;
+let apiInteractor: ApiInteractor;
 let entitlementsService: EntitlementsService;
 const testUserId = 'test user id';
 

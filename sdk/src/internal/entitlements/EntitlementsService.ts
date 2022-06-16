@@ -1,16 +1,16 @@
 import {EntitlementsResponse, EntitlementsService} from './types';
 import {Entitlement} from '../../dto/Entitlement';
-import {IApiInteractor, IRequestConfigurator} from '../network';
+import {ApiInteractor, RequestConfigurator} from '../network';
 import {camelcaseKeys} from '../utils/objectUtils';
 import {QonversionError} from '../../exception/QonversionError';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
 import {HTTP_NOT_FOUND} from '../network/constants';
 
 export class EntitlementsServiceImpl implements EntitlementsService {
-  private readonly requestConfigurator: IRequestConfigurator;
-  private readonly apiInteractor: IApiInteractor;
+  private readonly requestConfigurator: RequestConfigurator;
+  private readonly apiInteractor: ApiInteractor;
 
-  constructor(requestConfigurator: IRequestConfigurator, apiInteractor: IApiInteractor) {
+  constructor(requestConfigurator: RequestConfigurator, apiInteractor: ApiInteractor) {
     this.requestConfigurator = requestConfigurator;
     this.apiInteractor = apiInteractor;
   }

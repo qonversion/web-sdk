@@ -1,8 +1,8 @@
-import {ILogger, LogMethod} from './types';
+import {Logger, LogMethod} from './types';
 import {LoggerConfigProvider} from '../types';
 import {LogLevel} from '../../dto/LogLevel';
 
-export default class Logger implements ILogger {
+export default class LoggerImpl implements Logger {
   private readonly loggerConfigProvider: LoggerConfigProvider;
 
   constructor(loggerConfigProvider: LoggerConfigProvider) {

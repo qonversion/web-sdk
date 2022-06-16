@@ -1,6 +1,6 @@
 import {LoggerConfigProvider} from '../../../src/internal/types';
 import {LogLevel} from '../../../src';
-import Logger from '../../../src/internal/logger';
+import LoggerImpl from '../../../src/internal/logger';
 
 const testLogTag = 'tag';
 let allowedLogLevel = LogLevel.Disabled;
@@ -14,10 +14,10 @@ const loggerConfigProvider: LoggerConfigProvider = {
 };
 const someAdditionalParam = {someField: 'someValue'};
 
-const logger = new Logger(loggerConfigProvider);
+const logger = new LoggerImpl(loggerConfigProvider);
 
 describe('logging methods', function () {
-  const loggerSpy = jest.spyOn(Logger.prototype as any, 'log');
+  const loggerSpy = jest.spyOn(LoggerImpl.prototype as any, 'log');
 
   test('verbose', () => {
     // given

@@ -1,18 +1,18 @@
 import {
   ApiEndpoint,
-  IHeaderBuilder,
+  HeaderBuilder,
   NetworkRequest,
-  RequestConfigurator,
+  RequestConfiguratorImpl,
   RequestHeaders,
   RequestType
 } from '../../../src/internal/network';
 import {PrimaryConfig} from '../../../src/types';
 import {PrimaryConfigProvider} from '../../../src/internal/types';
-import {IUserDataProvider} from '../../../src/internal/user';
+import {UserDataProvider} from '../../../src/internal/user';
 import {PurchaseCoreData, StripeStoreData} from '../../../src';
 
 const testHeaders: RequestHeaders = {a: 'a'};
-const headerBuilder: IHeaderBuilder = {
+const headerBuilder: HeaderBuilder = {
   buildCommonHeaders(): RequestHeaders {
     return testHeaders;
   }
@@ -27,7 +27,7 @@ let primaryConfig: PrimaryConfig = {
   projectKey: testProjectKey,
   sdkVersion: ''
 };
-let requestConfigurator: RequestConfigurator;
+let requestConfigurator: RequestConfiguratorImpl;
 
 describe('RequestConfigurator tests', () => {
   beforeEach(() => {
@@ -37,13 +37,13 @@ describe('RequestConfigurator tests', () => {
       }
     };
     // @ts-ignore
-    const userDataProvider: IUserDataProvider = {
+    const userDataProvider: UserDataProvider = {
       getUserId(): string | undefined {
         return testUserId;
       }
     };
 
-    requestConfigurator = new RequestConfigurator(headerBuilder, testBaseUrl, primaryConfigProvider, userDataProvider);
+    requestConfigurator = new RequestConfiguratorImpl(headerBuilder, testBaseUrl, primaryConfigProvider, userDataProvider);
   });
 
   test('user request', () => {

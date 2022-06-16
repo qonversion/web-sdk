@@ -1,8 +1,8 @@
-import {ILogger} from '../logger';
-import {IApiInteractor, IHeaderBuilder, INetworkClient, IRequestConfigurator, RetryDelayCalculator} from '../network';
+import {Logger} from '../logger';
+import {ApiInteractor, HeaderBuilder, NetworkClient, RequestConfigurator, RetryDelayCalculator} from '../network';
 import {
   IdentityService,
-  IUserDataProvider,
+  UserDataProvider,
   UserController,
   UserDataStorage,
   UserIdGenerator,
@@ -14,22 +14,22 @@ import {DelayedWorker} from '../utils/DelayedWorker';
 import {EntitlementsController, EntitlementsService} from '../entitlements';
 import {PurchasesController, PurchasesService} from '../purchases';
 
-export type IMiscAssembly = {
-  logger: () => ILogger;
+export type MiscAssembly = {
+  logger: () => Logger;
   exponentialDelayCalculator: () => RetryDelayCalculator;
   delayedWorker: () => DelayedWorker;
   userIdGenerator: () => UserIdGenerator;
 };
 
-export type INetworkAssembly = {
-  networkClient: () => INetworkClient;
-  requestConfigurator: () => IRequestConfigurator;
-  headerBuilder: () => IHeaderBuilder;
-  exponentialApiInteractor: () => IApiInteractor;
-  infiniteExponentialApiInteractor: () => IApiInteractor;
+export type NetworkAssembly = {
+  networkClient: () => NetworkClient;
+  requestConfigurator: () => RequestConfigurator;
+  headerBuilder: () => HeaderBuilder;
+  exponentialApiInteractor: () => ApiInteractor;
+  infiniteExponentialApiInteractor: () => ApiInteractor;
 };
 
-export type IServicesAssembly = {
+export type ServicesAssembly = {
   userPropertiesService: () => UserPropertiesService;
   userService: () => UserService;
   userServiceDecorator: () => UserService;
@@ -38,17 +38,17 @@ export type IServicesAssembly = {
   purchasesService: () => PurchasesService;
 };
 
-export type IControllersAssembly = {
+export type ControllersAssembly = {
   userPropertiesController: () => UserPropertiesController;
   userController: () => UserController;
   entitlementsController: () => EntitlementsController;
   purchasesController: () => PurchasesController;
 };
 
-export type IStorageAssembly = {
+export type StorageAssembly = {
   localStorage: () => LocalStorage;
   sentUserPropertiesStorage: () => UserPropertiesStorage;
   pendingUserPropertiesStorage: () => UserPropertiesStorage;
-  userDataProvider: () => IUserDataProvider;
+  userDataProvider: () => UserDataProvider;
   userDataStorage: () => UserDataStorage;
 };

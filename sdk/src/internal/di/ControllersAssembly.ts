@@ -1,17 +1,17 @@
-import {IControllersAssembly, IMiscAssembly, IServicesAssembly, IStorageAssembly} from './types';
+import {ControllersAssembly, MiscAssembly, ServicesAssembly, StorageAssembly} from './types';
 import {UserPropertiesController, UserPropertiesControllerImpl} from '../userProperties';
 import {UserController, UserControllerImpl} from '../user';
 import {EntitlementsController, EntitlementsControllerImpl} from '../entitlements';
 import {PurchasesController, PurchasesControllerImpl} from '../purchases';
 
-export class ControllersAssembly implements IControllersAssembly {
-  private readonly miscAssembly: IMiscAssembly;
-  private readonly storageAssembly: IStorageAssembly;
-  private readonly servicesAssembly: IServicesAssembly;
+export class ControllersAssemblyImpl implements ControllersAssembly {
+  private readonly miscAssembly: MiscAssembly;
+  private readonly storageAssembly: StorageAssembly;
+  private readonly servicesAssembly: ServicesAssembly;
 
   private sharedUserController: UserController | undefined;
 
-  constructor(miscAssembly: IMiscAssembly, storageAssembly: IStorageAssembly, servicesAssembly: IServicesAssembly) {
+  constructor(miscAssembly: MiscAssembly, storageAssembly: StorageAssembly, servicesAssembly: ServicesAssembly) {
     this.miscAssembly = miscAssembly;
     this.storageAssembly = storageAssembly;
     this.servicesAssembly = servicesAssembly;

@@ -1,14 +1,14 @@
 import {PurchasesController, PurchasesService} from './types';
 import {UserDataStorage} from '../user';
-import {ILogger} from '../logger';
+import {Logger} from '../logger';
 import {PurchaseCoreData, StripeStoreData, UserPurchase} from '../../dto/Purchase';
 
 export class PurchasesControllerImpl implements PurchasesController {
   private readonly purchasesService: PurchasesService;
   private readonly userDataStorage: UserDataStorage;
-  private readonly logger: ILogger;
+  private readonly logger: Logger;
 
-  constructor(purchasesService: PurchasesService, userDataStorage: UserDataStorage, logger: ILogger) {
+  constructor(purchasesService: PurchasesService, userDataStorage: UserDataStorage, logger: Logger) {
     this.purchasesService = purchasesService;
     this.userDataStorage = userDataStorage;
     this.logger = logger;

@@ -1,6 +1,6 @@
 import {IdentityService, UserController, UserDataStorage, UserIdGenerator, UserService} from './types';
 import {User} from '../../dto/User';
-import {ILogger} from '../logger';
+import {Logger} from '../logger';
 import {TEST_USER_ID} from './constants';
 import {QonversionError} from '../../exception/QonversionError';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
@@ -10,14 +10,14 @@ export class UserControllerImpl implements UserController {
   private readonly identityService: IdentityService;
   private readonly userDataStorage: UserDataStorage;
   private readonly userIdGenerator: UserIdGenerator;
-  private readonly logger: ILogger;
+  private readonly logger: Logger;
 
   constructor(
     userService: UserService,
     identityService: IdentityService,
     userDataStorage: UserDataStorage,
     userIdGenerator: UserIdGenerator,
-    logger: ILogger
+    logger: Logger
   ) {
     this.userService = userService;
     this.identityService = identityService;

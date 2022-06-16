@@ -1,39 +1,39 @@
-import {IControllersAssembly, IMiscAssembly, INetworkAssembly, IServicesAssembly, IStorageAssembly} from './types';
+import {ControllersAssembly, MiscAssembly, NetworkAssembly, ServicesAssembly, StorageAssembly} from './types';
 import {InternalConfig} from '../InternalConfig';
-import {MiscAssembly} from './MiscAssembly';
-import {NetworkAssembly} from './NetworkAssembly';
-import {ServicesAssembly} from './ServicesAssembly';
-import {ControllersAssembly} from './ControllersAssembly';
-import {StorageAssembly} from './StorageAssembly';
-import {IApiInteractor, IHeaderBuilder, INetworkClient, IRequestConfigurator, RetryDelayCalculator} from '../network';
+import {MiscAssemblyImpl} from './MiscAssembly';
+import {NetworkAssemblyImpl} from './NetworkAssembly';
+import {ServicesAssemblyImpl} from './ServicesAssembly';
+import {ControllersAssemblyImpl} from './ControllersAssembly';
+import {StorageAssemblyImpl} from './StorageAssembly';
+import {ApiInteractor, HeaderBuilder, NetworkClient, RequestConfigurator, RetryDelayCalculator} from '../network';
 import {
   IdentityService,
-  IUserDataProvider,
+  UserDataProvider,
   UserController,
   UserDataStorage,
   UserIdGenerator,
   UserService,
 } from '../user';
-import {ILogger} from '../logger';
+import {Logger} from '../logger';
 import {LocalStorage} from '../common';
 import {UserPropertiesController, UserPropertiesService, UserPropertiesStorage} from '../userProperties';
 import {DelayedWorker} from '../utils/DelayedWorker';
 import {EntitlementsController, EntitlementsService} from '../entitlements';
 import {PurchasesController, PurchasesService} from '../purchases';
 
-export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IServicesAssembly, IControllersAssembly, IStorageAssembly {
-  private readonly networkAssembly: INetworkAssembly;
-  private readonly miscAssembly: IMiscAssembly;
-  private readonly servicesAssembly: IServicesAssembly;
-  private readonly controllersAssembly: IControllersAssembly;
-  private readonly storageAssembly: IStorageAssembly;
+export class DependenciesAssembly implements MiscAssembly, NetworkAssembly, ServicesAssembly, ControllersAssembly, StorageAssembly {
+  private readonly networkAssembly: NetworkAssembly;
+  private readonly miscAssembly: MiscAssembly;
+  private readonly servicesAssembly: ServicesAssembly;
+  private readonly controllersAssembly: ControllersAssembly;
+  private readonly storageAssembly: StorageAssembly;
 
   constructor(
-    networkAssembly: INetworkAssembly,
-    miscAssembly: IMiscAssembly,
-    servicesAssembly: IServicesAssembly,
-    controllersAssembly: IControllersAssembly,
-    storageAssembly: IStorageAssembly,
+    networkAssembly: NetworkAssembly,
+    miscAssembly: MiscAssembly,
+    servicesAssembly: ServicesAssembly,
+    controllersAssembly: ControllersAssembly,
+    storageAssembly: StorageAssembly,
   ) {
     this.networkAssembly = networkAssembly;
     this.miscAssembly = miscAssembly;
@@ -42,7 +42,7 @@ export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IS
     this.storageAssembly = storageAssembly;
   };
 
-  logger(): ILogger {
+  logger(): Logger {
     return this.miscAssembly.logger();
   }
 
@@ -58,23 +58,23 @@ export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IS
     return this.miscAssembly.userIdGenerator();
   }
 
-  exponentialApiInteractor(): IApiInteractor {
+  exponentialApiInteractor(): ApiInteractor {
     return this.networkAssembly.exponentialApiInteractor();
   }
 
-  infiniteExponentialApiInteractor(): IApiInteractor {
+  infiniteExponentialApiInteractor(): ApiInteractor {
     return this.networkAssembly.infiniteExponentialApiInteractor();
   }
 
-  headerBuilder(): IHeaderBuilder {
+  headerBuilder(): HeaderBuilder {
     return this.networkAssembly.headerBuilder();
   }
 
-  networkClient(): INetworkClient {
+  networkClient(): NetworkClient {
     return this.networkAssembly.networkClient();
   }
 
-  requestConfigurator(): IRequestConfigurator {
+  requestConfigurator(): RequestConfigurator {
     return this.networkAssembly.requestConfigurator();
   }
 
@@ -82,7 +82,7 @@ export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IS
     return this.storageAssembly.localStorage();
   }
 
-  userDataProvider(): IUserDataProvider {
+  userDataProvider(): UserDataProvider {
     return this.storageAssembly.userDataProvider();
   }
 
@@ -147,11 +147,11 @@ export class DependenciesAssemblyBuilder {
   };
 
   build(): DependenciesAssembly {
-    const miscAssembly = new MiscAssembly(this.internalConfig);
-    const storageAssembly = new StorageAssembly();
-    const networkAssembly = new NetworkAssembly(this.internalConfig, storageAssembly, miscAssembly);
-    const servicesAssembly = new ServicesAssembly(networkAssembly);
-    const controllersAssembly = new ControllersAssembly(miscAssembly, storageAssembly, servicesAssembly);
+    const miscAssembly = new MiscAssemblyImpl(this.internalConfig);
+    const storageAssembly = new StorageAssemblyImpl();
+    const networkAssembly = new NetworkAssemblyImpl(this.internalConfig, storageAssembly, miscAssembly);
+    const servicesAssembly = new ServicesAssemblyImpl(networkAssembly);
+    const controllersAssembly = new ControllersAssemblyImpl(miscAssembly, storageAssembly, servicesAssembly);
 
     return new DependenciesAssembly(
       networkAssembly, miscAssembly, servicesAssembly, controllersAssembly, storageAssembly

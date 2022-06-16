@@ -1,19 +1,19 @@
-import {ApiEndpoint, IHeaderBuilder, IRequestConfigurator, NetworkRequest, RequestType} from './types';
+import {ApiEndpoint, HeaderBuilder, RequestConfigurator, NetworkRequest, RequestType} from './types';
 import {PrimaryConfigProvider} from '../types';
-import {IUserDataProvider} from '../user';
+import {UserDataProvider} from '../user';
 import {PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
 
-export class RequestConfigurator implements IRequestConfigurator {
-  private readonly headerBuilder: IHeaderBuilder;
+export class RequestConfiguratorImpl implements RequestConfigurator {
+  private readonly headerBuilder: HeaderBuilder;
   private readonly baseUrl: string;
   private readonly primaryConfigProvider: PrimaryConfigProvider;
-  private readonly userDataProvider: IUserDataProvider
+  private readonly userDataProvider: UserDataProvider
 
   constructor(
-    headerBuilder: IHeaderBuilder,
+    headerBuilder: HeaderBuilder,
     baseUrl: string,
     primaryConfigProvider: PrimaryConfigProvider,
-    userDataProvider: IUserDataProvider
+    userDataProvider: UserDataProvider
   ) {
     this.headerBuilder = headerBuilder;
     this.baseUrl = baseUrl;

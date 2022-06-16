@@ -1,16 +1,16 @@
 import {UserApi, UserService} from './types';
 import {User} from '../../dto/User';
-import {IApiInteractor, IRequestConfigurator} from '../network';
+import {ApiInteractor, RequestConfigurator} from '../network';
 import {QonversionError} from '../../exception/QonversionError';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
 import {HTTP_NOT_FOUND} from '../network/constants';
 import {camelcaseKeys} from '../utils/objectUtils';
 
 export class UserServiceImpl implements UserService {
-  private readonly requestConfigurator: IRequestConfigurator;
-  private readonly apiInteractor: IApiInteractor;
+  private readonly requestConfigurator: RequestConfigurator;
+  private readonly apiInteractor: ApiInteractor;
 
-  constructor(requestConfigurator: IRequestConfigurator, apiInteractor: IApiInteractor) {
+  constructor(requestConfigurator: RequestConfigurator, apiInteractor: ApiInteractor) {
     this.requestConfigurator = requestConfigurator;
     this.apiInteractor = apiInteractor;
   }

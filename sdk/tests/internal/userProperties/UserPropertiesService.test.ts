@@ -3,20 +3,20 @@ import {
   UserPropertiesServiceImpl
 } from '../../../src/internal/userProperties';
 import {
-  IApiInteractor,
-  IRequestConfigurator,
+  ApiInteractor,
+  RequestConfigurator,
   NetworkRequest,
   NetworkResponseError,
   NetworkResponseSuccess,
-  RequestConfigurator,
+  RequestConfiguratorImpl,
   RequestType
 } from '../../../src/internal/network';
 import {QonversionError} from '../../../src';
 
 describe('UserPropertiesService tests', () => {
   let userPropertiesService: UserPropertiesService;
-  let requestConfigurator: IRequestConfigurator;
-  let apiInteractor: IApiInteractor;
+  let requestConfigurator: RequestConfigurator;
+  let apiInteractor: ApiInteractor;
   let testRequest: NetworkRequest = {
     body: {},
     headers: {},
@@ -29,7 +29,7 @@ describe('UserPropertiesService tests', () => {
   };
 
   beforeEach(() => {
-    requestConfigurator = new (RequestConfigurator as any)();
+    requestConfigurator = new (RequestConfiguratorImpl as any)();
     requestConfigurator.configureUserPropertiesRequest = jest.fn(() => testRequest);
     apiInteractor = {
       execute: jest.fn(),

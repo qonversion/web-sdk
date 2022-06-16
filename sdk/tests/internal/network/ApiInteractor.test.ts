@@ -1,8 +1,8 @@
 import {
   ApiError,
-  ApiInteractor,
+  ApiInteractorImpl,
   ExponentialDelayCalculator,
-  NetworkClient,
+  NetworkClientImpl,
   NetworkRequest,
   NetworkResponseError,
   NetworkResponseSuccess,
@@ -17,14 +17,14 @@ import {NetworkConfigHolder} from '../../../src/internal/types';
 import {QonversionError, QonversionErrorCode} from '../../../src';
 import * as NetworkUtils from '../../../src/internal/network/utils';
 
-let apiInteractor: ApiInteractor;
+let apiInteractor: ApiInteractorImpl;
 let delayCalculator: ExponentialDelayCalculator;
-let networkClient: NetworkClient;
+let networkClient: NetworkClientImpl;
 let networkConfigHolder: NetworkConfigHolder;
 let canSendRequests = true;
 
 beforeEach(() => {
-  networkClient = new NetworkClient();
+  networkClient = new NetworkClientImpl();
   delayCalculator = new ExponentialDelayCalculator();
 
   networkConfigHolder = {
@@ -36,7 +36,7 @@ beforeEach(() => {
     }
   };
 
-  apiInteractor = new ApiInteractor(networkClient, delayCalculator, networkConfigHolder);
+  apiInteractor = new ApiInteractorImpl(networkClient, delayCalculator, networkConfigHolder);
 });
 
 describe('execute tests', () => {
@@ -69,7 +69,7 @@ describe('execute tests', () => {
   beforeAll(() => {
     jest.spyOn(NetworkUtils, 'delay').mockImplementation(async () => {});
 
-    savedGetErrorResponse = ApiInteractor.getErrorResponse;
+    savedGetErrorResponse = ApiInteractorImpl.getErrorResponse;
   });
 
   beforeEach(() => {
@@ -81,11 +81,11 @@ describe('execute tests', () => {
 
     networkClient.execute = jest.fn(async () => {return rawSuccessResponse});
     apiInteractor.prepareRetryConfig = jest.fn(() => retryConfig);
-    ApiInteractor.getErrorResponse = jest.fn(() => errorResponse);
+    ApiInteractorImpl.getErrorResponse = jest.fn(() => errorResponse);
   });
 
   afterAll(() => {
-    ApiInteractor.getErrorResponse = savedGetErrorResponse;
+    ApiInteractorImpl.getErrorResponse = savedGetErrorResponse;
   });
 
   test('execute with successful response', async () => {
@@ -103,7 +103,7 @@ describe('execute tests', () => {
     expect(response).toStrictEqual(expResponse);
     expect(networkClient.execute).toBeCalledWith(request);
     expect(apiInteractor.prepareRetryConfig).not.toBeCalled();
-    expect(ApiInteractor.getErrorResponse).not.toBeCalled();
+    expect(ApiInteractorImpl.getErrorResponse).not.toBeCalled();
   });
 
   test('execute request with deny option on', () => {
@@ -136,7 +136,7 @@ describe('execute tests', () => {
     const retryCount = 3;
     const expectedError = new QonversionError(QonversionErrorCode.ConfigPreparation);
     networkClient.execute = jest.fn(() => {throw expectedError});
-    ApiInteractor.getErrorResponse = jest.fn((response, error) => {throw error});
+    ApiInteractorImpl.getErrorResponse = jest.fn((response, error) => {throw error});
     apiInteractor.prepareRetryConfig = jest.fn((retryPolicy, attemptIndex) => ({
       attemptIndex: attemptIndex + 1,
       delay: 1,
@@ -149,7 +149,7 @@ describe('execute tests', () => {
     }).rejects.toThrow(expectedError);
 
     expect(networkClient.execute).toBeCalledTimes(retryCount + 1);
-    expect(ApiInteractor.getErrorResponse).toBeCalledTimes(1);
+    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
   });
 
   test('retryable error response without retry config', async () => {
@@ -162,7 +162,7 @@ describe('execute tests', () => {
 
     expect(response).toStrictEqual(errorResponse);
     expect(networkClient.execute).toBeCalledTimes(1);
-    expect(ApiInteractor.getErrorResponse).toBeCalledTimes(1);
+    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
   });
 
   test('error response with limited retries', async () => {
@@ -180,7 +180,7 @@ describe('execute tests', () => {
 
     expect(response).toStrictEqual(errorResponse);
     expect(networkClient.execute).toBeCalledTimes(retryCount + 1);
-    expect(ApiInteractor.getErrorResponse).toBeCalledTimes(1);
+    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
   });
 
   test('error response which shouldn\'t be retried', async () => {
@@ -196,7 +196,7 @@ describe('execute tests', () => {
     // then
     expect(result).toStrictEqual(errorResponse);
     expect(networkClient.execute).toBeCalledTimes(1);
-    expect(ApiInteractor.getErrorResponse).toBeCalledTimes(1);
+    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
     expect(apiInteractor.prepareRetryConfig).not.toBeCalled();
     expect(configHolderSpy).not.toBeCalled();
   });
@@ -214,7 +214,7 @@ describe('execute tests', () => {
     // then
     expect(result).toStrictEqual(errorResponse);
     expect(networkClient.execute).toBeCalledTimes(1);
-    expect(ApiInteractor.getErrorResponse).toBeCalledTimes(1);
+    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
     expect(configHolderSpy).toBeCalledWith(false);
     expect(apiInteractor.prepareRetryConfig).not.toBeCalled();
   });
@@ -367,7 +367,7 @@ describe('getErrorResponse tests', () => {
     };
 
     // when
-    const result = ApiInteractor.getErrorResponse(networkResponse)
+    const result = ApiInteractorImpl.getErrorResponse(networkResponse)
 
     // then
     expect(result).toStrictEqual(expResult);
@@ -379,7 +379,7 @@ describe('getErrorResponse tests', () => {
 
     // when and then
     expect(() => {
-      ApiInteractor.getErrorResponse(undefined, executionError);
+      ApiInteractorImpl.getErrorResponse(undefined, executionError);
     }).toThrow(executionError);
   });
 
@@ -388,7 +388,7 @@ describe('getErrorResponse tests', () => {
 
     // when and then
     expect(() => {
-      ApiInteractor.getErrorResponse();
+      ApiInteractorImpl.getErrorResponse();
     }).toThrow();
   });
 });

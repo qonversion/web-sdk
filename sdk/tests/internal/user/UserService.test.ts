@@ -1,6 +1,6 @@
 import {
-  IApiInteractor,
-  IRequestConfigurator,
+  ApiInteractor,
+  RequestConfigurator,
   NetworkRequest, NetworkResponseError,
   NetworkResponseSuccess
 } from '../../../src/internal/network';
@@ -8,8 +8,8 @@ import {UserApi, UserService, UserServiceImpl} from '../../../src/internal/user'
 import {QonversionError, QonversionErrorCode, User} from '../../../src';
 import {HTTP_NOT_FOUND} from '../../../src/internal/network/constants';
 
-let requestConfigurator: IRequestConfigurator;
-let apiInteractor: IApiInteractor;
+let requestConfigurator: RequestConfigurator;
+let apiInteractor: ApiInteractor;
 let userService: UserService;
 const testUserId = 'test user id';
 

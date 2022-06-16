@@ -1,11 +1,11 @@
 import {UserDataStorage} from '../../../src/internal/user';
-import {ILogger} from '../../../src/internal/logger';
+import {Logger} from '../../../src/internal/logger';
 import {PurchaseCoreData, StripeStoreData, UserPurchase} from '../../../src';
 import {PurchasesController, PurchasesService, PurchasesControllerImpl} from '../../../src/internal/purchases';
 
 let purchasesService: PurchasesService;
 let userDataStorage: UserDataStorage;
-let logger: ILogger;
+let logger: Logger;
 let purchasesController: PurchasesController;
 
 const testUserId = 'test user id';

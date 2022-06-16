@@ -2,7 +2,6 @@ import {UserPropertiesStorage} from './types';
 import {LocalStorage} from '../common';
 
 export class UserPropertiesStorageImpl implements UserPropertiesStorage {
-
   private readonly localStorage: LocalStorage;
   private readonly key: string;
 

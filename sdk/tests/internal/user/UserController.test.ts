@@ -5,14 +5,14 @@ import {
   UserIdGenerator,
   UserService
 } from '../../../src/internal/user';
-import {ILogger} from '../../../src/internal/logger';
+import {Logger} from '../../../src/internal/logger';
 import {QonversionError, QonversionErrorCode, User} from '../../../src';
 
 let userService: UserService;
 let identityService: IdentityService;
 let userDataStorage: UserDataStorage;
 let userIdGenerator: UserIdGenerator;
-let logger: ILogger;
+let logger: Logger;
 let userController: UserControllerImpl;
 
 const testQonversionUserId = 'test qonversion user id';

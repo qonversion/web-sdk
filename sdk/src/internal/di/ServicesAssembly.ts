@@ -1,13 +1,13 @@
-import {INetworkAssembly, IServicesAssembly} from './types';
+import {NetworkAssembly, ServicesAssembly} from './types';
 import {UserPropertiesService, UserPropertiesServiceImpl} from '../userProperties';
 import {IdentityService, IdentityServiceImpl, UserService, UserServiceDecorator, UserServiceImpl} from '../user';
 import {EntitlementsService, EntitlementsServiceImpl} from '../entitlements';
 import {PurchaseServiceImpl, PurchasesService} from '../purchases';
 
-export class ServicesAssembly implements IServicesAssembly {
-  private readonly networkAssembly: INetworkAssembly;
+export class ServicesAssemblyImpl implements ServicesAssembly {
+  private readonly networkAssembly: NetworkAssembly;
 
-  constructor(networkAssembly: INetworkAssembly) {
+  constructor(networkAssembly: NetworkAssembly) {
     this.networkAssembly = networkAssembly;
   }
 

@@ -1,6 +1,6 @@
 import {
-  IApiInteractor,
-  IRequestConfigurator, NetworkRequest,
+  ApiInteractor,
+  RequestConfigurator, NetworkRequest,
   NetworkResponseError,
   NetworkResponseSuccess
 } from '../../../src/internal/network';
@@ -8,8 +8,8 @@ import {QonversionError, QonversionErrorCode} from '../../../src';
 import {HTTP_NOT_FOUND} from '../../../src/internal/network/constants';
 import {IdentityApi, IdentityService, IdentityServiceImpl} from '../../../src/internal/user';
 
-let requestConfigurator: IRequestConfigurator;
-let apiInteractor: IApiInteractor;
+let requestConfigurator: RequestConfigurator;
+let apiInteractor: ApiInteractor;
 let identityService: IdentityService;
 const testQonversionUserId = 'test qonversion user id';
 const testIdentityUserId = 'test identity user id';

@@ -1,6 +1,6 @@
 import {
-  IApiInteractor,
-  IRequestConfigurator,
+  ApiInteractor,
+  RequestConfigurator,
   NetworkRequest,
   NetworkResponseError,
   NetworkResponseSuccess
@@ -14,8 +14,8 @@ import {
 } from '../../../src';
 import {PurchaseServiceImpl, PurchasesService, UserPurchaseApi} from '../../../src/internal/purchases';
 
-let requestConfigurator: IRequestConfigurator;
-let apiInteractor: IApiInteractor;
+let requestConfigurator: RequestConfigurator;
+let apiInteractor: ApiInteractor;
 let purchasesService: PurchasesService;
 const testUserId = 'test user id';
 

@@ -67,15 +67,15 @@ export type NetworkRetryConfig = {
   delay: number;
 };
 
-export type INetworkClient = {
+export type NetworkClient = {
   execute: (request: NetworkRequest) => Promise<RawNetworkResponse>;
 };
 
-export type IApiInteractor = {
+export type ApiInteractor = {
   execute: <T>(request: NetworkRequest, retryPolicy?: RetryPolicy) => Promise<NetworkResponseSuccess<T> | NetworkResponseError>;
 };
 
-export type IRequestConfigurator = {
+export type RequestConfigurator = {
   configureUserRequest: (id: string) => NetworkRequest;
 
   configureCreateUserRequest: (id: string) => NetworkRequest;
@@ -91,6 +91,6 @@ export type IRequestConfigurator = {
   configureStripePurchaseRequest: (userId: string, data: PurchaseCoreData & StripeStoreData) => NetworkRequest;
 };
 
-export type IHeaderBuilder = {
+export type HeaderBuilder = {
   buildCommonHeaders: () => RequestHeaders;
 };

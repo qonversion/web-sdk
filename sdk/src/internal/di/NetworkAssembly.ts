@@ -1,37 +1,37 @@
-import {IMiscAssembly, INetworkAssembly, IStorageAssembly} from './types';
+import {MiscAssembly, NetworkAssembly, StorageAssembly} from './types';
 import {
   API_URL,
+  ApiInteractorImpl,
+  HeaderBuilderImpl,
   ApiInteractor,
   HeaderBuilder,
-  IApiInteractor,
-  IHeaderBuilder,
-  INetworkClient,
-  IRequestConfigurator,
   NetworkClient,
   RequestConfigurator,
+  NetworkClientImpl,
+  RequestConfiguratorImpl,
   RetryPolicy,
   RetryPolicyExponential,
   RetryPolicyInfiniteExponential,
 } from '../network';
 import {InternalConfig} from '../InternalConfig';
 
-export class NetworkAssembly implements INetworkAssembly {
+export class NetworkAssemblyImpl implements NetworkAssembly {
   private readonly internalConfig: InternalConfig;
-  private readonly storageAssembly: IStorageAssembly;
-  private readonly miscAssembly: IMiscAssembly;
+  private readonly storageAssembly: StorageAssembly;
+  private readonly miscAssembly: MiscAssembly;
 
-  constructor(internalConfig: InternalConfig, storageAssembly: IStorageAssembly, miscAssembly: IMiscAssembly) {
+  constructor(internalConfig: InternalConfig, storageAssembly: StorageAssembly, miscAssembly: MiscAssembly) {
     this.internalConfig = internalConfig;
     this.storageAssembly = storageAssembly;
     this.miscAssembly = miscAssembly;
   }
 
-  networkClient(): INetworkClient {
-    return new NetworkClient();
+  networkClient(): NetworkClient {
+    return new NetworkClientImpl();
   }
 
-  requestConfigurator(): IRequestConfigurator {
-    return new RequestConfigurator(
+  requestConfigurator(): RequestConfigurator {
+    return new RequestConfiguratorImpl(
       this.headerBuilder(),
       API_URL,
       this.internalConfig,
@@ -39,24 +39,24 @@ export class NetworkAssembly implements INetworkAssembly {
     );
   }
 
-  headerBuilder(): IHeaderBuilder {
-    return new HeaderBuilder(
+  headerBuilder(): HeaderBuilder {
+    return new HeaderBuilderImpl(
       this.internalConfig,
       this.internalConfig,
       this.storageAssembly.userDataProvider(),
     );
   }
 
-  exponentialApiInteractor(): IApiInteractor {
+  exponentialApiInteractor(): ApiInteractor {
     return this.apiInteractor(new RetryPolicyExponential());
   }
 
-  infiniteExponentialApiInteractor(): IApiInteractor {
+  infiniteExponentialApiInteractor(): ApiInteractor {
     return this.apiInteractor(new RetryPolicyInfiniteExponential());
   }
 
-  private apiInteractor(retryPolicy: RetryPolicy): IApiInteractor {
-    return new ApiInteractor(
+  private apiInteractor(retryPolicy: RetryPolicy): ApiInteractor {
+    return new ApiInteractorImpl(
       this.networkClient(),
       this.miscAssembly.exponentialDelayCalculator(),
       this.internalConfig,

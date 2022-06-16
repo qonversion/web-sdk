@@ -1,9 +1,9 @@
-import {IStorageAssembly} from './types';
-import {IUserDataProvider, UserDataStorage, UserDataStorageImpl} from '../user';
+import {StorageAssembly} from './types';
+import {UserDataProvider, UserDataStorage, UserDataStorageImpl} from '../user';
 import {LocalStorage, LocalStorageImpl, StorageConstants} from '../common';
 import {UserPropertiesStorage, UserPropertiesStorageImpl} from '../userProperties';
 
-export class StorageAssembly implements IStorageAssembly {
+export class StorageAssemblyImpl implements StorageAssembly {
   private sharedUserDataStorage: UserDataStorage | undefined;
   private sharedPendingUserPropertiesStorage: UserPropertiesStorage | undefined;
   private sharedSentUserPropertiesStorage: UserPropertiesStorage | undefined;
@@ -12,7 +12,7 @@ export class StorageAssembly implements IStorageAssembly {
     return new LocalStorageImpl();
   }
 
-  userDataProvider(): IUserDataProvider {
+  userDataProvider(): UserDataProvider {
     return this.userDataStorage();
   }
 

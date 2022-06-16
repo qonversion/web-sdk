@@ -1,8 +1,8 @@
-import {ApiHeader, HeaderBuilder, RequestHeaders} from '../../../src/internal/network';
+import {ApiHeader, HeaderBuilderImpl, RequestHeaders} from '../../../src/internal/network';
 import {EnvironmentProvider, PrimaryConfigProvider} from '../../../src/internal/types';
 import {Environment} from '../../../src';
 import {PrimaryConfig} from '../../../src/types';
-import {IUserDataProvider} from '../../../src/internal/user';
+import {UserDataProvider} from '../../../src/internal/user';
 
 const testProjectKey = 'test project key';
 const testSdkVersion = '500.1.1';
@@ -31,7 +31,7 @@ const environmentProvider: EnvironmentProvider = {
   }
 };
 
-const userDataProvider: IUserDataProvider = {
+const userDataProvider: UserDataProvider = {
   getUserId(): string | undefined {
     return testUserId;
   },
@@ -41,7 +41,7 @@ const userDataProvider: IUserDataProvider = {
   }
 };
 
-const headerBuilder = new HeaderBuilder(primaryConfigProvider, environmentProvider, userDataProvider);
+const headerBuilder = new HeaderBuilderImpl(primaryConfigProvider, environmentProvider, userDataProvider);
 
 describe('buildCommonHeaders tests', () => {
   const commonExpectedHeaders: RequestHeaders = {
