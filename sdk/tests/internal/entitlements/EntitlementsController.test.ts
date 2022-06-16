@@ -1,7 +1,6 @@
 import {UserControllerImpl, UserDataStorage} from '../../../src/internal/user';
 import {ILogger} from '../../../src/internal/logger';
-import {EntitlementsController, EntitlementsService} from '../../../src/internal/entitlements';
-import {EntitlementsControllerImpl} from '../../../src/internal/entitlements/EntitlementsController';
+import {EntitlementsController, EntitlementsService, EntitlementsControllerImpl} from '../../../src/internal/entitlements';
 import {Entitlement, QonversionError, QonversionErrorCode} from '../../../src';
 
 let entitlementsService: EntitlementsService;

@@ -1,12 +1,7 @@
 import {UserDataStorage} from '../../../src/internal/user';
 import {ILogger} from '../../../src/internal/logger';
-import {
-  PurchaseCoreData,
-  StripeStoreData,
-  UserPurchase
-} from '../../../src';
-import {PurchasesController, PurchasesService} from '../../../src/internal/purchases';
-import {PurchasesControllerImpl} from '../../../src/internal/purchases/PurchasesController';
+import {PurchaseCoreData, StripeStoreData, UserPurchase} from '../../../src';
+import {PurchasesController, PurchasesService, PurchasesControllerImpl} from '../../../src/internal/purchases';
 
 let purchasesService: PurchasesService;
 let userDataStorage: UserDataStorage;

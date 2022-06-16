@@ -14,10 +14,8 @@ import Qonversion, {
 } from '../../src';
 import {UserPropertiesController, UserPropertiesControllerImpl} from '../../src/internal/userProperties';
 import {UserController} from '../../src/internal/user';
-import {EntitlementsController} from '../../src/internal/entitlements';
-import {EntitlementsControllerImpl} from '../../src/internal/entitlements/EntitlementsController';
-import {PurchasesController} from '../../src/internal/purchases';
-import {PurchasesControllerImpl} from '../../src/internal/purchases/PurchasesController';
+import {EntitlementsController, EntitlementsControllerImpl} from '../../src/internal/entitlements';
+import {PurchasesController, PurchasesControllerImpl} from '../../src/internal/purchases';
 
 jest.mock('../../src/internal/di/DependenciesAssembly', () => {
   const originalModule = jest.requireActual('../../src/internal/di/DependenciesAssembly');

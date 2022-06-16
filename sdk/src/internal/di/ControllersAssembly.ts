@@ -1,10 +1,8 @@
 import {IControllersAssembly, IMiscAssembly, IServicesAssembly, IStorageAssembly} from './types';
 import {UserPropertiesController, UserPropertiesControllerImpl} from '../userProperties';
 import {UserController, UserControllerImpl} from '../user';
-import {EntitlementsController} from '../entitlements';
-import {EntitlementsControllerImpl} from '../entitlements/EntitlementsController';
-import {PurchasesControllerImpl} from '../purchases/PurchasesController';
-import {PurchasesController} from '../purchases';
+import {EntitlementsController, EntitlementsControllerImpl} from '../entitlements';
+import {PurchasesController, PurchasesControllerImpl} from '../purchases';
 
 export class ControllersAssembly implements IControllersAssembly {
   private readonly miscAssembly: IMiscAssembly;
