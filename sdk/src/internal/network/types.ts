@@ -32,7 +32,7 @@ export type NetworkRequest = {
   url: string;
   type: RequestType;
   headers: RequestHeaders;
-  body?: Record<string, any | null>;
+  body?: Record<string, unknown | null>;
 };
 
 export type NetworkResponse = {
@@ -40,7 +40,7 @@ export type NetworkResponse = {
 };
 
 export type RawNetworkResponse = NetworkResponse & {
-  payload: any;
+  payload: unknown;
 };
 
 export type NetworkResponseError = NetworkResponse & {

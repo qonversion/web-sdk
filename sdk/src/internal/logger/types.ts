@@ -1,4 +1,4 @@
-export type LogMethod = (message: string, ...objects: any[]) => void;
+export type LogMethod = (message: string, ...objects: unknown[]) => void;
 
 export type Logger = {
   verbose: LogMethod;

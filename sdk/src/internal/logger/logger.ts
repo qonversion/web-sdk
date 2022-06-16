@@ -9,23 +9,23 @@ export default class LoggerImpl implements Logger {
     this.loggerConfigProvider = loggerConfigProvider;
   }
 
-  verbose(message: string, ...objects: any[]) {
+  verbose(message: string, ...objects: unknown[]) {
     this.log(LogLevel.Verbose, console.log, message, objects);
   }
 
-  info(message: string, ...objects: any[]) {
+  info(message: string, ...objects: unknown[]) {
     this.log(LogLevel.Info, console.info, message, objects);
   }
 
-  warn(message: string, ...objects: any[]) {
+  warn(message: string, ...objects: unknown[]) {
     this.log(LogLevel.Warning, console.warn, message, objects);
   }
 
-  error(message: string, ...objects: any[]) {
+  error(message: string, ...objects: unknown[]) {
     this.log(LogLevel.Error, console.error, message, objects);
   }
 
-  private log(logLevel: LogLevel, logMethod: LogMethod, message: string, ...objects: any[]) {
+  private log(logLevel: LogLevel, logMethod: LogMethod, message: string, ...objects: unknown[]) {
     const allowedLogLevel = this.loggerConfigProvider.getLogLevel();
     if (logLevel >= allowedLogLevel) {
       const objectCopies = objects.map(value => JSON.parse(JSON.stringify(value)))
