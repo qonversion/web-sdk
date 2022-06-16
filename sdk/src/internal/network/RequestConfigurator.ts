@@ -108,7 +108,7 @@ export class RequestConfigurator implements IRequestConfigurator {
         subscription_id: data.subscriptionId,
         product_id: data.productId,
       },
-      purchased: data.purchasedAt,
+      purchased: data.purchased,
     };
 
     return {

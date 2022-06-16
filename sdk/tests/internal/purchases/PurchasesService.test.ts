@@ -46,7 +46,7 @@ const testErrorResponse: NetworkResponseError = {
 const expRes: UserPurchase = {
   currency: 'USD',
   price: 10,
-  purchasedAt: 3243523432,
+  purchased: 3243523432,
   stripeStoreData: {
     productId: 'test product id',
     subscriptionId: 'test subscription id'
@@ -57,7 +57,7 @@ const testStripePurchaseRequest: PurchaseCoreData & StripeStoreData = {
   currency: 'USD',
   price: 10,
   productId: 'test product id',
-  purchasedAt: 3243523432,
+  purchased: 3243523432,
   subscriptionId: 'test subscription id'
 };
 

@@ -12,7 +12,7 @@ const testUserId = 'test user id';
 const testUserPurchase: UserPurchase = {
   currency: 'USD',
   price: 10,
-  purchasedAt: 3243523432,
+  purchased: 3243523432,
   stripeStoreData: {
     productId: 'test product id',
     subscriptionId: 'test subscription id'
@@ -23,7 +23,7 @@ const testStripePurchaseData: PurchaseCoreData & StripeStoreData = {
   currency: 'USD',
   price: 10,
   productId: 'test product id',
-  purchasedAt: 3243523432,
+  purchased: 3243523432,
   subscriptionId: 'test subscription id'
 };
 
