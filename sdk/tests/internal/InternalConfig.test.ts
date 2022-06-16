@@ -1,12 +1,12 @@
 import {LoggerConfig, NetworkConfig, PrimaryConfig, QonversionConfig} from '../../src/types';
 import {Environment, LaunchMode, LogLevel} from '../../src';
-import {InternalConfig} from '../../src/internal/InternalConfig';
 import {
+  InternalConfig,
   EnvironmentProvider,
   LoggerConfigProvider,
   NetworkConfigHolder,
   PrimaryConfigProvider
-} from '../../src/internal/types';
+} from '../../src/internal';
 
 let primaryConfig: PrimaryConfig;
 let networkConfig: NetworkConfig;

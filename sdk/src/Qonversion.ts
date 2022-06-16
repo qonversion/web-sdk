@@ -1,9 +1,8 @@
 import {QonversionConfig, QonversionInstance} from './types';
 import {QonversionError} from './exception/QonversionError';
 import {QonversionErrorCode} from './exception/QonversionErrorCode';
-import {InternalConfig} from './internal/InternalConfig';
+import {QonversionInternal, InternalConfig} from './internal';
 import {DependenciesAssemblyBuilder} from './internal/di/DependenciesAssembly';
-import {QonversionInternal} from './internal/QonversionInternal';
 
 class Qonversion {
   private static backingInstance: QonversionInstance | undefined = undefined

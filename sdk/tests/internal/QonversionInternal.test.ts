@@ -1,5 +1,4 @@
-import {InternalConfig} from '../../src/internal/InternalConfig';
-import {QonversionInternal} from '../../src/internal/QonversionInternal';
+import {QonversionInternal, InternalConfig} from '../../src/internal';
 import {DependenciesAssembly} from '../../src/internal/di/DependenciesAssembly';
 import {LoggerConfig, NetworkConfig, PrimaryConfig} from '../../src/types';
 import Qonversion, {
