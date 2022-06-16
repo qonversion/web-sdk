@@ -40,7 +40,8 @@ export type NetworkResponse = {
 };
 
 export type RawNetworkResponse = NetworkResponse & {
-  payload: unknown;
+  // eslint-disable-next-line
+  payload: any;
 };
 
 export type NetworkResponseError = NetworkResponse & {
