@@ -2,6 +2,7 @@ import {INetworkAssembly, IServicesAssembly} from './types';
 import {UserPropertiesService, UserPropertiesServiceImpl} from '../userProperties';
 import {IdentityService, IdentityServiceImpl, UserService, UserServiceDecorator, UserServiceImpl} from '../user';
 import {EntitlementsService, EntitlementsServiceImpl} from '../entitlements';
+import {PurchaseServiceImpl, PurchasesService} from '../purchases';
 
 export class ServicesAssembly implements IServicesAssembly {
   private readonly networkAssembly: INetworkAssembly;
@@ -39,6 +40,13 @@ export class ServicesAssembly implements IServicesAssembly {
 
   entitlementsService(): EntitlementsService {
     return new EntitlementsServiceImpl(
+      this.networkAssembly.requestConfigurator(),
+      this.networkAssembly.exponentialApiInteractor(),
+    );
+  }
+
+  purchasesService(): PurchasesService {
+    return new PurchaseServiceImpl(
       this.networkAssembly.requestConfigurator(),
       this.networkAssembly.exponentialApiInteractor(),
     );

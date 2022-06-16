@@ -1,4 +1,5 @@
 import {RetryPolicy} from './RetryPolicy';
+import {PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
 
 export enum ApiHeader {
   Accept = "Accept",
@@ -85,7 +86,9 @@ export type IRequestConfigurator = {
 
   configureCreateIdentityRequest: (qonversionId: string, identityId: string) => NetworkRequest;
 
-  configureEntitlementsRequest: (id: string) => NetworkRequest;
+  configureEntitlementsRequest: (userId: string) => NetworkRequest;
+
+  configureStripePurchaseRequest: (userId: string, data: PurchaseCoreData & StripeStoreData) => NetworkRequest;
 };
 
 export type IHeaderBuilder = {

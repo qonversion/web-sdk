@@ -9,12 +9,15 @@ import {UserPropertiesController} from './userProperties';
 import {UserController} from './user';
 import {EntitlementsController} from './entitlements';
 import {Entitlement} from '../dto/Entitlement';
+import {PurchasesController} from './purchases';
+import {PurchaseCoreData, StripeStoreData, UserPurchase} from '../dto/Purchase';
 
 export class QonversionInternal implements QonversionInstance {
   private readonly internalConfig: InternalConfig;
   private readonly userPropertiesController: UserPropertiesController;
   private readonly userController: UserController;
   private readonly entitlementsController: EntitlementsController;
+  private readonly purchasesController: PurchasesController;
 
   constructor(internalConfig: InternalConfig, dependenciesAssembly: DependenciesAssembly) {
     this.internalConfig = internalConfig;
@@ -22,6 +25,11 @@ export class QonversionInternal implements QonversionInstance {
     this.userPropertiesController = dependenciesAssembly.userPropertiesController();
     this.userController = dependenciesAssembly.userController();
     this.entitlementsController = dependenciesAssembly.entitlementsController();
+    this.purchasesController = dependenciesAssembly.purchasesController();
+  }
+
+  sendStripePurchase(data: PurchaseCoreData & StripeStoreData): Promise<UserPurchase> {
+    return this.purchasesController.sendStripePurchase(data);
   }
 
   getEntitlements(): Promise<Entitlement[]> {

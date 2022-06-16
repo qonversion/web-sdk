@@ -2,11 +2,22 @@ import {InternalConfig} from '../../src/internal/InternalConfig';
 import {QonversionInternal} from '../../src/internal/QonversionInternal';
 import {DependenciesAssembly} from '../../src/internal/di/DependenciesAssembly';
 import {LoggerConfig, NetworkConfig, PrimaryConfig} from '../../src/types';
-import Qonversion, {Entitlement, Environment, LaunchMode, LogLevel, UserProperty} from '../../src';
+import Qonversion, {
+  Entitlement,
+  Environment,
+  LaunchMode,
+  LogLevel,
+  PurchaseCoreData,
+  StripeStoreData,
+  UserProperty,
+  UserPurchase,
+} from '../../src';
 import {UserPropertiesController, UserPropertiesControllerImpl} from '../../src/internal/userProperties';
 import {UserController} from '../../src/internal/user';
 import {EntitlementsController} from '../../src/internal/entitlements';
 import {EntitlementsControllerImpl} from '../../src/internal/entitlements/EntitlementsController';
+import {PurchasesController} from '../../src/internal/purchases';
+import {PurchasesControllerImpl} from '../../src/internal/purchases/PurchasesController';
 
 jest.mock('../../src/internal/di/DependenciesAssembly', () => {
   const originalModule = jest.requireActual('../../src/internal/di/DependenciesAssembly');
@@ -20,6 +31,7 @@ let internalConfig: InternalConfig;
 let userPropertyController: UserPropertiesController;
 let userController: UserController;
 let entitlementsController: EntitlementsController;
+let purchasesController: PurchasesController;
 let dependenciesAssembly: jest.Mocked<DependenciesAssembly>;
 let qonversionInternal: QonversionInternal;
 
@@ -44,12 +56,14 @@ beforeEach(() => {
   });
   userPropertyController = new (UserPropertiesControllerImpl as any)();
   entitlementsController = new (EntitlementsControllerImpl as any)();
+  purchasesController = new (PurchasesControllerImpl as any)();
   // @ts-ignore
   userController = {};
   dependenciesAssembly = new (DependenciesAssembly as any)();
   dependenciesAssembly.userPropertiesController = jest.fn(() => userPropertyController);
   dependenciesAssembly.userController = jest.fn(() => userController);
   dependenciesAssembly.entitlementsController = jest.fn(() => entitlementsController);
+  dependenciesAssembly.purchasesController = jest.fn(() => purchasesController);
   qonversionInternal = new QonversionInternal(internalConfig, dependenciesAssembly);
 });
 
@@ -206,4 +220,36 @@ describe('EntitlementsController usage tests', () => {
     expect(res).toStrictEqual(promiseReturned);
     expect(entitlementsController.getEntitlements).toBeCalled();
   });
+});
+
+describe('PurchasesController usage tests', () => {
+  test('sendStripePurchase',
+    () => {
+      // given
+      const responseData: UserPurchase = {
+        currency: 'USD',
+        price: 10,
+        purchasedAt: 934590234,
+        stripeStoreData: {
+          productId: 'test product id',
+          subscriptionId: 'test subscription id',
+        },
+      };
+      const requestData: PurchaseCoreData & StripeStoreData = {
+        currency: 'USD',
+        price: 10,
+        purchasedAt: 934590234,
+        productId: 'test product id',
+        subscriptionId: 'test subscription id',
+      };
+      const promiseReturned = new Promise<UserPurchase>(() => responseData);
+      purchasesController.sendStripePurchase = jest.fn(async () => promiseReturned);
+
+      // when
+      const res = qonversionInternal.sendStripePurchase(requestData);
+
+      // then
+      expect(res).toStrictEqual(promiseReturned);
+      expect(purchasesController.sendStripePurchase).toBeCalledWith(requestData);
+    });
 });

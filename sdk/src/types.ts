@@ -3,8 +3,18 @@ import {LaunchMode} from './dto/LaunchMode';
 import {Environment} from './dto/Environment';
 import {UserProperty} from './dto/UserProperty';
 import {Entitlement} from './dto/Entitlement';
+import {PurchaseCoreData, StripeStoreData, UserPurchase} from './dto/Purchase';
 
 export type QonversionInstance = {
+  /**
+   * Call this function to send completed Stripe purchase to our API. The purchase will be linked to the current user,
+   * and he will gain corresponding entitlements, described in the Qonversion Product Center.
+   *
+   * @param data information about completed purchase.
+   * @returns a purchase info, saved on the API.
+   */
+  sendStripePurchase: (data: PurchaseCoreData & StripeStoreData) => Promise<UserPurchase>;
+
   /**
    * Call this function to receive all entitlements of the current user. If you initiated user changing
    * actions like {@link identify} or {@link logout} be sure to await their ending and only after it request

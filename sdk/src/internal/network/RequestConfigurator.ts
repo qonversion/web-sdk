@@ -1,6 +1,7 @@
 import {ApiEndpoint, IHeaderBuilder, IRequestConfigurator, NetworkRequest, RequestType} from './types';
 import {PrimaryConfigProvider} from '../types';
 import {IUserDataProvider} from '../user';
+import {PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
 
 export class RequestConfigurator implements IRequestConfigurator {
   private readonly headerBuilder: IHeaderBuilder;
@@ -86,14 +87,35 @@ export class RequestConfigurator implements IRequestConfigurator {
     };
   }
 
-  configureEntitlementsRequest(id: string): NetworkRequest {
+  configureEntitlementsRequest(userId: string): NetworkRequest {
     const headers = this.headerBuilder.buildCommonHeaders();
-    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${id}/entitlements`;
+    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${userId}/entitlements`;
 
     return {
       url,
       headers,
       type: RequestType.GET,
+    };
+  }
+
+  configureStripePurchaseRequest(userId: string, data: PurchaseCoreData & StripeStoreData): NetworkRequest {
+    const headers = this.headerBuilder.buildCommonHeaders();
+    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${userId}/purchases`;
+    const body = {
+      price: data.price,
+      currency: data.currency,
+      stripe_store_data: {
+        subscription_id: data.subscriptionId,
+        product_id: data.productId,
+      },
+      purchased: data.purchasedAt,
+    };
+
+    return {
+      url,
+      headers,
+      type: RequestType.POST,
+      body,
     };
   }
 }
