@@ -83,7 +83,7 @@ export class ApiInteractorImpl implements ApiInteractor {
 
   static getErrorResponse(response?: RawNetworkResponse, executionError?: Error): NetworkResponseError {
     if (response) {
-      const apiError: ApiError = response.payload;
+      const apiError: ApiError = response.payload.error;
       return {
         code: response.code,
         message: apiError.message,

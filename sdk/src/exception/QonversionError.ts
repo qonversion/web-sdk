@@ -10,7 +10,16 @@ export class QonversionError extends Error {
   readonly cause?: Error;
 
   constructor(code: QonversionErrorCode, details?: string, cause?: Error) {
-    super(details);
+    let message: string = code;
+    if (details) {
+      message += '. ' + details;
+    }
+    if (cause) {
+      message += '. ' + cause.message;
+    }
+
+    super(message);
+
     this.code = code;
     this.cause = cause;
   }

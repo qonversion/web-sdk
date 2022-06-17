@@ -13,7 +13,7 @@ import {
   RetryPolicyInfiniteExponential,
   RetryPolicyNone
 } from '../../../src/internal/network';
-import {NetworkConfigHolder} from '../../../src/internal/types';
+import {NetworkConfigHolder} from '../../../src/internal';
 import {QonversionError, QonversionErrorCode} from '../../../src';
 import * as NetworkUtils from '../../../src/internal/network/utils';
 
@@ -356,7 +356,7 @@ describe('getErrorResponse tests', () => {
     };
     const networkResponse: RawNetworkResponse = {
       code: testErrorCode,
-      payload: apiError,
+      payload: {error: apiError},
     };
     const expResult: NetworkResponseError = {
       apiCode: testErrorApiCode,

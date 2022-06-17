@@ -2,6 +2,7 @@ import {ApiEndpoint, HeaderBuilder, RequestConfigurator, NetworkRequest, Request
 import {PrimaryConfigProvider} from '../types';
 import {UserDataProvider} from '../user';
 import {PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
+import {Environment} from '../../dto/Environment';
 
 export class RequestConfiguratorImpl implements RequestConfigurator {
   private readonly headerBuilder: HeaderBuilder;
@@ -32,10 +33,10 @@ export class RequestConfiguratorImpl implements RequestConfigurator {
     };
   }
 
-  configureCreateUserRequest(id: string): NetworkRequest {
+  configureCreateUserRequest(id: string, environment: Environment): NetworkRequest {
     const headers = this.headerBuilder.buildCommonHeaders();
-    const url = `${this.baseUrl}/${ApiEndpoint.Users}`;
-    const body = {id};
+    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${id}`;
+    const body = {environment};
 
     return {
       url,
@@ -51,7 +52,7 @@ export class RequestConfiguratorImpl implements RequestConfigurator {
     // TODO delete access_token and q_uid from the body after migrating API to v2
     const body = {
       "access_token": this.primaryConfigProvider.getPrimaryConfig().projectKey,
-      "q_uid": this.userDataProvider.getUserId(),
+      "q_uid": this.userDataProvider.getOriginalUserId(),
       "properties": properties
     };
 

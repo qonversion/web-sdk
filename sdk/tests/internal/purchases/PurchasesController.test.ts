@@ -43,7 +43,7 @@ beforeEach(() => {
 describe('sendStripePurchase tests', () => {
   test('successfully sent', async () => {
     // given
-    userDataStorage.requireUserId = jest.fn(() => testUserId);
+    userDataStorage.requireOriginalUserId = jest.fn(() => testUserId);
     purchasesService.sendStripePurchase = jest.fn(async () => testUserPurchase);
 
     // when
@@ -51,14 +51,14 @@ describe('sendStripePurchase tests', () => {
 
     // then
     expect(res).toStrictEqual(testUserPurchase);
-    expect(userDataStorage.requireUserId).toBeCalled();
+    expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(purchasesService.sendStripePurchase).toBeCalledWith(testUserId, testStripePurchaseData);
     expect(logger.info).toBeCalledWith('Successfully send the Stripe purchase', testUserPurchase);
   });
 
   test('unknown error while sending purchase', async () => {
     // given
-    userDataStorage.requireUserId = jest.fn(() => testUserId);
+    userDataStorage.requireOriginalUserId = jest.fn(() => testUserId);
     const unknownError = new Error('unknown error');
     purchasesService.sendStripePurchase = jest.fn(async () => {throw unknownError});
 

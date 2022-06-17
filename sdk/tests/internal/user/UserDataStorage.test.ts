@@ -31,42 +31,6 @@ describe('UserDataStorage tests', () => {
     expect(userDataStorage['identityId']).toBe(testIdentityId);
   });
 
-  test('get user id when both original and identity id exist', () => {
-    // given
-    userDataStorage['originalId'] = testOriginalId;
-    userDataStorage['identityId'] = testIdentityId;
-
-    // when
-    const res = userDataStorage.getUserId();
-
-    // then
-    expect(res).toBe(testIdentityId);
-  });
-
-  test('get user id when only original id exist', () => {
-    // given
-    userDataStorage['originalId'] = testOriginalId;
-    userDataStorage['identityId'] = undefined;
-
-    // when
-    const res = userDataStorage.getUserId();
-
-    // then
-    expect(res).toBe(testOriginalId);
-  });
-
-  test('get user id when neither identity nor original id exist', () => {
-    // given
-    userDataStorage['originalId'] = undefined;
-    userDataStorage['identityId'] = undefined;
-
-    // when
-    const res = userDataStorage.getUserId();
-
-    // then
-    expect(res).toBeUndefined();
-  });
-
   test('get original user id', () => {
     // given
     userDataStorage['originalId'] = testOriginalId;
@@ -91,38 +55,24 @@ describe('UserDataStorage tests', () => {
     expect(res).toBe(testIdentityId);
   });
 
-  test('require user id when both original and identity id exist', () => {
+  test('require original user id when original id exist', () => {
     // given
     userDataStorage['originalId'] = testOriginalId;
-    userDataStorage['identityId'] = testIdentityId;
 
     // when
-    const res = userDataStorage.requireUserId();
-
-    // then
-    expect(res).toBe(testIdentityId);
-  });
-
-  test('require user id when only original id exist', () => {
-    // given
-    userDataStorage['originalId'] = testOriginalId;
-    userDataStorage['identityId'] = undefined;
-
-    // when
-    const res = userDataStorage.requireUserId();
+    const res = userDataStorage.requireOriginalUserId();
 
     // then
     expect(res).toBe(testOriginalId);
   });
 
-  test('require user id when neither identity nor original id exist', () => {
+  test('require user id when original id does not exist', () => {
     // given
     userDataStorage['originalId'] = undefined;
-    userDataStorage['identityId'] = undefined;
 
     // when and then
     expect(() => {
-      userDataStorage.requireUserId();
+      userDataStorage.requireOriginalUserId();
     }).toThrow(QonversionError);
   });
 

@@ -5,18 +5,26 @@ import {QonversionError} from '../../exception/QonversionError';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
 import {HTTP_NOT_FOUND} from '../network/constants';
 import {camelcaseKeys} from '../utils/objectUtils';
+import {PrimaryConfigProvider} from '../types';
 
 export class UserServiceImpl implements UserService {
+  private readonly primaryConfigProvider: PrimaryConfigProvider;
   private readonly requestConfigurator: RequestConfigurator;
   private readonly apiInteractor: ApiInteractor;
 
-  constructor(requestConfigurator: RequestConfigurator, apiInteractor: ApiInteractor) {
+  constructor(
+    primaryConfigProvider: PrimaryConfigProvider,
+    requestConfigurator: RequestConfigurator,
+    apiInteractor: ApiInteractor,
+  ) {
+    this.primaryConfigProvider = primaryConfigProvider;
     this.requestConfigurator = requestConfigurator;
     this.apiInteractor = apiInteractor;
   }
 
   async createUser(id: string): Promise<User> {
-    const request = this.requestConfigurator.configureCreateUserRequest(id);
+    const environment = this.primaryConfigProvider.getPrimaryConfig().environment;
+    const request = this.requestConfigurator.configureCreateUserRequest(id, environment);
     const response = await this.apiInteractor.execute<UserApi>(request);
 
     if (response.isSuccess) {

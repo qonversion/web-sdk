@@ -7,9 +7,9 @@ import {
   RequestType
 } from '../../../src/internal/network';
 import {PrimaryConfig} from '../../../src/types';
-import {PrimaryConfigProvider} from '../../../src/internal/types';
+import {PrimaryConfigProvider} from '../../../src/internal';
 import {UserDataProvider} from '../../../src/internal/user';
-import {PurchaseCoreData, StripeStoreData} from '../../../src';
+import {PurchaseCoreData, StripeStoreData, Environment} from '../../../src';
 
 const testHeaders: RequestHeaders = {a: 'a'};
 const headerBuilder: HeaderBuilder = {
@@ -32,15 +32,12 @@ let requestConfigurator: RequestConfiguratorImpl;
 describe('RequestConfigurator tests', () => {
   beforeEach(() => {
     const primaryConfigProvider: PrimaryConfigProvider = {
-      getPrimaryConfig(): PrimaryConfig {
-        return primaryConfig;
-      }
+      getPrimaryConfig: () => primaryConfig,
     };
+
     // @ts-ignore
     const userDataProvider: UserDataProvider = {
-      getUserId(): string | undefined {
-        return testUserId;
-      }
+      getOriginalUserId: () => testUserId,
     };
 
     requestConfigurator = new RequestConfiguratorImpl(headerBuilder, testBaseUrl, primaryConfigProvider, userDataProvider);
@@ -63,15 +60,16 @@ describe('RequestConfigurator tests', () => {
 
   test('create user request', () => {
     // given
+    const environment = Environment.Sandbox;
     const expResult: NetworkRequest = {
       headers: testHeaders,
       type: RequestType.POST,
-      url: testBaseUrl + '/' + ApiEndpoint.Users,
-      body: {id: testUserId},
+      url: `${testBaseUrl}/${ApiEndpoint.Users}/${testUserId}`,
+      body: {environment},
     };
 
     // when
-    const request = requestConfigurator.configureCreateUserRequest(testUserId);
+    const request = requestConfigurator.configureCreateUserRequest(testUserId, environment);
 
     // then
     expect(request).toStrictEqual(expResult);

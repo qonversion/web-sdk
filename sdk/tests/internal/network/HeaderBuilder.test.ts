@@ -1,5 +1,5 @@
 import {ApiHeader, HeaderBuilderImpl, RequestHeaders} from '../../../src/internal/network';
-import {EnvironmentProvider, PrimaryConfigProvider} from '../../../src/internal/types';
+import {EnvironmentProvider, PrimaryConfigProvider} from '../../../src/internal';
 import {Environment} from '../../../src';
 import {PrimaryConfig} from '../../../src/types';
 import {UserDataProvider} from '../../../src/internal/user';
@@ -31,14 +31,9 @@ const environmentProvider: EnvironmentProvider = {
   }
 };
 
+// @ts-ignore
 const userDataProvider: UserDataProvider = {
-  getUserId(): string | undefined {
-    return testUserId;
-  },
-
-  requireUserId(): string {
-    return this.getUserId();
-  }
+  getOriginalUserId: () => testUserId,
 };
 
 const headerBuilder = new HeaderBuilderImpl(primaryConfigProvider, environmentProvider, userDataProvider);

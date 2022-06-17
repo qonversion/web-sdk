@@ -1,5 +1,6 @@
 import {RetryPolicy} from './RetryPolicy';
 import {PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
+import {Environment} from '../../dto/Environment';
 
 export enum ApiHeader {
   Accept = "Accept",
@@ -16,7 +17,7 @@ export enum ApiHeader {
 export enum ApiEndpoint {
   Users = "v3/users",
   Identity = "v3/identities",
-  Properties = "properties",
+  Properties = "v1/properties",
 }
 
 export enum RequestType {
@@ -79,7 +80,7 @@ export type ApiInteractor = {
 export type RequestConfigurator = {
   configureUserRequest: (id: string) => NetworkRequest;
 
-  configureCreateUserRequest: (id: string) => NetworkRequest;
+  configureCreateUserRequest: (id: string, environment: Environment) => NetworkRequest;
 
   configureUserPropertiesRequest: (properties: Record<string, string>) => NetworkRequest;
 

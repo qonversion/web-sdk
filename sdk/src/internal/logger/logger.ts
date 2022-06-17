@@ -25,12 +25,11 @@ export default class LoggerImpl implements Logger {
     this.log(LogLevel.Error, console.error, message, objects);
   }
 
-  private log(logLevel: LogLevel, logMethod: LogMethod, message: string, ...objects: unknown[]) {
+  private log(logLevel: LogLevel, logMethod: LogMethod, message: string, objects: unknown[]) {
     const allowedLogLevel = this.loggerConfigProvider.getLogLevel();
     if (logLevel >= allowedLogLevel) {
-      const objectCopies = objects.map(value => JSON.parse(JSON.stringify(value)))
-      const logMessage = this.loggerConfigProvider.getLogTag() + ' ' + message;
-      logMethod(logMessage, objectCopies);
+      const logMessage = `${this.loggerConfigProvider.getLogTag()}: ${message}`;
+      logMethod(logMessage, ...objects);
     }
   }
 }

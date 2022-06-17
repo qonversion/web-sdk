@@ -1,4 +1,4 @@
-import {LoggerConfigProvider} from '../../../src/internal/types';
+import {LoggerConfigProvider} from '../../../src/internal';
 import {LogLevel} from '../../../src';
 import LoggerImpl from '../../../src/internal/logger';
 
@@ -66,39 +66,39 @@ describe('logging methods', function () {
 
 describe('core log method', function () {
   const testMessage = 'test message';
-  const expMessage = testLogTag + ' ' + testMessage;
+  const expMessage = `${testLogTag}: ${testMessage}`;
 
   test('configured log level is higher than called one', () => {
     // given
-    allowedLogLevel = LogLevel.Warning
+    allowedLogLevel = LogLevel.Warning;
     const logMethod = jest.fn();
 
     // when
-    logger['log'](LogLevel.Error, logMethod, testMessage, someAdditionalParam);
+    logger['log'](LogLevel.Error, logMethod, testMessage, [someAdditionalParam]);
 
     // then
-    expect(logMethod).toHaveBeenCalledWith(expMessage, [someAdditionalParam]);
+    expect(logMethod).toHaveBeenCalledWith(expMessage, someAdditionalParam);
   });
 
   test('configured log level is exact the same as called one', () => {
     // given
-    allowedLogLevel = LogLevel.Warning
+    allowedLogLevel = LogLevel.Warning;
     const logMethod = jest.fn();
 
     // when
-    logger['log'](LogLevel.Warning, logMethod, testMessage, someAdditionalParam);
+    logger['log'](LogLevel.Warning, logMethod, testMessage, [someAdditionalParam]);
 
     // then
-    expect(logMethod).toHaveBeenCalledWith(expMessage, [someAdditionalParam]);
+    expect(logMethod).toHaveBeenCalledWith(expMessage, someAdditionalParam);
   });
 
   test('configured log level is lower than called one', () => {
     // given
-    allowedLogLevel = LogLevel.Warning
+    allowedLogLevel = LogLevel.Warning;
     const logMethod = jest.fn();
 
     // when
-    logger['log'](LogLevel.Info, logMethod, testMessage, someAdditionalParam);
+    logger['log'](LogLevel.Info, logMethod, testMessage, [someAdditionalParam]);
 
     // then
     expect(logMethod).not.toBeCalled();
@@ -106,29 +106,13 @@ describe('core log method', function () {
 
   test('calling without additional params', () => {
     // given
-    allowedLogLevel = LogLevel.Warning
+    allowedLogLevel = LogLevel.Warning;
     const logMethod = jest.fn();
 
     // when
-    logger['log'](LogLevel.Error, logMethod, testMessage);
+    logger['log'](LogLevel.Error, logMethod, testMessage, []);
 
     // then
-    expect(logMethod).toHaveBeenCalledWith(expMessage, []);
-  });
-
-  test('additional param has changed after logging', () => {
-    // given
-    allowedLogLevel = LogLevel.Warning
-    const logMethod = jest.fn();
-    let additionalParam = {...someAdditionalParam};
-    const expectedLoggerParam = {...additionalParam};
-
-    // when
-    logger['log'](LogLevel.Error, logMethod, testMessage, additionalParam);
-    additionalParam.someField = 'changed value';
-
-    // then
-    expect(logMethod).toHaveBeenCalledWith(expMessage, [expectedLoggerParam]);
-    expect(logMethod).not.toHaveBeenCalledWith(expMessage, [additionalParam]);
+    expect(logMethod).toHaveBeenCalledWith(expMessage);
   });
 });

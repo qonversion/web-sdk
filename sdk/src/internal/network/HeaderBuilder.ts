@@ -26,7 +26,7 @@ export class HeaderBuilderImpl implements HeaderBuilder {
       [ApiHeader.SourceVersion]: this.primaryConfigProvider.getPrimaryConfig().sdkVersion, // todo
       [ApiHeader.Platform]: PLATFORM_FOR_API, // todo
       [ApiHeader.PlatformVersion]: this.primaryConfigProvider.getPrimaryConfig().sdkVersion,
-      [ApiHeader.UserID]: this.userDataProvider.getUserId() ?? '',
+      [ApiHeader.UserID]: this.userDataProvider.getOriginalUserId() ?? '',
     };
   }
 }

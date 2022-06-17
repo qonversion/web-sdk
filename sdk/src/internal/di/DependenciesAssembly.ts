@@ -150,7 +150,7 @@ export class DependenciesAssemblyBuilder {
     const miscAssembly = new MiscAssemblyImpl(this.internalConfig);
     const storageAssembly = new StorageAssemblyImpl();
     const networkAssembly = new NetworkAssemblyImpl(this.internalConfig, storageAssembly, miscAssembly);
-    const servicesAssembly = new ServicesAssemblyImpl(networkAssembly);
+    const servicesAssembly = new ServicesAssemblyImpl(this.internalConfig, networkAssembly);
     const controllersAssembly = new ControllersAssemblyImpl(miscAssembly, storageAssembly, servicesAssembly);
 
     return new DependenciesAssembly(

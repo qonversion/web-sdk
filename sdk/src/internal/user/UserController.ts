@@ -17,7 +17,7 @@ export class UserControllerImpl implements UserController {
     identityService: IdentityService,
     userDataStorage: UserDataStorage,
     userIdGenerator: UserIdGenerator,
-    logger: Logger
+    logger: Logger,
   ) {
     this.userService = userService;
     this.identityService = identityService;
@@ -25,7 +25,7 @@ export class UserControllerImpl implements UserController {
     this.userIdGenerator = userIdGenerator;
     this.logger = logger;
 
-    const existingUserId = userDataStorage.getUserId();
+    const existingUserId = userDataStorage.getOriginalUserId();
     if (!existingUserId || existingUserId == TEST_USER_ID) {
       this.createUser()
         .then(() => this.logger.info('New user created on initialization'))
@@ -35,7 +35,7 @@ export class UserControllerImpl implements UserController {
 
   async getUser(): Promise<User> {
     try {
-      const userId = this.userDataStorage.requireUserId();
+      const userId = this.userDataStorage.requireOriginalUserId();
       const apiUser = await this.userService.getUser(userId);
       this.logger.info('User info was successfully received from API', apiUser);
       return apiUser;
@@ -55,7 +55,7 @@ export class UserControllerImpl implements UserController {
       this.handleSuccessfulIdentity(newOriginalId, identityId);
     } catch (error) {
       if (error instanceof QonversionError && error.code == QonversionErrorCode.IdentityNotFound) {
-        const originalId = this.userDataStorage.requireUserId();
+        const originalId = this.userDataStorage.requireOriginalUserId();
 
         try {
           const newOriginalId = await this.identityService.createIdentity(originalId, identityId);
@@ -65,7 +65,7 @@ export class UserControllerImpl implements UserController {
           throw secondaryError;
         }
       } else {
-        this.logger.error(`Failed to identify user with id ${identityId}`, error)
+        this.logger.error(`Failed to identify user with id ${identityId}`, error);
         throw error;
       }
     }

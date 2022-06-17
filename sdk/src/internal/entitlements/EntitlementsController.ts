@@ -20,7 +20,7 @@ export class EntitlementsControllerImpl implements EntitlementsController {
 
   async getEntitlements(): Promise<Entitlement[]> {
     try {
-      const userId = this.userDataStorage.requireUserId();
+      const userId = this.userDataStorage.requireOriginalUserId();
       const entitlements = await this.entitlementsService.getEntitlements(userId);
       this.logger.info('Successfully received entitlements', entitlements);
       return entitlements;
@@ -30,7 +30,7 @@ export class EntitlementsControllerImpl implements EntitlementsController {
           this.logger.info('User is not registered. Creating new one');
           await this.userController.createUser();
         } catch (userCreationError) {
-          this.logger.error('Failed to create new user', error);
+          this.logger.error('Failed to create new user', userCreationError);
         }
         return [];
       } else {

@@ -16,7 +16,7 @@ export class PurchasesControllerImpl implements PurchasesController {
 
   async sendStripePurchase(data: PurchaseCoreData & StripeStoreData): Promise<UserPurchase> {
     try {
-      const userId = this.userDataStorage.requireUserId();
+      const userId = this.userDataStorage.requireOriginalUserId();
       const userPurchase = await this.purchasesService.sendStripePurchase(userId, data);
       this.logger.info('Successfully send the Stripe purchase', userPurchase);
       return userPurchase;
