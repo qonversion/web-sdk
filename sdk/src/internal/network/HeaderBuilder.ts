@@ -21,10 +21,7 @@ export class HeaderBuilderImpl implements HeaderBuilder {
 
     return {
       [ApiHeader.Authorization]: bearer,
-      //[ApiHeader.Locale]: locale, // todo
-      [ApiHeader.Source]: PLATFORM_FOR_API, // todo
-      [ApiHeader.SourceVersion]: this.primaryConfigProvider.getPrimaryConfig().sdkVersion, // todo
-      [ApiHeader.Platform]: PLATFORM_FOR_API, // todo
+      [ApiHeader.Platform]: PLATFORM_FOR_API,
       [ApiHeader.PlatformVersion]: this.primaryConfigProvider.getPrimaryConfig().sdkVersion,
       [ApiHeader.UserID]: this.userDataProvider.getOriginalUserId() ?? '',
     };

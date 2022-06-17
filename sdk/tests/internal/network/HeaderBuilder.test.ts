@@ -41,8 +41,6 @@ const headerBuilder = new HeaderBuilderImpl(primaryConfigProvider, environmentPr
 describe('buildCommonHeaders tests', () => {
   const commonExpectedHeaders: RequestHeaders = {
     [ApiHeader.Authorization]: 'Bearer ' + testProjectKey,
-    [ApiHeader.Source]: 'web',
-    [ApiHeader.SourceVersion]: testSdkVersion,
     [ApiHeader.Platform]: 'web',
     [ApiHeader.PlatformVersion]: testSdkVersion,
     [ApiHeader.UserID]: testUserId,
