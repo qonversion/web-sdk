@@ -2,39 +2,48 @@ import {InternalConfig} from '../../src/internal/InternalConfig';
 import {QonversionInternal} from '../../src/internal/QonversionInternal';
 import {DependenciesAssembly} from '../../src/internal/di/DependenciesAssembly';
 import {LoggerConfig, NetworkConfig, PrimaryConfig} from '../../src/types';
-import Qonversion, {Environment, LaunchMode, LogLevel} from '../../src';
+import Qonversion, {Environment, LaunchMode, LogLevel, UserProperty} from '../../src';
+import {UserPropertiesController, UserPropertiesControllerImpl} from '../../src/internal/userProperties';
 
 jest.mock('../../src/internal/di/DependenciesAssembly', () => {
   const originalModule = jest.requireActual('../../src/internal/di/DependenciesAssembly');
   return {__esModule: true, ...originalModule};
 });
 
-let primaryConfig: PrimaryConfig = {
-  environment: Environment.Sandbox,
-  launchMode: LaunchMode.InfrastructureMode,
-  projectKey: '',
-  sdkVersion: '',
-};
-let networkConfig: NetworkConfig = {
-  canSendRequests: true,
-};
-let loggerConfig: LoggerConfig = {
-  logTag: '',
-  logLevel: LogLevel.Warning,
-};
-let internalConfig: InternalConfig = new InternalConfig({
-  primaryConfig,
-  networkConfig,
-  loggerConfig,
-});
-let dependenciesAssembly: jest.Mocked<DependenciesAssembly> = new (DependenciesAssembly as any)();
+let primaryConfig: PrimaryConfig;
+let networkConfig: NetworkConfig;
+let loggerConfig: LoggerConfig;
+let internalConfig: InternalConfig;
+let userPropertyController: UserPropertiesController;
+let dependenciesAssembly: jest.Mocked<DependenciesAssembly>;
 let qonversionInternal: QonversionInternal;
 
-describe('setters tests', function () {
-  beforeEach(() => {
-    qonversionInternal = new QonversionInternal(internalConfig, dependenciesAssembly);
+beforeEach(() => {
+  primaryConfig = {
+    environment: Environment.Sandbox,
+    launchMode: LaunchMode.InfrastructureMode,
+    projectKey: '',
+    sdkVersion: '',
+  };
+  networkConfig = {
+    canSendRequests: true,
+  };
+  loggerConfig = {
+    logTag: '',
+    logLevel: LogLevel.Warning,
+  };
+  internalConfig = new InternalConfig({
+    primaryConfig,
+    networkConfig,
+    loggerConfig,
   });
+  userPropertyController = new (UserPropertiesControllerImpl as any)();
+  dependenciesAssembly = new (DependenciesAssembly as any)();
+  dependenciesAssembly.userPropertiesController = jest.fn(() => userPropertyController);
+  qonversionInternal = new QonversionInternal(internalConfig, dependenciesAssembly);
+});
 
+describe('setters tests', function () {
   test('set environment', () => {
     // given
     const environment = Environment.Sandbox;
@@ -98,5 +107,49 @@ describe('finish tests', function () {
 
     // then
     expect(Qonversion['backingInstance']).toBe(anotherInstance);
+  });
+});
+
+describe('UserPropertiesController usage tests', () => {
+  test('setCustomUserProperty', () => {
+    // given
+    const key = 'property_key';
+    const value = 'property_value';
+    userPropertyController.setProperty = jest.fn();
+
+    // when
+    qonversionInternal.setCustomUserProperty(key, value);
+
+    // then
+    expect(userPropertyController.setProperty).toBeCalledWith(key, value);
+  });
+
+  test('setUserProperty', () => {
+    // given
+    const key = UserProperty.AppsFlyerUserId;
+    const value = 'property_value';
+    userPropertyController.setProperty = jest.fn();
+
+    // when
+    qonversionInternal.setUserProperty(key, value);
+
+    // then
+    expect(userPropertyController.setProperty).toBeCalledWith(key, value);
+  });
+
+  test('setUserProperties', () => {
+    // given
+    const properties = {
+      key: 'value',
+      a: 'aa',
+      b: 'bb',
+    };
+    userPropertyController.setProperties = jest.fn();
+
+    // when
+    qonversionInternal.setUserProperties(properties);
+
+    // then
+    expect(userPropertyController.setProperties).toBeCalledWith(properties);
   });
 });

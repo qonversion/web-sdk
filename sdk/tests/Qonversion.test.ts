@@ -1,5 +1,8 @@
 import {expectQonversionError} from './utils';
 import Qonversion, {QonversionConfig, QonversionErrorCode} from '../src';
+import {QonversionInternal} from '../src/internal/QonversionInternal';
+
+jest.mock('../src/internal/QonversionInternal');
 
 test('get non-initialized backing instance', () => {
   // given
@@ -20,5 +23,6 @@ test('initialize and get shared instance', () => {
   Qonversion.initialize(mockQonversionConfig)
 
   // then
-  expect(Qonversion['backingInstance']).not.toBe(undefined);
+  expect(QonversionInternal).toBeCalled();
+  expect(Qonversion['backingInstance']).not.toBeUndefined();
 });

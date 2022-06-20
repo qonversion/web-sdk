@@ -8,6 +8,9 @@ import {StorageAssembly} from './StorageAssembly';
 import {IApiInteractor, IHeaderBuilder, INetworkClient, IRequestConfigurator, RetryDelayCalculator} from '../network';
 import {IUserDataProvider} from '../user';
 import {ILogger} from '../logger';
+import {LocalStorage} from '../common';
+import {UserPropertiesController, UserPropertiesService, UserPropertiesStorage} from '../userProperties';
+import {DelayedWorker} from '../utils/DelayedWorker';
 
 export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IServicesAssembly, IControllersAssembly, IStorageAssembly {
   private readonly networkAssembly: INetworkAssembly;
@@ -38,6 +41,10 @@ export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IS
     return this.miscAssembly.exponentialDelayCalculator();
   }
 
+  delayedWorker(): DelayedWorker {
+    return this.miscAssembly.delayedWorker();
+  }
+
   exponentialApiInteractor(): IApiInteractor {
     return this.networkAssembly.exponentialApiInteractor();
   }
@@ -58,8 +65,28 @@ export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IS
     return this.networkAssembly.requestConfigurator();
   }
 
+  localStorage(): LocalStorage {
+    return this.storageAssembly.localStorage();
+  }
+
   userDataProvider(): IUserDataProvider {
     return this.storageAssembly.userDataProvider();
+  }
+
+  sentUserPropertiesStorage(): UserPropertiesStorage {
+    return this.storageAssembly.sentUserPropertiesStorage();
+  }
+
+  pendingUserPropertiesStorage(): UserPropertiesStorage {
+    return this.storageAssembly.pendingUserPropertiesStorage();
+  }
+
+  userPropertiesService(): UserPropertiesService {
+    return this.servicesAssembly.userPropertiesService();
+  }
+
+  userPropertiesController(): UserPropertiesController {
+    return this.controllersAssembly.userPropertiesController();
   }
 }
 
@@ -72,10 +99,10 @@ export class DependenciesAssemblyBuilder {
 
   build(): DependenciesAssembly {
     const miscAssembly = new MiscAssembly(this.internalConfig);
-    const servicesAssembly = new ServicesAssembly();
-    const controllersAssembly = new ControllersAssembly();
     const storageAssembly = new StorageAssembly();
     const networkAssembly = new NetworkAssembly(this.internalConfig, storageAssembly, miscAssembly);
+    const servicesAssembly = new ServicesAssembly(networkAssembly);
+    const controllersAssembly = new ControllersAssembly(miscAssembly, storageAssembly, servicesAssembly);
 
     return new DependenciesAssembly(
       networkAssembly, miscAssembly, servicesAssembly, controllersAssembly, storageAssembly

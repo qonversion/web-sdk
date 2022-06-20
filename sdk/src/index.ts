@@ -1,8 +1,10 @@
 export * from './QonversionConfigBuilder';
-export {QonversionConfig} from './types';
-export * from './dto/Environment'
-export * from './dto/LaunchMode'
-export * from './dto/LogLevel'
+export {QonversionConfig, QonversionInstance} from './types';
+export * from './dto/Environment';
+export * from './dto/LaunchMode';
+export * from './dto/LogLevel';
+export * from './dto/UserProperty';
 export * from './exception/QonversionError';
 export * from './exception/QonversionErrorCode';
+export * from './UserPropertiesBuilder';
 export {default} from './Qonversion';
