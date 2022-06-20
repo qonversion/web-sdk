@@ -28,56 +28,109 @@ let primaryConfig: PrimaryConfig = {
 };
 let requestConfigurator: RequestConfigurator;
 
-beforeEach(() => {
-  const primaryConfigProvider: PrimaryConfigProvider = {
-    getPrimaryConfig(): PrimaryConfig {
-      return primaryConfig;
-    }
-  };
-  const userDataProvider: IUserDataProvider = {
-    requireUserId(): string {
-      return testUserId;
-    },
-    getUserId(): string | undefined {
-      return testUserId;
-    }
-  };
+describe('RequestConfigurator tests', () => {
+  beforeEach(() => {
+    const primaryConfigProvider: PrimaryConfigProvider = {
+      getPrimaryConfig(): PrimaryConfig {
+        return primaryConfig;
+      }
+    };
+    const userDataProvider: IUserDataProvider = {
+      requireUserId(): string {
+        return testUserId;
+      },
+      getUserId(): string | undefined {
+        return testUserId;
+      }
+    };
 
-  requestConfigurator = new RequestConfigurator(headerBuilder, testBaseUrl, primaryConfigProvider, userDataProvider);
-});
+    requestConfigurator = new RequestConfigurator(headerBuilder, testBaseUrl, primaryConfigProvider, userDataProvider);
+  });
 
-test('user request', () => {
-  // given
-  const expResult: NetworkRequest = {
-    headers: testHeaders,
-    type: RequestType.GET,
-    url: testBaseUrl + '/' + ApiEndpoint.Users + '/' + testUserId,
-  };
+  test('user request', () => {
+    // given
+    const expResult: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.GET,
+      url: testBaseUrl + '/' + ApiEndpoint.Users + '/' + testUserId,
+    };
 
-  // when
-  const request = requestConfigurator.configureUserRequest(testUserId);
+    // when
+    const request = requestConfigurator.configureUserRequest(testUserId);
 
-  // then
-  expect(request).toStrictEqual(expResult);
-});
+    // then
+    expect(request).toStrictEqual(expResult);
+  });
 
-test('user properties request', () => {
-  // given
-  const properties = {a: 'a', b: 'b'};
-  const expResult: NetworkRequest = {
-    headers: testHeaders,
-    type: RequestType.POST,
-    url: testBaseUrl + '/' + ApiEndpoint.Properties,
-    body: {
-      access_token: testProjectKey,
-      q_uid: testUserId,
-      properties,
-    }
-  };
+  test('create user request', () => {
+    // given
+    const expResult: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.POST,
+      url: testBaseUrl + '/' + ApiEndpoint.Users,
+      body: {id: testUserId},
+    };
 
-  // when
-  const request = requestConfigurator.configureUserPropertiesRequest(properties);
+    // when
+    const request = requestConfigurator.configureCreateUserRequest(testUserId);
 
-  // then
-  expect(request).toStrictEqual(expResult);
+    // then
+    expect(request).toStrictEqual(expResult);
+  });
+
+  test('user properties request', () => {
+    // given
+    const properties = {a: 'a', b: 'b'};
+    const expResult: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.POST,
+      url: testBaseUrl + '/' + ApiEndpoint.Properties,
+      body: {
+        access_token: testProjectKey,
+        q_uid: testUserId,
+        properties,
+      }
+    };
+
+    // when
+    const request = requestConfigurator.configureUserPropertiesRequest(properties);
+
+    // then
+    expect(request).toStrictEqual(expResult);
+  });
+
+  test('identity request', () => {
+    // given
+    const testIdentityId = 'test identity id';
+    const expResult: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.GET,
+      url: `${testBaseUrl}/${ApiEndpoint.Identity}/${testIdentityId}`,
+    };
+
+    // when
+    const request = requestConfigurator.configureIdentityRequest(testIdentityId);
+
+    // then
+    expect(request).toStrictEqual(expResult);
+  });
+
+  test('create identity request', () => {
+    // given
+    const testIdentityId = 'test identity id';
+    const expResult: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.POST,
+      url: `${testBaseUrl}/${ApiEndpoint.Identity}/${testIdentityId}`,
+      body: {
+        user_id: testUserId,
+      }
+    };
+
+    // when
+    const request = requestConfigurator.configureCreateIdentityRequest(testUserId, testIdentityId);
+
+    // then
+    expect(request).toStrictEqual(expResult);
+  });
 });

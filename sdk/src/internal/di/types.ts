@@ -1,6 +1,13 @@
 import {ILogger} from '../logger';
 import {IApiInteractor, IHeaderBuilder, INetworkClient, IRequestConfigurator, RetryDelayCalculator} from '../network';
-import {IUserDataProvider} from '../user';
+import {
+  IdentityService,
+  IUserDataProvider,
+  UserController,
+  UserDataStorage,
+  UserIdGenerator,
+  UserService
+} from '../user';
 import {LocalStorage} from '../common';
 import {UserPropertiesController, UserPropertiesService, UserPropertiesStorage} from '../userProperties';
 import {DelayedWorker} from '../utils/DelayedWorker';
@@ -9,6 +16,7 @@ export type IMiscAssembly = {
   logger: () => ILogger;
   exponentialDelayCalculator: () => RetryDelayCalculator;
   delayedWorker: () => DelayedWorker;
+  userIdGenerator: () => UserIdGenerator;
 };
 
 export type INetworkAssembly = {
@@ -21,15 +29,20 @@ export type INetworkAssembly = {
 
 export type IServicesAssembly = {
   userPropertiesService: () => UserPropertiesService;
+  userService: () => UserService;
+  userServiceDecorator: () => UserService;
+  identityService: () => IdentityService;
 };
 
 export type IControllersAssembly = {
   userPropertiesController: () => UserPropertiesController;
+  userController: () => UserController;
 };
 
 export type IStorageAssembly = {
   localStorage: () => LocalStorage;
-  userDataProvider: () => IUserDataProvider;
   sentUserPropertiesStorage: () => UserPropertiesStorage;
   pendingUserPropertiesStorage: () => UserPropertiesStorage;
+  userDataProvider: () => IUserDataProvider;
+  userDataStorage: () => UserDataStorage;
 };

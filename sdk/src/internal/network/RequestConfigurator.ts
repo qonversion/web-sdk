@@ -22,7 +22,7 @@ export class RequestConfigurator implements IRequestConfigurator {
 
   configureUserRequest(id: string): NetworkRequest {
     const headers = this.headerBuilder.buildCommonHeaders();
-    const url = this.baseUrl + '/' + ApiEndpoint.Users + '/' + id;
+    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${id}`;
 
     return {
       url,
@@ -31,9 +31,22 @@ export class RequestConfigurator implements IRequestConfigurator {
     };
   }
 
+  configureCreateUserRequest(id: string): NetworkRequest {
+    const headers = this.headerBuilder.buildCommonHeaders();
+    const url = `${this.baseUrl}/${ApiEndpoint.Users}`;
+    const body = {id};
+
+    return {
+      url,
+      body,
+      headers,
+      type: RequestType.POST,
+    };
+  }
+
   configureUserPropertiesRequest(properties: Record<string, string>): NetworkRequest {
     const headers = this.headerBuilder.buildCommonHeaders();
-    const url = this.baseUrl + '/' + ApiEndpoint.Properties;
+    const url = `${this.baseUrl}/${ApiEndpoint.Properties}`;
     // TODO delete access_token and q_uid from the body after migrating API to v2
     const body = {
       "access_token": this.primaryConfigProvider.getPrimaryConfig().projectKey,
@@ -46,6 +59,30 @@ export class RequestConfigurator implements IRequestConfigurator {
       headers,
       type: RequestType.POST,
       body,
+    };
+  }
+
+  configureCreateIdentityRequest(qonversionId: string, identityId: string): NetworkRequest {
+    const headers = this.headerBuilder.buildCommonHeaders();
+    const url = `${this.baseUrl}/${ApiEndpoint.Identity}/${identityId}`;
+    const body = {user_id: qonversionId};
+
+    return {
+      url,
+      headers,
+      type: RequestType.POST,
+      body,
+    };
+  }
+
+  configureIdentityRequest(identityId: string): NetworkRequest {
+    const headers = this.headerBuilder.buildCommonHeaders();
+    const url = `${this.baseUrl}/${ApiEndpoint.Identity}/${identityId}`;
+
+    return {
+      url,
+      headers,
+      type: RequestType.GET,
     };
   }
 }

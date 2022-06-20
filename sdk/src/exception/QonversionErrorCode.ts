@@ -4,4 +4,6 @@ export enum QonversionErrorCode {
     "the initialize method before accessing the shared instance of Qonversion.",
   RequestDenied = "Request denied",
   BackendError = "Qonversion API returned an error",
+  UserNotFound = "Qonversion user not found",
+  IdentityNotFound = "User with requested identity not found",
 }

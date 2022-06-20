@@ -1,5 +1,6 @@
 import {IControllersAssembly, IMiscAssembly, IServicesAssembly, IStorageAssembly} from './types';
 import {UserPropertiesController, UserPropertiesControllerImpl} from '../userProperties';
+import {UserController, UserControllerImpl} from '../user';
 
 export class ControllersAssembly implements IControllersAssembly {
   private readonly miscAssembly: IMiscAssembly;
@@ -18,6 +19,16 @@ export class ControllersAssembly implements IControllersAssembly {
       this.storageAssembly.sentUserPropertiesStorage(),
       this.servicesAssembly.userPropertiesService(),
       this.miscAssembly.delayedWorker(),
+      this.miscAssembly.logger(),
+    );
+  }
+
+  userController(): UserController {
+    return new UserControllerImpl(
+      this.servicesAssembly.userServiceDecorator(),
+      this.servicesAssembly.identityService(),
+      this.storageAssembly.userDataStorage(),
+      this.miscAssembly.userIdGenerator(),
       this.miscAssembly.logger(),
     );
   }

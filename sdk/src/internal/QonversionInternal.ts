@@ -6,15 +6,26 @@ import {DependenciesAssembly} from './di/DependenciesAssembly';
 import Qonversion from '../Qonversion';
 import {UserProperty} from '../dto/UserProperty';
 import {UserPropertiesController} from './userProperties';
+import {UserController} from './user';
 
 export class QonversionInternal implements QonversionInstance {
   private readonly internalConfig: InternalConfig;
   private readonly userPropertiesController: UserPropertiesController;
+  private readonly userController: UserController;
 
   constructor(internalConfig: InternalConfig, dependenciesAssembly: DependenciesAssembly) {
     this.internalConfig = internalConfig;
 
     this.userPropertiesController = dependenciesAssembly.userPropertiesController();
+    this.userController = dependenciesAssembly.userController();
+  }
+
+  identify(userId: string): Promise<void> {
+    return this.userController.identify(userId);
+  }
+
+  logout(): Promise<void> {
+    return this.userController.logout();
   }
 
   setCustomUserProperty(key: string, value: string): void {
