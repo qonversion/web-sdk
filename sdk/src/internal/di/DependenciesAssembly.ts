@@ -18,6 +18,7 @@ import {ILogger} from '../logger';
 import {LocalStorage} from '../common';
 import {UserPropertiesController, UserPropertiesService, UserPropertiesStorage} from '../userProperties';
 import {DelayedWorker} from '../utils/DelayedWorker';
+import {EntitlementsController, EntitlementsService} from '../entitlements';
 
 export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IServicesAssembly, IControllersAssembly, IStorageAssembly {
   private readonly networkAssembly: INetworkAssembly;
@@ -112,12 +113,20 @@ export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IS
     return this.servicesAssembly.identityService();
   }
 
+  entitlementsService(): EntitlementsService {
+    return this.servicesAssembly.entitlementsService();
+  }
+
   userPropertiesController(): UserPropertiesController {
     return this.controllersAssembly.userPropertiesController();
   }
 
   userController(): UserController {
     return this.controllersAssembly.userController();
+  }
+
+  entitlementsController(): EntitlementsController {
+    return this.controllersAssembly.entitlementsController();
   }
 }
 

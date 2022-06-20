@@ -34,6 +34,7 @@ export type IdentityService = {
 
 export type UserController = {
   getUser: () => Promise<User>;
+  createUser: () => Promise<User>;
   identify: (identityId: string) => Promise<void>;
   logout: () => Promise<void>;
 };

@@ -7,17 +7,25 @@ import Qonversion from '../Qonversion';
 import {UserProperty} from '../dto/UserProperty';
 import {UserPropertiesController} from './userProperties';
 import {UserController} from './user';
+import {EntitlementsController} from './entitlements';
+import {Entitlement} from '../dto/Entitlement';
 
 export class QonversionInternal implements QonversionInstance {
   private readonly internalConfig: InternalConfig;
   private readonly userPropertiesController: UserPropertiesController;
   private readonly userController: UserController;
+  private readonly entitlementsController: EntitlementsController;
 
   constructor(internalConfig: InternalConfig, dependenciesAssembly: DependenciesAssembly) {
     this.internalConfig = internalConfig;
 
     this.userPropertiesController = dependenciesAssembly.userPropertiesController();
     this.userController = dependenciesAssembly.userController();
+    this.entitlementsController = dependenciesAssembly.entitlementsController();
+  }
+
+  getEntitlements(): Promise<Entitlement[]> {
+    return this.entitlementsController.getEntitlements();
   }
 
   identify(userId: string): Promise<void> {

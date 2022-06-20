@@ -85,4 +85,15 @@ export class RequestConfigurator implements IRequestConfigurator {
       type: RequestType.GET,
     };
   }
+
+  configureEntitlementsRequest(id: string): NetworkRequest {
+    const headers = this.headerBuilder.buildCommonHeaders();
+    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${id}/entitlements`;
+
+    return {
+      url,
+      headers,
+      type: RequestType.GET,
+    };
+  }
 }
