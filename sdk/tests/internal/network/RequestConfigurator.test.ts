@@ -9,6 +9,7 @@ import {
 import {PrimaryConfig} from '../../../src/types';
 import {PrimaryConfigProvider} from '../../../src/internal/types';
 import {IUserDataProvider} from '../../../src/internal/user';
+import {PurchaseCoreData, StripeStoreData} from '../../../src';
 
 const testHeaders: RequestHeaders = {a: 'a'};
 const headerBuilder: IHeaderBuilder = {
@@ -142,6 +143,37 @@ describe('RequestConfigurator tests', () => {
 
     // when
     const request = requestConfigurator.configureEntitlementsRequest(testUserId);
+
+    // then
+    expect(request).toStrictEqual(expResult);
+  });
+
+  test('stripe purchase request', () => {
+    // given
+    const data: PurchaseCoreData & StripeStoreData = {
+      currency: 'USD',
+      price: 14.99,
+      purchased: 124330432,
+      productId: 'test product',
+      subscriptionId: 'test subscription',
+    };
+    const expResult: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.POST,
+      url: `${testBaseUrl}/${ApiEndpoint.Users}/${testUserId}/purchases`,
+      body: {
+        price: data.price,
+        currency: data.currency,
+        stripe_store_data: {
+          subscription_id: data.subscriptionId,
+          product_id: data.productId,
+        },
+        purchased: data.purchased,
+      },
+    };
+
+    // when
+    const request = requestConfigurator.configureStripePurchaseRequest(testUserId, data);
 
     // then
     expect(request).toStrictEqual(expResult);

@@ -1,7 +1,6 @@
 import {UserControllerImpl, UserDataStorage} from '../../../src/internal/user';
 import {ILogger} from '../../../src/internal/logger';
-import {EntitlementsController, EntitlementsService} from '../../../src/internal/entitlements';
-import {EntitlementsControllerImpl} from '../../../src/internal/entitlements/EntitlementsController';
+import {EntitlementsController, EntitlementsService, EntitlementsControllerImpl} from '../../../src/internal/entitlements';
 import {Entitlement, QonversionError, QonversionErrorCode} from '../../../src';
 
 let entitlementsService: EntitlementsService;
@@ -62,6 +61,7 @@ describe('getEntitlements tests', () => {
 
     // when and then
     await expect(entitlementsController.getEntitlements()).rejects.toThrow(unknownError);
+    expect(entitlementsService.getEntitlements).toBeCalledWith(testUserId);
     expect(logger.error).toBeCalledWith('Failed to request entitlements', unknownError);
   });
 
@@ -78,6 +78,7 @@ describe('getEntitlements tests', () => {
 
     // then
     expect(res).toStrictEqual([]);
+    expect(entitlementsService.getEntitlements).toBeCalledWith(testUserId);
     expect(logger.info).toBeCalledWith('User is not registered. Creating new one');
     expect(userController.createUser).toBeCalled();
     expect(logger.error).not.toBeCalled();
@@ -96,6 +97,7 @@ describe('getEntitlements tests', () => {
 
     // then
     expect(res).toStrictEqual([]);
+    expect(entitlementsService.getEntitlements).toBeCalledWith(testUserId);
     expect(logger.info).toBeCalledWith('User is not registered. Creating new one');
     expect(userController.createUser).toBeCalled();
     expect(logger.error).toBeCalledWith('Failed to create new user', userCreationError);

@@ -12,13 +12,14 @@ import {
   UserController,
   UserDataStorage,
   UserIdGenerator,
-  UserService
+  UserService,
 } from '../user';
 import {ILogger} from '../logger';
 import {LocalStorage} from '../common';
 import {UserPropertiesController, UserPropertiesService, UserPropertiesStorage} from '../userProperties';
 import {DelayedWorker} from '../utils/DelayedWorker';
 import {EntitlementsController, EntitlementsService} from '../entitlements';
+import {PurchasesController, PurchasesService} from '../purchases';
 
 export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IServicesAssembly, IControllersAssembly, IStorageAssembly {
   private readonly networkAssembly: INetworkAssembly;
@@ -117,6 +118,10 @@ export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IS
     return this.servicesAssembly.entitlementsService();
   }
 
+  purchasesService(): PurchasesService {
+    return this.servicesAssembly.purchasesService();
+  }
+
   userPropertiesController(): UserPropertiesController {
     return this.controllersAssembly.userPropertiesController();
   }
@@ -127,6 +132,10 @@ export class DependenciesAssembly implements IMiscAssembly, INetworkAssembly, IS
 
   entitlementsController(): EntitlementsController {
     return this.controllersAssembly.entitlementsController();
+  }
+
+  purchasesController(): PurchasesController {
+    return this.controllersAssembly.purchasesController();
   }
 }
 

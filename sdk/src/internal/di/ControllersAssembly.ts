@@ -1,8 +1,8 @@
 import {IControllersAssembly, IMiscAssembly, IServicesAssembly, IStorageAssembly} from './types';
 import {UserPropertiesController, UserPropertiesControllerImpl} from '../userProperties';
 import {UserController, UserControllerImpl} from '../user';
-import {EntitlementsController} from '../entitlements';
-import {EntitlementsControllerImpl} from '../entitlements/EntitlementsController';
+import {EntitlementsController, EntitlementsControllerImpl} from '../entitlements';
+import {PurchasesController, PurchasesControllerImpl} from '../purchases';
 
 export class ControllersAssembly implements IControllersAssembly {
   private readonly miscAssembly: IMiscAssembly;
@@ -46,6 +46,14 @@ export class ControllersAssembly implements IControllersAssembly {
     return new EntitlementsControllerImpl(
       this.userController(),
       this.servicesAssembly.entitlementsService(),
+      this.storageAssembly.userDataStorage(),
+      this.miscAssembly.logger(),
+    );
+  }
+
+  purchasesController(): PurchasesController {
+    return new PurchasesControllerImpl(
+      this.servicesAssembly.purchasesService(),
       this.storageAssembly.userDataStorage(),
       this.miscAssembly.logger(),
     );
