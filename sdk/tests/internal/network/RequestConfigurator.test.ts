@@ -49,6 +49,7 @@ describe('RequestConfigurator tests', () => {
       headers: testHeaders,
       type: RequestType.GET,
       url: testBaseUrl + '/' + ApiEndpoint.Users + '/' + testUserId,
+      body: undefined,
     };
 
     // when
@@ -103,6 +104,7 @@ describe('RequestConfigurator tests', () => {
       headers: testHeaders,
       type: RequestType.GET,
       url: `${testBaseUrl}/${ApiEndpoint.Identity}/${testIdentityId}`,
+      body: undefined,
     };
 
     // when
@@ -137,6 +139,7 @@ describe('RequestConfigurator tests', () => {
       headers: testHeaders,
       type: RequestType.GET,
       url: `${testBaseUrl}/${ApiEndpoint.Users}/${testUserId}/entitlements`,
+      body: undefined,
     };
 
     // when

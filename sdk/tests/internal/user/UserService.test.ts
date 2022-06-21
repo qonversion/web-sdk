@@ -6,7 +6,7 @@ import {
 } from '../../../src/internal/network';
 import {UserApi, UserService, UserServiceImpl} from '../../../src/internal/user';
 import {Environment, QonversionError, QonversionErrorCode, User} from '../../../src';
-import {HTTP_NOT_FOUND} from '../../../src/internal/network/constants';
+import {HTTP_CODE_NOT_FOUND} from '../../../src/internal/network/constants';
 import {PrimaryConfig} from '../../../src/types';
 import {PrimaryConfigProvider} from '../../../src/internal';
 
@@ -97,7 +97,7 @@ describe('getUser tests', function () {
   test('user does not exist', async () => {
     // given
     const testUserNotFoundResponse: NetworkResponseError = {
-      code: HTTP_NOT_FOUND,
+      code: HTTP_CODE_NOT_FOUND,
       apiCode: '',
       message: testErrorMessage,
       type: '',

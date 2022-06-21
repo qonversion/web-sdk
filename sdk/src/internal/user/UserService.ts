@@ -3,8 +3,8 @@ import {User} from '../../dto/User';
 import {ApiInteractor, RequestConfigurator} from '../network';
 import {QonversionError} from '../../exception/QonversionError';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
-import {HTTP_NOT_FOUND} from '../network/constants';
-import {camelcaseKeys} from '../utils/objectUtils';
+import {HTTP_CODE_NOT_FOUND} from '../network/constants';
+import {camelCaseKeys} from '../utils/objectUtils';
 import {PrimaryConfigProvider} from '../types';
 
 export class UserServiceImpl implements UserService {
@@ -28,7 +28,7 @@ export class UserServiceImpl implements UserService {
     const response = await this.apiInteractor.execute<UserApi>(request);
 
     if (response.isSuccess) {
-      return camelcaseKeys(response.data);
+      return camelCaseKeys(response.data);
     }
 
     const errorMessage = `Response code ${response.code}, message: ${response.message}`;
@@ -40,10 +40,10 @@ export class UserServiceImpl implements UserService {
     const response = await this.apiInteractor.execute<UserApi>(request);
 
     if (response.isSuccess) {
-      return camelcaseKeys(response.data);
+      return camelCaseKeys(response.data);
     }
 
-    if (response.code == HTTP_NOT_FOUND) {
+    if (response.code == HTTP_CODE_NOT_FOUND) {
       throw new QonversionError(QonversionErrorCode.UserNotFound, `Id: ${id}`);
     }
 

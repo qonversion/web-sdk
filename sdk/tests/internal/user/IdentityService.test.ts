@@ -5,7 +5,7 @@ import {
   NetworkResponseSuccess
 } from '../../../src/internal/network';
 import {QonversionError, QonversionErrorCode} from '../../../src';
-import {HTTP_NOT_FOUND} from '../../../src/internal/network/constants';
+import {HTTP_CODE_NOT_FOUND} from '../../../src/internal/network/constants';
 import {IdentityApi, IdentityService, IdentityServiceImpl} from '../../../src/internal/user';
 
 let requestConfigurator: RequestConfigurator;
@@ -78,7 +78,7 @@ describe('obtainIdentity tests', function () {
   test('identity does not exist', async () => {
     // given
     const testUserNotFoundResponse: NetworkResponseError = {
-      code: HTTP_NOT_FOUND,
+      code: HTTP_CODE_NOT_FOUND,
       apiCode: '',
       message: testErrorMessage,
       type: '',

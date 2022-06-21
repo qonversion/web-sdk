@@ -1,7 +1,6 @@
 import {IdentityService, UserController, UserDataStorage, UserIdGenerator, UserService} from './types';
 import {User} from '../../dto/User';
 import {Logger} from '../logger';
-import {TEST_USER_ID} from './constants';
 import {QonversionError} from '../../exception/QonversionError';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
 
@@ -26,7 +25,7 @@ export class UserControllerImpl implements UserController {
     this.logger = logger;
 
     const existingUserId = userDataStorage.getOriginalUserId();
-    if (!existingUserId || existingUserId == TEST_USER_ID) {
+    if (!existingUserId) {
       this.createUser()
         .then(() => this.logger.info('New user created on initialization'))
         .catch(error => this.logger.error('Failed to create new user on initialization', error));
@@ -94,7 +93,7 @@ export class UserControllerImpl implements UserController {
   }
 
   private handleSuccessfulIdentity(originalId: string, identityId: string) {
-      this.logger.info(`User with id ${identityId} is successfully identified.`);
+    this.logger.info(`User with id ${identityId} is successfully identified.`);
 
     this.userDataStorage.setOriginalUserId(originalId);
     this.userDataStorage.setIdentityUserId(identityId);

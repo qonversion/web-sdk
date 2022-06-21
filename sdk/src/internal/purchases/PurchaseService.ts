@@ -1,7 +1,7 @@
 import {PurchasesService, UserPurchaseApi} from './types';
 import {PurchaseCoreData, StripeStoreData, UserPurchase} from '../../dto/Purchase';
 import {ApiInteractor, RequestConfigurator} from '../network';
-import {camelcaseKeys} from '../utils/objectUtils';
+import {camelCaseKeys} from '../utils/objectUtils';
 import {QonversionError} from '../../exception/QonversionError';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
 
@@ -19,7 +19,7 @@ export class PurchaseServiceImpl implements PurchasesService {
     const response = await this.apiInteractor.execute<UserPurchaseApi>(request);
 
     if (response.isSuccess) {
-      return camelcaseKeys(response.data);
+      return camelCaseKeys(response.data);
     }
 
     const errorMessage = `Response code ${response.code}, message: ${response.message}`;

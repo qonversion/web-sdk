@@ -28,12 +28,13 @@ export enum RequestType {
 }
 
 export type RequestHeaders = Record<string, string>;
+export type RequestBody = Record<string, unknown | null>;
 
 export type NetworkRequest = {
   url: string;
   type: RequestType;
   headers: RequestHeaders;
-  body?: Record<string, unknown | null>;
+  body?: RequestBody;
 };
 
 export type NetworkResponse = {

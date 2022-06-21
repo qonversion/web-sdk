@@ -29,10 +29,7 @@ export class UserPropertiesControllerImpl implements UserPropertiesController {
   }
 
   setProperty(key: string, value: string): void {
-    if (this.shouldSendProperty(key, value)) {
-      this.pendingUserPropertiesStorage.addOne(key, value);
-    }
-    this.sendUserPropertiesIfNeeded();
+    this.setProperties({[key]: value})
   }
 
   setProperties(properties: Record<string, string>): void {
