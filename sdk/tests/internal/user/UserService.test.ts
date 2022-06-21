@@ -1,15 +1,18 @@
 import {
-  IApiInteractor,
-  IRequestConfigurator,
+  ApiInteractor,
+  RequestConfigurator,
   NetworkRequest, NetworkResponseError,
   NetworkResponseSuccess
 } from '../../../src/internal/network';
 import {UserApi, UserService, UserServiceImpl} from '../../../src/internal/user';
-import {QonversionError, QonversionErrorCode, User} from '../../../src';
-import {HTTP_NOT_FOUND} from '../../../src/internal/network/constants';
+import {Environment, QonversionError, QonversionErrorCode, User} from '../../../src';
+import {HTTP_CODE_NOT_FOUND} from '../../../src/internal/network/constants';
+import {PrimaryConfig} from '../../../src/types';
+import {PrimaryConfigProvider} from '../../../src/internal';
 
-let requestConfigurator: IRequestConfigurator;
-let apiInteractor: IApiInteractor;
+let primaryConfig: PrimaryConfig;
+let requestConfigurator: RequestConfigurator;
+let apiInteractor: ApiInteractor;
 let userService: UserService;
 const testUserId = 'test user id';
 
@@ -39,14 +42,22 @@ const expRes: User = {
   id: testUserId,
   identityId: 'some identity',
 };
+const testEnvironment = Environment.Sandbox;
 
 beforeEach(() => {
+  // @ts-ignore
+  primaryConfig = {
+    environment: testEnvironment,
+  };
+  const primaryConfigProvider: PrimaryConfigProvider = {
+    getPrimaryConfig: () => primaryConfig,
+  };
   // @ts-ignore
   requestConfigurator = {};
   // @ts-ignore
   apiInteractor = {};
 
-  userService = new UserServiceImpl(requestConfigurator, apiInteractor);
+  userService = new UserServiceImpl(primaryConfigProvider, requestConfigurator, apiInteractor);
 });
 
 describe('getUser tests', function () {
@@ -86,7 +97,7 @@ describe('getUser tests', function () {
   test('user does not exist', async () => {
     // given
     const testUserNotFoundResponse: NetworkResponseError = {
-      code: HTTP_NOT_FOUND,
+      code: HTTP_CODE_NOT_FOUND,
       apiCode: '',
       message: testErrorMessage,
       type: '',
@@ -121,7 +132,7 @@ describe('createUser tests', function () {
 
     // then
     expect(res).toStrictEqual(expRes);
-    expect(requestConfigurator.configureCreateUserRequest).toBeCalledWith(testUserId);
+    expect(requestConfigurator.configureCreateUserRequest).toBeCalledWith(testUserId, testEnvironment);
     expect(apiInteractor.execute).toBeCalledWith(testRequest);
   });
 
@@ -136,7 +147,7 @@ describe('createUser tests', function () {
 
     // when and then
     await expect(() => userService.createUser(testUserId)).rejects.toThrow(expError);
-    expect(requestConfigurator.configureCreateUserRequest).toBeCalledWith(testUserId);
+    expect(requestConfigurator.configureCreateUserRequest).toBeCalledWith(testUserId, testEnvironment);
     expect(apiInteractor.execute).toBeCalledWith(testRequest);
   });
 });

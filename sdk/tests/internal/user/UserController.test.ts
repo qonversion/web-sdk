@@ -5,14 +5,14 @@ import {
   UserIdGenerator,
   UserService
 } from '../../../src/internal/user';
-import {ILogger} from '../../../src/internal/logger';
+import {Logger} from '../../../src/internal/logger';
 import {QonversionError, QonversionErrorCode, User} from '../../../src';
 
 let userService: UserService;
 let identityService: IdentityService;
 let userDataStorage: UserDataStorage;
 let userIdGenerator: UserIdGenerator;
-let logger: ILogger;
+let logger: Logger;
 let userController: UserControllerImpl;
 
 const testQonversionUserId = 'test qonversion user id';
@@ -32,7 +32,7 @@ beforeEach(() => {
   identityService = {};
   // @ts-ignore
   userDataStorage = {
-    getUserId: jest.fn(() => testQonversionUserId),
+    getOriginalUserId: jest.fn(() => testQonversionUserId),
     clearIdentityUserId: jest.fn(),
     setOriginalUserId: jest.fn(),
     setIdentityUserId: jest.fn(),
@@ -60,20 +60,20 @@ describe('constructor tests', function () {
     userController = new UserControllerImpl(userService, identityService, userDataStorage, userIdGenerator, logger);
 
     // then
-    expect(userDataStorage.getUserId).toBeCalled();
+    expect(userDataStorage.getOriginalUserId).toBeCalled();
     expect(userIdGenerator.generate).not.toBeCalled();
     expect(userDataStorage.setOriginalUserId).not.toBeCalled();
   });
 
   test('user id does not exist', () => {
     // given
-    userDataStorage.getUserId = jest.fn(() => undefined);
+    userDataStorage.getOriginalUserId = jest.fn(() => undefined);
 
     // when
     userController = new UserControllerImpl(userService, identityService, userDataStorage, userIdGenerator, logger);
 
     // then
-    expect(userDataStorage.getUserId).toBeCalled();
+    expect(userDataStorage.getOriginalUserId).toBeCalled();
     expect(userIdGenerator.generate).toBeCalled();
     expect(userDataStorage.setOriginalUserId).toBeCalledWith(testNewQonversionUserId);
   });
@@ -82,14 +82,14 @@ describe('constructor tests', function () {
 describe('getUser tests', function () {
   test('get existing user', async () => {
     // given
-    userDataStorage.requireUserId = jest.fn(() => testQonversionUserId);
+    userDataStorage.requireOriginalUserId = jest.fn(() => testQonversionUserId);
 
     // when
     const res = await userController.getUser();
 
     // then
     expect(res).toStrictEqual(testUser);
-    expect(userDataStorage.requireUserId).toBeCalled();
+    expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(userService.getUser).toBeCalledWith(testQonversionUserId);
     expect(logger.info).toBeCalledWith('User info was successfully received from API', testUser);
     expect(logger.error).not.toBeCalled();
@@ -98,11 +98,11 @@ describe('getUser tests', function () {
   test('user id does not exist', async () => {
     // given
     const noUserIdError = new QonversionError(QonversionErrorCode.UserNotFound);
-    userDataStorage.requireUserId = jest.fn(() => {throw noUserIdError});
+    userDataStorage.requireOriginalUserId = jest.fn(() => {throw noUserIdError});
 
     // when and then
     await expect(userController.getUser()).rejects.toThrow(noUserIdError);
-    expect(userDataStorage.requireUserId).toBeCalled();
+    expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(userService.getUser).not.toBeCalled();
     expect(logger.info).not.toBeCalled();
     expect(logger.error).toBeCalledWith('Failed to get User from API', noUserIdError);
@@ -111,12 +111,12 @@ describe('getUser tests', function () {
   test('user request fails with error', async () => {
     // given
     const userRequestError = new QonversionError(QonversionErrorCode.BackendError);
-    userDataStorage.requireUserId = jest.fn(() => testQonversionUserId);
+    userDataStorage.requireOriginalUserId = jest.fn(() => testQonversionUserId);
     userService.getUser = jest.fn(async () => {throw userRequestError});
 
     // when and then
     await expect(userController.getUser()).rejects.toThrow(userRequestError);
-    expect(userDataStorage.requireUserId).toBeCalled();
+    expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(userService.getUser).toBeCalledWith(testQonversionUserId);
     expect(logger.info).not.toBeCalled();
     expect(logger.error).toBeCalledWith('Failed to get User from API', userRequestError);
@@ -175,7 +175,7 @@ describe('identify tests', function () {
     const notFoundError = new QonversionError(QonversionErrorCode.IdentityNotFound);
     identityService.obtainIdentity = jest.fn(async () => {throw notFoundError});
     identityService.createIdentity = jest.fn(async () => testNewQonversionUserId);
-    userDataStorage.requireUserId = jest.fn(() => testQonversionUserId);
+    userDataStorage.requireOriginalUserId = jest.fn(() => testQonversionUserId);
 
     // when
     await userController.identify(testIdentityUserId);
@@ -183,7 +183,7 @@ describe('identify tests', function () {
     // then
     expect(userDataStorage.getIdentityUserId).toBeCalled();
     expect(identityService.obtainIdentity).toBeCalledWith(testIdentityUserId);
-    expect(userDataStorage.requireUserId).toBeCalled();
+    expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(identityService.createIdentity).toBeCalledWith(testQonversionUserId, testIdentityUserId);
     expect(userController['handleSuccessfulIdentity']).toBeCalledWith(testNewQonversionUserId, testIdentityUserId);
   });
@@ -194,13 +194,13 @@ describe('identify tests', function () {
     identityService.obtainIdentity = jest.fn(async () => {throw notFoundError});
     const creationError = new QonversionError(QonversionErrorCode.BackendError);
     identityService.createIdentity = jest.fn(async () => {throw creationError});
-    userDataStorage.requireUserId = jest.fn(() => testQonversionUserId);
+    userDataStorage.requireOriginalUserId = jest.fn(() => testQonversionUserId);
 
     // when and then
     await expect(() => userController.identify(testIdentityUserId)).rejects.toThrow(creationError);
     expect(userDataStorage.getIdentityUserId).toBeCalled();
     expect(identityService.obtainIdentity).toBeCalledWith(testIdentityUserId);
-    expect(userDataStorage.requireUserId).toBeCalled();
+    expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(identityService.createIdentity).toBeCalledWith(testQonversionUserId, testIdentityUserId);
     expect(logger.error).toBeCalledWith(`Failed to create user identity for id ${testIdentityUserId}`, creationError);
     expect(userController['handleSuccessfulIdentity']).not.toBeCalled();

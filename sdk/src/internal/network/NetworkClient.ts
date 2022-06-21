@@ -1,6 +1,6 @@
-import {ApiHeader, INetworkClient, NetworkRequest, RawNetworkResponse} from './types';
+import {ApiHeader, NetworkClient, NetworkRequest, RawNetworkResponse} from './types';
 
-export class NetworkClient implements INetworkClient {
+export class NetworkClientImpl implements NetworkClient {
   async execute(request: NetworkRequest): Promise<RawNetworkResponse> {
     const headers = {
       ...request.headers,

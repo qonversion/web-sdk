@@ -1,13 +1,16 @@
-import {INetworkAssembly, IServicesAssembly} from './types';
+import {NetworkAssembly, ServicesAssembly} from './types';
 import {UserPropertiesService, UserPropertiesServiceImpl} from '../userProperties';
 import {IdentityService, IdentityServiceImpl, UserService, UserServiceDecorator, UserServiceImpl} from '../user';
 import {EntitlementsService, EntitlementsServiceImpl} from '../entitlements';
 import {PurchaseServiceImpl, PurchasesService} from '../purchases';
+import {InternalConfig} from '../InternalConfig';
 
-export class ServicesAssembly implements IServicesAssembly {
-  private readonly networkAssembly: INetworkAssembly;
+export class ServicesAssemblyImpl implements ServicesAssembly {
+  private readonly internalConfig: InternalConfig;
+  private readonly networkAssembly: NetworkAssembly;
 
-  constructor(networkAssembly: INetworkAssembly) {
+  constructor(internalConfig: InternalConfig, networkAssembly: NetworkAssembly) {
+    this.internalConfig = internalConfig;
     this.networkAssembly = networkAssembly;
   }
 
@@ -20,6 +23,7 @@ export class ServicesAssembly implements IServicesAssembly {
 
   userService(): UserService {
     return new UserServiceImpl(
+      this.internalConfig,
       this.networkAssembly.requestConfigurator(),
       this.networkAssembly.exponentialApiInteractor(),
     );

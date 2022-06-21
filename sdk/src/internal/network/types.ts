@@ -1,5 +1,6 @@
 import {RetryPolicy} from './RetryPolicy';
 import {PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
+import {Environment} from '../../dto/Environment';
 
 export enum ApiHeader {
   Accept = "Accept",
@@ -16,7 +17,7 @@ export enum ApiHeader {
 export enum ApiEndpoint {
   Users = "v3/users",
   Identity = "v3/identities",
-  Properties = "properties",
+  Properties = "v1/properties",
 }
 
 export enum RequestType {
@@ -27,12 +28,13 @@ export enum RequestType {
 }
 
 export type RequestHeaders = Record<string, string>;
+export type RequestBody = Record<string, unknown | null>;
 
 export type NetworkRequest = {
   url: string;
   type: RequestType;
   headers: RequestHeaders;
-  body?: Record<string, any | null>;
+  body?: RequestBody;
 };
 
 export type NetworkResponse = {
@@ -40,6 +42,7 @@ export type NetworkResponse = {
 };
 
 export type RawNetworkResponse = NetworkResponse & {
+  // eslint-disable-next-line
   payload: any;
 };
 
@@ -67,18 +70,18 @@ export type NetworkRetryConfig = {
   delay: number;
 };
 
-export type INetworkClient = {
+export type NetworkClient = {
   execute: (request: NetworkRequest) => Promise<RawNetworkResponse>;
 };
 
-export type IApiInteractor = {
+export type ApiInteractor = {
   execute: <T>(request: NetworkRequest, retryPolicy?: RetryPolicy) => Promise<NetworkResponseSuccess<T> | NetworkResponseError>;
 };
 
-export type IRequestConfigurator = {
+export type RequestConfigurator = {
   configureUserRequest: (id: string) => NetworkRequest;
 
-  configureCreateUserRequest: (id: string) => NetworkRequest;
+  configureCreateUserRequest: (id: string, environment: Environment) => NetworkRequest;
 
   configureUserPropertiesRequest: (properties: Record<string, string>) => NetworkRequest;
 
@@ -91,6 +94,6 @@ export type IRequestConfigurator = {
   configureStripePurchaseRequest: (userId: string, data: PurchaseCoreData & StripeStoreData) => NetworkRequest;
 };
 
-export type IHeaderBuilder = {
+export type HeaderBuilder = {
   buildCommonHeaders: () => RequestHeaders;
 };

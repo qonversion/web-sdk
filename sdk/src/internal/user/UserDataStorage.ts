@@ -17,10 +17,6 @@ export class UserDataStorageImpl implements UserDataStorage {
     this.identityId = localStorage.getString(StorageConstants.IdentityUserId);
   }
 
-  getUserId(): string | undefined {
-    return this.identityId ?? this.originalId;
-  }
-
   getIdentityUserId(): string | undefined {
     return this.identityId;
   }
@@ -29,8 +25,8 @@ export class UserDataStorageImpl implements UserDataStorage {
     return this.originalId;
   }
 
-  requireUserId(): string {
-    const id = this.getUserId();
+  requireOriginalUserId(): string {
+    const id = this.getOriginalUserId();
     if (id) {
       return id;
     }

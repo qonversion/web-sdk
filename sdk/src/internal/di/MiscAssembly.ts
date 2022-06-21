@@ -1,19 +1,19 @@
-import {IMiscAssembly} from './types';
+import {MiscAssembly} from './types';
 import {InternalConfig} from '../InternalConfig';
-import Logger, {ILogger} from '../logger';
+import LoggerImpl, {Logger} from '../logger';
 import {ExponentialDelayCalculator, RetryDelayCalculator} from '../network';
 import {DelayedWorker, DelayedWorkerImpl} from '../utils/DelayedWorker';
 import {UserIdGenerator, UserIdGeneratorImpl} from '../user';
 
-export class MiscAssembly implements IMiscAssembly {
+export class MiscAssemblyImpl implements MiscAssembly {
   private readonly internalConfig: InternalConfig;
 
   constructor(internalConfig: InternalConfig) {
     this.internalConfig = internalConfig;
   }
 
-  logger(): ILogger {
-    return new Logger(this.internalConfig);
+  logger(): Logger {
+    return new LoggerImpl(this.internalConfig);
   }
 
   exponentialDelayCalculator(): RetryDelayCalculator {

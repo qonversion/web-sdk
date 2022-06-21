@@ -4,7 +4,7 @@ import {
   UserPropertiesStorage
 } from '../../../src/internal/userProperties';
 import {DelayedWorker} from '../../../src/internal/utils/DelayedWorker';
-import {ILogger} from '../../../src/internal/logger';
+import {Logger} from '../../../src/internal/logger';
 import {QonversionError, QonversionErrorCode, UserProperty} from '../../../src';
 
 let userPropertiesController: UserPropertiesControllerImpl;
@@ -12,7 +12,7 @@ let pendingUserPropertiesStorage: UserPropertiesStorage;
 let sentUserPropertiesStorage: UserPropertiesStorage;
 let userPropertiesService: UserPropertiesService;
 let delayedWorker: DelayedWorker;
-let logger: ILogger;
+let logger: Logger;
 const testSendingDelayMs = 10000;
 
 beforeEach(() => {
@@ -43,36 +43,17 @@ describe('set property/properties tests', () => {
     userPropertiesController['sendUserPropertiesIfNeeded'] = jest.fn();
   });
 
-  test('single valid property', () => {
+  test('single property', () => {
     // given
     const key = "test_key";
     const value = "test value";
-    userPropertiesController['shouldSendProperty'] = jest.fn(() => true);
-    pendingUserPropertiesStorage.addOne = jest.fn();
+    userPropertiesController.setProperties = jest.fn();
 
     // when
     userPropertiesController.setProperty(key, value);
 
     // then
-    expect(userPropertiesController['shouldSendProperty']).toBeCalledWith(key, value);
-    expect(pendingUserPropertiesStorage.addOne).toBeCalledWith(key, value);
-    expect(userPropertiesController['sendUserPropertiesIfNeeded']).toBeCalledTimes(1);
-  });
-
-  test('single invalid property', () => {
-    // given
-    const key = "test_key";
-    const value = "test value";
-    userPropertiesController['shouldSendProperty'] = jest.fn(() => false);
-    pendingUserPropertiesStorage.addOne = jest.fn();
-
-    // when
-    userPropertiesController.setProperty(key, value);
-
-    // then
-    expect(userPropertiesController['shouldSendProperty']).toBeCalledWith(key, value);
-    expect(userPropertiesController['sendUserPropertiesIfNeeded']).toBeCalled();
-    expect(pendingUserPropertiesStorage.addOne).not.toBeCalled();
+    expect(userPropertiesController.setProperties).toBeCalledWith({[key]: value});
   });
 
   test('multiple valid properties', () => {

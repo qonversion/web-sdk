@@ -1,6 +1,6 @@
 import {UserPropertiesController, UserPropertiesService, UserPropertiesStorage} from './types';
 import {DelayedWorker} from '../utils/DelayedWorker';
-import {ILogger} from '../logger';
+import {Logger} from '../logger';
 import {KEY_REGEX, SENDING_DELAY_MS} from './constants';
 import {QonversionError} from '../../exception/QonversionError';
 
@@ -9,7 +9,7 @@ export class UserPropertiesControllerImpl implements UserPropertiesController {
   private readonly sentUserPropertiesStorage: UserPropertiesStorage;
   private readonly userPropertiesService: UserPropertiesService;
   private readonly delayedWorker: DelayedWorker;
-  private readonly logger: ILogger;
+  private readonly logger: Logger;
   private readonly sendingDelayMs: number;
 
   constructor(
@@ -17,7 +17,7 @@ export class UserPropertiesControllerImpl implements UserPropertiesController {
     sentUserPropertiesStorage: UserPropertiesStorage,
     userPropertiesService: UserPropertiesService,
     delayedWorker: DelayedWorker,
-    logger: ILogger,
+    logger: Logger,
     sendingDelayMs: number = SENDING_DELAY_MS,
   ) {
     this.pendingUserPropertiesStorage = pendingUserPropertiesStorage;
@@ -29,10 +29,7 @@ export class UserPropertiesControllerImpl implements UserPropertiesController {
   }
 
   setProperty(key: string, value: string): void {
-    if (this.shouldSendProperty(key, value)) {
-      this.pendingUserPropertiesStorage.addOne(key, value);
-    }
-    this.sendUserPropertiesIfNeeded();
+    this.setProperties({[key]: value})
   }
 
   setProperties(properties: Record<string, string>): void {

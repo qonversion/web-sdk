@@ -1,13 +1,13 @@
 import {
   ApiHeader,
-  NetworkClient,
+  NetworkClientImpl,
   NetworkRequest,
   RawNetworkResponse,
   RequestHeaders,
   RequestType
 } from '../../../src/internal/network';
 
-const networkClient = new NetworkClient();
+const networkClient = new NetworkClientImpl();
 
 const testUrl = 'test url';
 const testHeaders = {a: 'a', b: 'b'};

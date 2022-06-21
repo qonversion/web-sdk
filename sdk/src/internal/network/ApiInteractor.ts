@@ -1,7 +1,7 @@
 import {
   ApiError,
-  IApiInteractor,
-  INetworkClient,
+  ApiInteractor,
+  NetworkClient,
   NetworkRequest,
   NetworkResponseError,
   NetworkResponseSuccess,
@@ -16,14 +16,14 @@ import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
 import {delay, isInternalServerErrorResponse, isSuccessfulResponse} from './utils';
 import {ERROR_CODES_BLOCKING_FURTHER_EXECUTIONS} from './constants';
 
-export class ApiInteractor implements IApiInteractor {
-  private readonly networkClient: INetworkClient;
+export class ApiInteractorImpl implements ApiInteractor {
+  private readonly networkClient: NetworkClient;
   private readonly delayCalculator: RetryDelayCalculator;
   private readonly configHolder: NetworkConfigHolder;
   private readonly defaultRetryPolicy: RetryPolicy;
 
   constructor(
-    networkClient: INetworkClient,
+    networkClient: NetworkClient,
     delayCalculator: RetryDelayCalculator,
     configHolder: NetworkConfigHolder,
     defaultRetryPolicy: RetryPolicy = new RetryPolicyExponential(),
@@ -66,7 +66,7 @@ export class ApiInteractor implements IApiInteractor {
 
     if (response && ERROR_CODES_BLOCKING_FURTHER_EXECUTIONS.includes(response.code)) {
       this.configHolder.setCanSendRequests(false);
-      return ApiInteractor.getErrorResponse(response, executionError);
+      return ApiInteractorImpl.getErrorResponse(response, executionError);
     }
 
     const shouldTryToRetry = (!!response && isInternalServerErrorResponse(response.code)) || !!executionError;
@@ -78,12 +78,12 @@ export class ApiInteractor implements IApiInteractor {
        }
     }
 
-    return ApiInteractor.getErrorResponse(response, executionError);
+    return ApiInteractorImpl.getErrorResponse(response, executionError);
   }
 
   static getErrorResponse(response?: RawNetworkResponse, executionError?: Error): NetworkResponseError {
     if (response) {
-      const apiError: ApiError = response.payload;
+      const apiError: ApiError = response.payload.error;
       return {
         code: response.code,
         message: apiError.message,

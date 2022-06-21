@@ -1,16 +1,14 @@
 import {User} from '../../dto/User';
 
-export type IUserDataProvider = {
-  getUserId: () => string | undefined;
-
+export type UserDataProvider = {
   getOriginalUserId: () => string | undefined;
 
   getIdentityUserId: () => string | undefined;
 
-  requireUserId: () => string;
+  requireOriginalUserId: () => string;
 }
 
-export type UserDataStorage = IUserDataProvider & {
+export type UserDataStorage = UserDataProvider & {
   setOriginalUserId: (originalUserId: string) => void;
 
   setIdentityUserId: (identityUserId: string) => void;

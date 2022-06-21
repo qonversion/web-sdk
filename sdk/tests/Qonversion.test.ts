@@ -1,6 +1,6 @@
 import {expectQonversionError} from './utils';
 import Qonversion, {QonversionConfig, QonversionErrorCode} from '../src';
-import {QonversionInternal} from '../src/internal/QonversionInternal';
+import {QonversionInternal} from '../src/internal';
 
 jest.mock('../src/internal/QonversionInternal');
 

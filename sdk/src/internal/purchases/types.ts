@@ -11,7 +11,7 @@ export type PurchasesController = {
 export type PurchaseCoreDataApi = {
   price: number;
   currency: string;
-  purchased_at: number;
+  purchased: number;
 };
 
 export type StripeStoreDataApi = {

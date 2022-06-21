@@ -3,7 +3,7 @@ import {LocalStorage} from './types';
 export class LocalStorageImpl implements LocalStorage {
   getInt(key: string): number | undefined {
     const stringValue = this.getString(key);
-    if (!!stringValue) {
+    if (stringValue) {
       return Number.parseInt(stringValue);
     }
     return undefined;
@@ -11,7 +11,7 @@ export class LocalStorageImpl implements LocalStorage {
 
   getFloat(key: string): number | undefined {
     const stringValue = this.getString(key);
-    if (!!stringValue) {
+    if (stringValue) {
       return Number.parseFloat(stringValue);
     }
     return undefined;
@@ -21,9 +21,9 @@ export class LocalStorageImpl implements LocalStorage {
     return localStorage.getItem(key) ?? undefined;
   }
 
-  getObject<T extends Object>(key: string): T | undefined {
+  getObject<T extends Record<string, unknown>>(key: string): T | undefined {
     const stringValue = this.getString(key);
-    if (!!stringValue) {
+    if (stringValue) {
       try {
         return JSON.parse(stringValue);
       } catch (e) {
@@ -33,7 +33,7 @@ export class LocalStorageImpl implements LocalStorage {
     return undefined;
   }
 
-  putObject(key: string, value: Object) {
+  putObject(key: string, value: Record<string, unknown>) {
     try {
       const stringValue = JSON.stringify(value);
       this.putString(key, stringValue);

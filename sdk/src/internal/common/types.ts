@@ -4,7 +4,7 @@ export type LocalStorage = {
   putNumber(key: string, value: number): void;
   getString(key: string): string | undefined;
   putString(key: string, value: string): void;
-  putObject(key: string, value: Object): void;
-  getObject<T extends Object>(key: string): T | undefined;
+  putObject(key: string, value: Record<string, unknown>): void;
+  getObject<T extends Record<string, unknown>>(key: string): T | undefined;
   remove(key: string): void;
 };

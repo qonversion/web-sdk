@@ -5,6 +5,6 @@
  * after initializing the SDK. The default value SDK uses is {@link Environment.Production}.
  */
 export enum Environment {
-  Sandbox,
-  Production
+  Sandbox = 'sandbox',
+  Production = 'prod',
 }

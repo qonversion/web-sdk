@@ -1,11 +1,11 @@
 import {UserControllerImpl, UserDataStorage} from '../../../src/internal/user';
-import {ILogger} from '../../../src/internal/logger';
+import {Logger} from '../../../src/internal/logger';
 import {EntitlementsController, EntitlementsService, EntitlementsControllerImpl} from '../../../src/internal/entitlements';
 import {Entitlement, QonversionError, QonversionErrorCode} from '../../../src';
 
 let entitlementsService: EntitlementsService;
 let userDataStorage: UserDataStorage;
-let logger: ILogger;
+let logger: Logger;
 let userController: UserControllerImpl;
 let entitlementsController: EntitlementsController;
 
@@ -40,7 +40,7 @@ beforeEach(() => {
 describe('getEntitlements tests', () => {
   test('successfully get entitlements', async () => {
     // given
-    userDataStorage.requireUserId = jest.fn(() => testUserId);
+    userDataStorage.requireOriginalUserId = jest.fn(() => testUserId);
     entitlementsService.getEntitlements = jest.fn(async () => testEntitlements);
 
     // when
@@ -48,14 +48,14 @@ describe('getEntitlements tests', () => {
 
     // then
     expect(res).toStrictEqual(testEntitlements);
-    expect(userDataStorage.requireUserId).toBeCalled();
+    expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(entitlementsService.getEntitlements).toBeCalledWith(testUserId);
     expect(logger.info).toBeCalledWith('Successfully received entitlements', testEntitlements);
   });
 
   test('unknown error while getting entitlements', async () => {
     // given
-    userDataStorage.requireUserId = jest.fn(() => testUserId);
+    userDataStorage.requireOriginalUserId = jest.fn(() => testUserId);
     const unknownError = new Error('unknown error');
     entitlementsService.getEntitlements = jest.fn(async () => {throw unknownError});
 
@@ -67,7 +67,7 @@ describe('getEntitlements tests', () => {
 
   test('user not found and created successfully', async () => {
     // given
-    userDataStorage.requireUserId = jest.fn(() => testUserId);
+    userDataStorage.requireOriginalUserId = jest.fn(() => testUserId);
     const userNotFoundError = new QonversionError(QonversionErrorCode.UserNotFound);
     entitlementsService.getEntitlements = jest.fn(async () => {throw userNotFoundError});
     // @ts-ignore
@@ -86,7 +86,7 @@ describe('getEntitlements tests', () => {
 
   test('user not found and creation fails', async () => {
     // given
-    userDataStorage.requireUserId = jest.fn(() => testUserId);
+    userDataStorage.requireOriginalUserId = jest.fn(() => testUserId);
     const userNotFoundError = new QonversionError(QonversionErrorCode.UserNotFound);
     entitlementsService.getEntitlements = jest.fn(async () => {throw userNotFoundError});
     const userCreationError = new QonversionError(QonversionErrorCode.BackendError);

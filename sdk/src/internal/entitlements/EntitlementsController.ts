@@ -1,7 +1,7 @@
 import {EntitlementsController, EntitlementsService} from './types';
 import {Entitlement} from '../../dto/Entitlement';
 import {UserController, UserDataStorage} from '../user';
-import {ILogger} from '../logger';
+import {Logger} from '../logger';
 import {QonversionError} from '../../exception/QonversionError';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
 
@@ -9,9 +9,9 @@ export class EntitlementsControllerImpl implements EntitlementsController {
   private readonly userController: UserController;
   private readonly entitlementsService: EntitlementsService;
   private readonly userDataStorage: UserDataStorage;
-  private readonly logger: ILogger;
+  private readonly logger: Logger;
 
-  constructor(userController: UserController, entitlementsService: EntitlementsService, userDataStorage: UserDataStorage, logger: ILogger) {
+  constructor(userController: UserController, entitlementsService: EntitlementsService, userDataStorage: UserDataStorage, logger: Logger) {
     this.userController = userController;
     this.entitlementsService = entitlementsService;
     this.userDataStorage = userDataStorage;
@@ -20,7 +20,7 @@ export class EntitlementsControllerImpl implements EntitlementsController {
 
   async getEntitlements(): Promise<Entitlement[]> {
     try {
-      const userId = this.userDataStorage.requireUserId();
+      const userId = this.userDataStorage.requireOriginalUserId();
       const entitlements = await this.entitlementsService.getEntitlements(userId);
       this.logger.info('Successfully received entitlements', entitlements);
       return entitlements;
@@ -30,7 +30,7 @@ export class EntitlementsControllerImpl implements EntitlementsController {
           this.logger.info('User is not registered. Creating new one');
           await this.userController.createUser();
         } catch (userCreationError) {
-          this.logger.error('Failed to create new user', error);
+          this.logger.error('Failed to create new user', userCreationError);
         }
         return [];
       } else {

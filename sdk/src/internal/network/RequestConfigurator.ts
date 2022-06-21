@@ -1,19 +1,28 @@
-import {ApiEndpoint, IHeaderBuilder, IRequestConfigurator, NetworkRequest, RequestType} from './types';
+import {
+  ApiEndpoint,
+  HeaderBuilder,
+  NetworkRequest,
+  RequestBody,
+  RequestConfigurator,
+  RequestHeaders,
+  RequestType
+} from './types';
 import {PrimaryConfigProvider} from '../types';
-import {IUserDataProvider} from '../user';
+import {UserDataProvider} from '../user';
 import {PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
+import {Environment} from '../../dto/Environment';
 
-export class RequestConfigurator implements IRequestConfigurator {
-  private readonly headerBuilder: IHeaderBuilder;
+export class RequestConfiguratorImpl implements RequestConfigurator {
+  private readonly headerBuilder: HeaderBuilder;
   private readonly baseUrl: string;
   private readonly primaryConfigProvider: PrimaryConfigProvider;
-  private readonly userDataProvider: IUserDataProvider
+  private readonly userDataProvider: UserDataProvider
 
   constructor(
-    headerBuilder: IHeaderBuilder,
+    headerBuilder: HeaderBuilder,
     baseUrl: string,
     primaryConfigProvider: PrimaryConfigProvider,
-    userDataProvider: IUserDataProvider
+    userDataProvider: UserDataProvider
   ) {
     this.headerBuilder = headerBuilder;
     this.baseUrl = baseUrl;
@@ -22,84 +31,50 @@ export class RequestConfigurator implements IRequestConfigurator {
   }
 
   configureUserRequest(id: string): NetworkRequest {
-    const headers = this.headerBuilder.buildCommonHeaders();
     const url = `${this.baseUrl}/${ApiEndpoint.Users}/${id}`;
 
-    return {
-      url,
-      headers,
-      type: RequestType.GET,
-    };
+    return this.configureRequest(url, RequestType.GET);
   }
 
-  configureCreateUserRequest(id: string): NetworkRequest {
-    const headers = this.headerBuilder.buildCommonHeaders();
-    const url = `${this.baseUrl}/${ApiEndpoint.Users}`;
-    const body = {id};
+  configureCreateUserRequest(id: string, environment: Environment): NetworkRequest {
+    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${id}`;
+    const body = {environment};
 
-    return {
-      url,
-      body,
-      headers,
-      type: RequestType.POST,
-    };
+    return this.configureRequest(url, RequestType.POST, body);
   }
 
   configureUserPropertiesRequest(properties: Record<string, string>): NetworkRequest {
-    const headers = this.headerBuilder.buildCommonHeaders();
     const url = `${this.baseUrl}/${ApiEndpoint.Properties}`;
     // TODO delete access_token and q_uid from the body after migrating API to v2
     const body = {
       "access_token": this.primaryConfigProvider.getPrimaryConfig().projectKey,
-      "q_uid": this.userDataProvider.getUserId(),
+      "q_uid": this.userDataProvider.getOriginalUserId(),
       "properties": properties
     };
 
-    return {
-      url,
-      headers,
-      type: RequestType.POST,
-      body,
-    };
+    return this.configureRequest(url, RequestType.POST, body);
   }
 
   configureCreateIdentityRequest(qonversionId: string, identityId: string): NetworkRequest {
-    const headers = this.headerBuilder.buildCommonHeaders();
     const url = `${this.baseUrl}/${ApiEndpoint.Identity}/${identityId}`;
     const body = {user_id: qonversionId};
 
-    return {
-      url,
-      headers,
-      type: RequestType.POST,
-      body,
-    };
+    return this.configureRequest(url, RequestType.POST, body);
   }
 
   configureIdentityRequest(identityId: string): NetworkRequest {
-    const headers = this.headerBuilder.buildCommonHeaders();
     const url = `${this.baseUrl}/${ApiEndpoint.Identity}/${identityId}`;
 
-    return {
-      url,
-      headers,
-      type: RequestType.GET,
-    };
+    return this.configureRequest(url, RequestType.GET);
   }
 
   configureEntitlementsRequest(userId: string): NetworkRequest {
-    const headers = this.headerBuilder.buildCommonHeaders();
     const url = `${this.baseUrl}/${ApiEndpoint.Users}/${userId}/entitlements`;
 
-    return {
-      url,
-      headers,
-      type: RequestType.GET,
-    };
+    return this.configureRequest(url, RequestType.GET);
   }
 
   configureStripePurchaseRequest(userId: string, data: PurchaseCoreData & StripeStoreData): NetworkRequest {
-    const headers = this.headerBuilder.buildCommonHeaders();
     const url = `${this.baseUrl}/${ApiEndpoint.Users}/${userId}/purchases`;
     const body = {
       price: data.price,
@@ -111,11 +86,25 @@ export class RequestConfigurator implements IRequestConfigurator {
       purchased: data.purchased,
     };
 
+    return this.configureRequest(url, RequestType.POST, body);
+  }
+
+  private configureRequest(
+    url: string,
+    type: RequestType,
+    body?: RequestBody,
+    additionalHeaders?: RequestHeaders
+  ): NetworkRequest {
+    let headers = this.headerBuilder.buildCommonHeaders();
+    if (additionalHeaders) {
+      headers = {...headers, ...additionalHeaders};
+    }
+
     return {
       url,
       headers,
-      type: RequestType.POST,
+      type,
       body,
-    };
+    }
   }
 }

@@ -1,12 +1,12 @@
 import {
-  IApiInteractor,
-  IRequestConfigurator,
+  ApiInteractor,
+  RequestConfigurator,
   NetworkRequest,
   NetworkResponseError,
   NetworkResponseSuccess
 } from '../../../src/internal/network';
-import {Entitlement, PeriodType, QonversionError, QonversionErrorCode, RenewState, User} from '../../../src';
-import {HTTP_NOT_FOUND} from '../../../src/internal/network/constants';
+import {Entitlement, PeriodType, QonversionError, QonversionErrorCode, RenewState} from '../../../src';
+import {HTTP_CODE_NOT_FOUND} from '../../../src/internal/network/constants';
 import {
   EntitlementApi,
   EntitlementsResponse,
@@ -14,8 +14,8 @@ import {
   EntitlementsServiceImpl
 } from '../../../src/internal/entitlements';
 
-let requestConfigurator: IRequestConfigurator;
-let apiInteractor: IApiInteractor;
+let requestConfigurator: RequestConfigurator;
+let apiInteractor: ApiInteractor;
 let entitlementsService: EntitlementsService;
 const testUserId = 'test user id';
 
@@ -111,7 +111,7 @@ describe('getEntitlements tests', function () {
   test('user does not exist', async () => {
     // given
     const testUserNotFoundResponse: NetworkResponseError = {
-      code: HTTP_NOT_FOUND,
+      code: HTTP_CODE_NOT_FOUND,
       apiCode: '',
       message: testErrorMessage,
       type: '',

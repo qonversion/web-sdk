@@ -5,6 +5,7 @@ import {LaunchMode} from './dto/LaunchMode';
 import {LogLevel} from './dto/LogLevel';
 import {LoggerConfig, NetworkConfig, PrimaryConfig, QonversionConfig} from './types';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageJson = require('../package.json');
 const DEFAULT_LOG_TAG = "Qonversion";
 
@@ -78,19 +79,19 @@ export class QonversionConfigBuilder {
       throw new QonversionError(QonversionErrorCode.ConfigPreparation, "Project key is empty");
     }
 
-    let primaryConfig: PrimaryConfig = {
+    const primaryConfig: PrimaryConfig = {
       projectKey: this.projectKey,
       launchMode: this.launchMode,
       environment: this.environment,
       sdkVersion: packageJson.version,
     };
 
-    let loggerConfig: LoggerConfig = {
+    const loggerConfig: LoggerConfig = {
       logLevel: this.logLevel,
       logTag: this.logTag,
     };
 
-    let networkConfig: NetworkConfig = {
+    const networkConfig: NetworkConfig = {
       canSendRequests: true,
     };
 

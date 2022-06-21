@@ -1,4 +1,4 @@
-import {camelcaseObjectKeys, snakeToCamelCase} from '../../../src/internal/utils/objectUtils';
+import {camelCaseObjectKeys, snakeToCamelCase} from '../../../src/internal/utils/objectUtils';
 
 describe('snakeToCamelCase tests', function () {
   test('simple case', () => {
@@ -56,7 +56,7 @@ describe('camelcaseKeys tests', () => {
 
     testCases.forEach(testCase => {
       // when
-      const res = camelcaseObjectKeys(testCase[0]);
+      const res = camelCaseObjectKeys(testCase[0]);
 
       // then
       expect(res).toStrictEqual(testCase[1]);
