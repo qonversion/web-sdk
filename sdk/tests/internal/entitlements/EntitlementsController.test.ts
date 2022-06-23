@@ -31,6 +31,7 @@ beforeEach(() => {
   userDataStorage = {};
   // @ts-ignore
   logger = {
+    verbose: jest.fn(),
     info: jest.fn(),
     error: jest.fn(),
   };
@@ -50,6 +51,7 @@ describe('getEntitlements tests', () => {
     expect(res).toStrictEqual(testEntitlements);
     expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(entitlementsService.getEntitlements).toBeCalledWith(testUserId);
+    expect(logger.verbose).toBeCalledWith('Requesting entitlements', {userId: testUserId});
     expect(logger.info).toBeCalledWith('Successfully received entitlements', testEntitlements);
   });
 
@@ -62,6 +64,7 @@ describe('getEntitlements tests', () => {
     // when and then
     await expect(entitlementsController.getEntitlements()).rejects.toThrow(unknownError);
     expect(entitlementsService.getEntitlements).toBeCalledWith(testUserId);
+    expect(logger.verbose).toBeCalledWith('Requesting entitlements', {userId: testUserId});
     expect(logger.error).toBeCalledWith('Failed to request entitlements', unknownError);
   });
 
@@ -79,7 +82,8 @@ describe('getEntitlements tests', () => {
     // then
     expect(res).toStrictEqual([]);
     expect(entitlementsService.getEntitlements).toBeCalledWith(testUserId);
-    expect(logger.info).toBeCalledWith('User is not registered. Creating new one');
+    expect(logger.verbose).toBeCalledWith('Requesting entitlements', {userId: testUserId});
+    expect(logger.verbose).toBeCalledWith('User is not registered. Creating new one');
     expect(userController.createUser).toBeCalled();
     expect(logger.error).not.toBeCalled();
   });
@@ -98,8 +102,9 @@ describe('getEntitlements tests', () => {
     // then
     expect(res).toStrictEqual([]);
     expect(entitlementsService.getEntitlements).toBeCalledWith(testUserId);
-    expect(logger.info).toBeCalledWith('User is not registered. Creating new one');
+    expect(logger.verbose).toBeCalledWith('Requesting entitlements', {userId: testUserId});
+    expect(logger.verbose).toBeCalledWith('User is not registered. Creating new one');
+    expect(logger.error).toBeCalledWith('Failed to create new user while requesting entitlements', userCreationError);
     expect(userController.createUser).toBeCalled();
-    expect(logger.error).toBeCalledWith('Failed to create new user', userCreationError);
   });
 });

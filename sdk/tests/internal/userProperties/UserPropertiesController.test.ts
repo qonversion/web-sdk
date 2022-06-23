@@ -25,7 +25,9 @@ beforeEach(() => {
   // @ts-ignore
   delayedWorker = {};
   // @ts-ignore
-  logger = {};
+  logger = {
+    verbose: jest.fn(),
+  };
 
   userPropertiesController = new UserPropertiesControllerImpl(
     pendingUserPropertiesStorage,
@@ -54,6 +56,7 @@ describe('set property/properties tests', () => {
 
     // then
     expect(userPropertiesController.setProperties).toBeCalledWith({[key]: value});
+    expect(logger.verbose).toBeCalledWith('Setting user property', {key, value});
   });
 
   test('multiple valid properties', () => {
@@ -73,6 +76,7 @@ describe('set property/properties tests', () => {
     expect(userPropertiesController['shouldSendProperty']).toBeCalledWith('b', 'bb');
     expect(pendingUserPropertiesStorage.add).toBeCalledWith(properties);
     expect(userPropertiesController['sendUserPropertiesIfNeeded']).toBeCalledTimes(1);
+    expect(logger.verbose).toBeCalledWith('Setting user properties', properties);
   });
 
   test('multiple invalid properties', () => {
@@ -92,6 +96,7 @@ describe('set property/properties tests', () => {
     expect(userPropertiesController['shouldSendProperty']).toBeCalledWith('b', 'bb');
     expect(pendingUserPropertiesStorage.add).toBeCalledWith({});
     expect(userPropertiesController['sendUserPropertiesIfNeeded']).toBeCalledTimes(1);
+    expect(logger.verbose).toBeCalledWith('Setting user properties', properties);
   });
 
   test('multiple properties with several valid', () => {
@@ -111,6 +116,7 @@ describe('set property/properties tests', () => {
     expect(userPropertiesController['shouldSendProperty']).toBeCalledWith('b', 'bb');
     expect(pendingUserPropertiesStorage.add).toBeCalledWith({a: 'aa'});
     expect(userPropertiesController['sendUserPropertiesIfNeeded']).toBeCalledTimes(1);
+    expect(logger.verbose).toBeCalledWith('Setting user properties', properties);
   });
 });
 
@@ -190,6 +196,8 @@ describe('sendUserProperties tests', () => {
     expect(sentUserPropertiesStorage.add).toBeCalledWith(properties);
     expect(userPropertiesController['sendUserPropertiesIfNeeded']).toBeCalledWith(true);
 
+    expect(logger.verbose).toBeCalledWith('Sending user properties', properties);
+    expect(logger.verbose).toBeCalledWith('User properties were sent', {processedPropertyKeys});
     expect(logger.warn).not.toBeCalled();
     expect(logger.error).not.toBeCalled();
   });
@@ -209,6 +217,7 @@ describe('sendUserProperties tests', () => {
     expect(pendingUserPropertiesStorage.delete).not.toBeCalled();
     expect(sentUserPropertiesStorage.add).not.toBeCalled();
 
+    expect(logger.verbose).not.toBeCalled();
     expect(logger.warn).not.toBeCalled();
     expect(logger.error).not.toBeCalled();
   });
@@ -229,6 +238,8 @@ describe('sendUserProperties tests', () => {
     expect(logger.error).toBeCalledWith('Failed to send user properties to api', expError);
     expect(pendingUserPropertiesStorage.delete).not.toBeCalled();
     expect(sentUserPropertiesStorage.add).not.toBeCalled();
+
+    expect(logger.verbose).toBeCalledWith('Sending user properties', properties);
   });
 
   test('not all properties were processed', async () => {
@@ -249,6 +260,9 @@ describe('sendUserProperties tests', () => {
     expect(sentUserPropertiesStorage.add).toBeCalledWith(processedProperties);
     expect(logger.warn).toBeCalledWith('Some user properties were not processed: b.');
     expect(userPropertiesController['sendUserPropertiesIfNeeded']).toBeCalledWith(true);
+
+    expect(logger.verbose).toBeCalledWith('Sending user properties', properties);
+    expect(logger.verbose).toBeCalledWith('User properties were sent', {processedPropertyKeys});
   });
 });
 

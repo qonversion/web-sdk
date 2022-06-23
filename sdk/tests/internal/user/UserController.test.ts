@@ -41,6 +41,7 @@ beforeEach(() => {
   userIdGenerator = {};
   // @ts-ignore
   logger = {
+    verbose: jest.fn(),
     info: jest.fn(),
     error: jest.fn(),
   };
@@ -91,6 +92,7 @@ describe('getUser tests', function () {
     expect(res).toStrictEqual(testUser);
     expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(userService.getUser).toBeCalledWith(testQonversionUserId);
+    expect(logger.verbose).toBeCalledWith('Sending user request', {userId: testQonversionUserId});
     expect(logger.info).toBeCalledWith('User info was successfully received from API', testUser);
     expect(logger.error).not.toBeCalled();
   });
@@ -104,6 +106,7 @@ describe('getUser tests', function () {
     await expect(userController.getUser()).rejects.toThrow(noUserIdError);
     expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(userService.getUser).not.toBeCalled();
+    expect(logger.verbose).not.toBeCalled();
     expect(logger.info).not.toBeCalled();
     expect(logger.error).toBeCalledWith('Failed to get User from API', noUserIdError);
   });
@@ -118,6 +121,7 @@ describe('getUser tests', function () {
     await expect(userController.getUser()).rejects.toThrow(userRequestError);
     expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(userService.getUser).toBeCalledWith(testQonversionUserId);
+    expect(logger.verbose).toBeCalledWith('Sending user request', {userId: testQonversionUserId});
     expect(logger.info).not.toBeCalled();
     expect(logger.error).toBeCalledWith('Failed to get User from API', userRequestError);
   });
@@ -141,6 +145,7 @@ describe('identify tests', function () {
     expect(userDataStorage.getIdentityUserId).toBeCalled();
     expect(identityService.obtainIdentity).not.toBeCalled();
     expect(userController['handleSuccessfulIdentity']).not.toBeCalled();
+    expect(logger.verbose).toBeCalledWith('Current user has the same identity id', {identityId: testIdentityUserId});
   });
 
   test('existing identity', async () => {
@@ -156,6 +161,7 @@ describe('identify tests', function () {
     expect(identityService.obtainIdentity).toBeCalledWith(testIdentityUserId);
     expect(userController['handleSuccessfulIdentity']).toBeCalledWith(testNewQonversionUserId, testIdentityUserId);
     expect(identityService.createIdentity).not.toBeCalled();
+    expect(logger.verbose).toBeCalledWith('Checking for existing user with the given identity id', {identityId: testIdentityUserId});
   });
 
   test('obtainIdentity throws unknown error', async () => {
@@ -166,6 +172,7 @@ describe('identify tests', function () {
     // when and then
     await expect(() => userController.identify(testIdentityUserId)).rejects.toThrow(unknownError);
     expect(userDataStorage.getIdentityUserId).toBeCalled();
+    expect(logger.verbose).toBeCalledWith('Checking for existing user with the given identity id', {identityId: testIdentityUserId});
     expect(logger.error).toBeCalledWith(`Failed to identify user with id ${testIdentityUserId}`, unknownError);
     expect(userController['handleSuccessfulIdentity']).not.toBeCalled();
   });
@@ -186,6 +193,8 @@ describe('identify tests', function () {
     expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(identityService.createIdentity).toBeCalledWith(testQonversionUserId, testIdentityUserId);
     expect(userController['handleSuccessfulIdentity']).toBeCalledWith(testNewQonversionUserId, testIdentityUserId);
+    expect(logger.verbose).toBeCalledWith('Checking for existing user with the given identity id', {identityId: testIdentityUserId});
+    expect(logger.verbose).toBeCalledWith('No user found with the given identity id, linking current one', {userId: testQonversionUserId, identityId: testIdentityUserId});
   });
 
   test('identity not found, but creation fails', async () => {
@@ -202,6 +211,8 @@ describe('identify tests', function () {
     expect(identityService.obtainIdentity).toBeCalledWith(testIdentityUserId);
     expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(identityService.createIdentity).toBeCalledWith(testQonversionUserId, testIdentityUserId);
+    expect(logger.verbose).toBeCalledWith('Checking for existing user with the given identity id', {identityId: testIdentityUserId});
+    expect(logger.verbose).toBeCalledWith('No user found with the given identity id, linking current one', {userId: testQonversionUserId, identityId: testIdentityUserId});
     expect(logger.error).toBeCalledWith(`Failed to create user identity for id ${testIdentityUserId}`, creationError);
     expect(userController['handleSuccessfulIdentity']).not.toBeCalled();
   });
@@ -218,6 +229,7 @@ describe('logout tests', function () {
 
     // then
     expect(userController['createUser']).not.toBeCalled();
+    expect(logger.verbose).toBeCalledWith('No user is identified, no need to logout');
   });
 
   test('successful logout', async () => {
@@ -262,6 +274,7 @@ describe('createUser tests', function () {
     expect(userIdGenerator.generate).toBeCalled();
     expect(userDataStorage.setOriginalUserId).toBeCalledWith(testNewQonversionUserId);
     expect(userService.createUser).toBeCalledWith(testNewQonversionUserId);
+    expect(logger.verbose).toBeCalledWith('Creating new user', {userId: testNewQonversionUserId});
   });
 });
 

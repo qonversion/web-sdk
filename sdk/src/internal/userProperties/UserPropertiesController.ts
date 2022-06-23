@@ -29,10 +29,12 @@ export class UserPropertiesControllerImpl implements UserPropertiesController {
   }
 
   setProperty(key: string, value: string): void {
+    this.logger.verbose('Setting user property', {key, value});
     this.setProperties({[key]: value})
   }
 
   setProperties(properties: Record<string, string>): void {
+    this.logger.verbose('Setting user properties', properties);
     const validatedProperties: Record<string, string> = {};
     Object.keys(properties).forEach(key => {
       if (this.shouldSendProperty(key, properties[key])) {
@@ -62,6 +64,7 @@ export class UserPropertiesControllerImpl implements UserPropertiesController {
       if (Object.keys(propertiesToSend).length === 0) {
         return
       }
+      this.logger.verbose('Sending user properties', propertiesToSend);
       const processedPropertyKeys = await this.userPropertiesService.sendProperties(propertiesToSend);
 
       const nonProcessedProperties: Record<string, string> = {};
@@ -73,6 +76,8 @@ export class UserPropertiesControllerImpl implements UserPropertiesController {
           nonProcessedProperties[key] = propertiesToSend[key];
         }
       });
+
+      this.logger.verbose('User properties were sent', {processedPropertyKeys});
 
       // We delete all sent properties even if they were not successfully handled
       // to prevent spamming api with unacceptable properties.

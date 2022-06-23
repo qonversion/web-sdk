@@ -35,6 +35,7 @@ export class UserControllerImpl implements UserController {
   async getUser(): Promise<User> {
     try {
       const userId = this.userDataStorage.requireOriginalUserId();
+      this.logger.verbose('Sending user request', {userId});
       const apiUser = await this.userService.getUser(userId);
       this.logger.info('User info was successfully received from API', apiUser);
       return apiUser;
@@ -46,10 +47,12 @@ export class UserControllerImpl implements UserController {
 
   async identify(identityId: string): Promise<void> {
     if (identityId == this.userDataStorage.getIdentityUserId()) {
+      this.logger.verbose('Current user has the same identity id', {identityId});
       return;
     }
 
     try {
+      this.logger.verbose('Checking for existing user with the given identity id', {identityId});
       const newOriginalId = await this.identityService.obtainIdentity(identityId);
       this.handleSuccessfulIdentity(newOriginalId, identityId);
     } catch (error) {
@@ -57,6 +60,7 @@ export class UserControllerImpl implements UserController {
         const originalId = this.userDataStorage.requireOriginalUserId();
 
         try {
+          this.logger.verbose('No user found with the given identity id, linking current one', {userId: originalId, identityId});
           const newOriginalId = await this.identityService.createIdentity(originalId, identityId);
           this.handleSuccessfulIdentity(newOriginalId, identityId);
         } catch (secondaryError) {
@@ -72,6 +76,7 @@ export class UserControllerImpl implements UserController {
 
   async logout(): Promise<void> {
     if (!this.userDataStorage.getIdentityUserId()) {
+      this.logger.verbose('No user is identified, no need to logout');
       return;
     }
 
@@ -89,6 +94,7 @@ export class UserControllerImpl implements UserController {
     const newOriginalId = this.userIdGenerator.generate();
     this.userDataStorage.setOriginalUserId(newOriginalId);
 
+    this.logger.verbose('Creating new user', {userId: newOriginalId});
     return this.userService.createUser(newOriginalId);
   }
 
