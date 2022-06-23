@@ -15,6 +15,7 @@ import {UserPropertiesController, UserPropertiesControllerImpl} from '../../src/
 import {UserController} from '../../src/internal/user';
 import {EntitlementsController, EntitlementsControllerImpl} from '../../src/internal/entitlements';
 import {PurchasesController, PurchasesControllerImpl} from '../../src/internal/purchases';
+import {Logger} from '../../src/internal/logger';
 
 jest.mock('../../src/internal/di/DependenciesAssembly', () => {
   const originalModule = jest.requireActual('../../src/internal/di/DependenciesAssembly');
@@ -30,6 +31,7 @@ let userController: UserController;
 let entitlementsController: EntitlementsController;
 let purchasesController: PurchasesController;
 let dependenciesAssembly: jest.Mocked<DependenciesAssembly>;
+let logger: Logger;
 let qonversionInternal: QonversionInternal;
 
 beforeEach(() => {
@@ -55,12 +57,17 @@ beforeEach(() => {
   entitlementsController = new (EntitlementsControllerImpl as any)();
   purchasesController = new (PurchasesControllerImpl as any)();
   // @ts-ignore
+  logger = {
+    verbose: jest.fn(),
+  }
+  // @ts-ignore
   userController = {};
   dependenciesAssembly = new (DependenciesAssembly as any)();
   dependenciesAssembly.userPropertiesController = jest.fn(() => userPropertyController);
   dependenciesAssembly.userController = jest.fn(() => userController);
   dependenciesAssembly.entitlementsController = jest.fn(() => entitlementsController);
   dependenciesAssembly.purchasesController = jest.fn(() => purchasesController);
+  dependenciesAssembly.logger = jest.fn(() => logger);
   qonversionInternal = new QonversionInternal(internalConfig, dependenciesAssembly);
 });
 
@@ -75,6 +82,7 @@ describe('setters tests', function () {
 
     // then
     expect(internalConfig.primaryConfig).toStrictEqual(expPrimaryConfig);
+    expect(logger.verbose).toBeCalledWith('setEnvironment() call');
   });
 
   test('set log level', () => {
@@ -87,6 +95,7 @@ describe('setters tests', function () {
 
     // then
     expect(internalConfig.loggerConfig).toStrictEqual(expLoggerConfig);
+    expect(logger.verbose).toBeCalledWith('setLogLevel() call');
   });
 
   test('set log tag', () => {
@@ -99,6 +108,7 @@ describe('setters tests', function () {
 
     // then
     expect(internalConfig.loggerConfig).toStrictEqual(expLoggerConfig);
+    expect(logger.verbose).toBeCalledWith('setLogTag() call');
   });
 });
 
@@ -116,6 +126,7 @@ describe('finish tests', function () {
 
     // then
     expect(Qonversion['backingInstance']).toBeUndefined();
+    expect(logger.verbose).toBeCalledWith('finish() call');
   });
 
   test('finish not shared instance', () => {
@@ -128,6 +139,7 @@ describe('finish tests', function () {
 
     // then
     expect(Qonversion['backingInstance']).toBe(anotherInstance);
+    expect(logger.verbose).toBeCalledWith('finish() call');
   });
 });
 
@@ -144,6 +156,7 @@ describe('UserController usage tests', () => {
     // then
     expect(res).toStrictEqual(promiseReturned);
     expect(userController.identify).toBeCalledWith(identityId);
+    expect(logger.verbose).toBeCalledWith('identify() call');
   });
 
   test('logout', () => {
@@ -157,6 +170,7 @@ describe('UserController usage tests', () => {
     // then
     expect(res).toStrictEqual(promiseReturned);
     expect(userController.logout).toBeCalled();
+    expect(logger.verbose).toBeCalledWith('logout() call');
   });
 });
 
@@ -172,6 +186,7 @@ describe('UserPropertiesController usage tests', () => {
 
     // then
     expect(userPropertyController.setProperty).toBeCalledWith(key, value);
+    expect(logger.verbose).toBeCalledWith('setCustomUserProperty() call');
   });
 
   test('setUserProperty', () => {
@@ -185,6 +200,7 @@ describe('UserPropertiesController usage tests', () => {
 
     // then
     expect(userPropertyController.setProperty).toBeCalledWith(key, value);
+    expect(logger.verbose).toBeCalledWith('setUserProperty() call');
   });
 
   test('setUserProperties', () => {
@@ -201,6 +217,7 @@ describe('UserPropertiesController usage tests', () => {
 
     // then
     expect(userPropertyController.setProperties).toBeCalledWith(properties);
+    expect(logger.verbose).toBeCalledWith('setUserProperties() call');
   });
 });
 
@@ -216,6 +233,7 @@ describe('EntitlementsController usage tests', () => {
     // then
     expect(res).toStrictEqual(promiseReturned);
     expect(entitlementsController.getEntitlements).toBeCalled();
+    expect(logger.verbose).toBeCalledWith('getEntitlements() call');
   });
 });
 
@@ -248,5 +266,6 @@ describe('PurchasesController usage tests', () => {
       // then
       expect(res).toStrictEqual(promiseReturned);
       expect(purchasesController.sendStripePurchase).toBeCalledWith(requestData);
+      expect(logger.verbose).toBeCalledWith('sendStripePurchase() call');
     });
 });

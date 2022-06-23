@@ -21,16 +21,17 @@ export class EntitlementsControllerImpl implements EntitlementsController {
   async getEntitlements(): Promise<Entitlement[]> {
     try {
       const userId = this.userDataStorage.requireOriginalUserId();
+      this.logger.verbose('Requesting entitlements', {userId});
       const entitlements = await this.entitlementsService.getEntitlements(userId);
       this.logger.info('Successfully received entitlements', entitlements);
       return entitlements;
     } catch (error) {
       if (error instanceof QonversionError && error.code == QonversionErrorCode.UserNotFound) {
         try {
-          this.logger.info('User is not registered. Creating new one');
+          this.logger.verbose('User is not registered. Creating new one');
           await this.userController.createUser();
         } catch (userCreationError) {
-          this.logger.error('Failed to create new user', userCreationError);
+          this.logger.error('Failed to create new user while requesting entitlements', userCreationError);
         }
         return [];
       } else {

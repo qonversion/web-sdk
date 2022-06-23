@@ -34,6 +34,7 @@ beforeEach(() => {
   userDataStorage = {};
   // @ts-ignore
   logger = {
+    verbose: jest.fn(),
     info: jest.fn(),
     error: jest.fn(),
   };
@@ -54,6 +55,7 @@ describe('sendStripePurchase tests', () => {
     expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(purchasesService.sendStripePurchase).toBeCalledWith(testUserId, testStripePurchaseData);
     expect(logger.info).toBeCalledWith('Successfully send the Stripe purchase', testUserPurchase);
+    expect(logger.verbose).toBeCalledWith('Sending Stripe purchase', {userId: testUserId, data: testStripePurchaseData});
   });
 
   test('unknown error while sending purchase', async () => {
@@ -66,5 +68,6 @@ describe('sendStripePurchase tests', () => {
     await expect(purchasesController.sendStripePurchase(testStripePurchaseData)).rejects.toThrow(unknownError);
     expect(purchasesService.sendStripePurchase).toBeCalledWith(testUserId, testStripePurchaseData);
     expect(logger.error).toBeCalledWith('Failed to send the Stripe purchase', unknownError);
+    expect(logger.verbose).toBeCalledWith('Sending Stripe purchase', {userId: testUserId, data: testStripePurchaseData});
   });
 });
