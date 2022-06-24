@@ -21,7 +21,7 @@ const testUserId = 'test user id';
 
 const apiPurchase: UserPurchaseApi = {
   currency: 'USD',
-  price: 10,
+  price: '10',
   purchased: 3243523432,
   stripe_store_data: {
     product_id: 'test product id',
