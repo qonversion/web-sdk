@@ -27,7 +27,7 @@ export class QonversionInternal implements QonversionInstance {
     this.userPropertiesController = dependenciesAssembly.userPropertiesController();
     this.userController = dependenciesAssembly.userController();
     this.entitlementsController = dependenciesAssembly.entitlementsController();
-    this.purchasesController = dependenciesAssembly.purchasesController();
+      this.purchasesController = dependenciesAssembly.purchasesController();
     this.logger = dependenciesAssembly.logger();
 
     this.logger.verbose("The QonversionInstance is created");
@@ -40,7 +40,9 @@ export class QonversionInternal implements QonversionInstance {
 
   getEntitlements(): Promise<Entitlement[]> {
     this.logger.verbose("getEntitlements() call");
-    return this.entitlementsController.getEntitlements();
+    this.entitlementsController.getEntitlements();
+    
+    return;
   }
 
   identify(userId: string): Promise<void> {
