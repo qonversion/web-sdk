@@ -25,7 +25,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install Dependencies
-        run: yarn ci
+        run: yarn
 
       - name: Run linter
         run: yarn lint
@@ -50,7 +50,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install Dependencies
-        run: yarn ci
+        run: yarn
 
       - name: Run tsc
         run: yarn build
@@ -75,7 +75,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - name: Install Dependencies
-        run: npm ci
+        run: yarn
 
       - name: Run tests
         run: yarn test
