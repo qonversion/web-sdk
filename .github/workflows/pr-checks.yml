@@ -1,6 +1,8 @@
-name: CI
+name: PR checks
 
-on: [pull_request]
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   lint:
