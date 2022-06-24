@@ -8,7 +8,7 @@ Qonversion is the data platform to power in-app subscription revenue growth.
 * back-end infrastructure to validate user receipts
 * manage cross-platform user access to paid content on your app
 * comprehensive subscription analytics
-* out-of-the-box integrations with the leading marketing, attribution, and product analytics platforms
+* out-of-the-box integrations with the leading ma rketing, attribution, and product analytics platforms
 * push notifications and in-app messaging to win back lapsed subscribers
 * A/B Testing for in-app purchases
 
