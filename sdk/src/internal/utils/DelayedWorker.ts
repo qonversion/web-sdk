@@ -9,7 +9,6 @@ export type DelayedWorker = {
 };
 
 export class DelayedWorkerImpl implements DelayedWorker {
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   private timeoutId: any | undefined; // timeout type differs for different engines
 
   doDelayed(delayMs: number, action: () => Promise<void>, ignoreExistingJob: boolean = false): void {
