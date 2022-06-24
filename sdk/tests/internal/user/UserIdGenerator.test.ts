@@ -1,7 +1,7 @@
 import {UserIdGenerator, UserIdGeneratorImpl} from '../../../src/internal/user';
 import {USER_ID_PREFIX, USER_ID_SEPARATOR} from '../../../src/internal/user/constants';
 
-const testUuid = 'testUuid';
+const testUuid = 'b431fcbe-b067-4be0-9288-4a19887522e8';
 
 jest.mock('uuid', () => {
   const originalModule = jest.requireActual('uuid');
@@ -24,7 +24,8 @@ describe('UserIdGenerator tests', function () {
 
   test('generate user id', () => {
     // given
-    const expRes = `${USER_ID_PREFIX}${USER_ID_SEPARATOR}${testUuid}`;
+    const uuidWithoutDashes = 'b431fcbeb0674be092884a19887522e8';
+    const expRes = `${USER_ID_PREFIX}${USER_ID_SEPARATOR}${uuidWithoutDashes}`;
 
     // when
     const res = userIdGenerator.generate();

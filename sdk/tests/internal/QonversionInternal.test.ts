@@ -243,7 +243,7 @@ describe('PurchasesController usage tests', () => {
       // given
       const responseData: UserPurchase = {
         currency: 'USD',
-        price: 10,
+        price: '10',
         purchased: 934590234,
         stripeStoreData: {
           productId: 'test product id',
@@ -252,7 +252,7 @@ describe('PurchasesController usage tests', () => {
       };
       const requestData: PurchaseCoreData & StripeStoreData = {
         currency: 'USD',
-        price: 10,
+        price: '10',
         purchased: 934590234,
         productId: 'test product id',
         subscriptionId: 'test subscription id',

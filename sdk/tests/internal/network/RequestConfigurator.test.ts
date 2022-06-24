@@ -153,7 +153,7 @@ describe('RequestConfigurator tests', () => {
     // given
     const data: PurchaseCoreData & StripeStoreData = {
       currency: 'USD',
-      price: 14.99,
+      price: '14.99',
       purchased: 124330432,
       productId: 'test product',
       subscriptionId: 'test subscription',

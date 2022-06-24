@@ -4,7 +4,7 @@ import {USER_ID_PREFIX, USER_ID_SEPARATOR} from './constants';
 
 export class UserIdGeneratorImpl implements UserIdGenerator {
   generate(): string {
-    const uuid = generateUuid().replace('-', '');
+    const uuid = generateUuid().replace(/-/g, '');
 
     return `${USER_ID_PREFIX}${USER_ID_SEPARATOR}${uuid}`;
   }
