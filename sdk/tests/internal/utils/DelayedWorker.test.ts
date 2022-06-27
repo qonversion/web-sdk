@@ -15,7 +15,7 @@ describe('DelayedWorker tests', () => {
     delayedWorker = new DelayedWorkerImpl();
   });
 
-  test('do normal delayed job', () => {
+  test('do normal delayed job', async () => {
     // given
     delayedWorker.isInProgress = jest.fn(() => false);
 
@@ -31,7 +31,8 @@ describe('DelayedWorker tests', () => {
     expect(testAction).not.toBeCalled();
 
     jest.advanceTimersByTime(testDelay / 2 + 1);
-    expect(testAction).toBeCalled();
+    await expect(testAction).toBeCalled();
+    expect(delayedWorker['timeoutId']).toBeUndefined();
   });
 
   test('do delayed job when another one is in progress', () => {

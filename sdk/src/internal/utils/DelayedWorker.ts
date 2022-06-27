@@ -18,7 +18,13 @@ export class DelayedWorkerImpl implements DelayedWorker {
     }
 
     if (!this.isInProgress()) {
-      this.timeoutId = setTimeout(action, delayMs);
+      this.timeoutId = setTimeout(async () => {
+        try {
+          await action();
+        } finally {
+          this.timeoutId = undefined;
+        }
+      }, delayMs);
     }
   }
 

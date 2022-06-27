@@ -11,7 +11,7 @@ let purchasesController: PurchasesController;
 const testUserId = 'test user id';
 const testUserPurchase: UserPurchase = {
   currency: 'USD',
-  price: 10,
+  price: '10',
   purchased: 3243523432,
   stripeStoreData: {
     productId: 'test product id',
@@ -21,7 +21,7 @@ const testUserPurchase: UserPurchase = {
 
 const testStripePurchaseData: PurchaseCoreData & StripeStoreData = {
   currency: 'USD',
-  price: 10,
+  price: '10',
   productId: 'test product id',
   purchased: 3243523432,
   subscriptionId: 'test subscription id'

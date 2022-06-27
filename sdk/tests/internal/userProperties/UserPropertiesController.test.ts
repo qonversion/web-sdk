@@ -56,7 +56,6 @@ describe('set property/properties tests', () => {
 
     // then
     expect(userPropertiesController.setProperties).toBeCalledWith({[key]: value});
-    expect(logger.verbose).toBeCalledWith('Setting user property', {key, value});
   });
 
   test('multiple valid properties', () => {

@@ -9,7 +9,7 @@ export type PurchasesController = {
 };
 
 export type PurchaseCoreDataApi = {
-  price: number;
+  price: string;
   currency: string;
   purchased: number;
 };

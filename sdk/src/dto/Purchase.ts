@@ -1,5 +1,5 @@
 export type PurchaseCoreData = {
-  price: number;
+  price: string;
   currency: string; // Currency code by ISO 4217 standard
   purchased: number; // todo check date type
 };

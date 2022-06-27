@@ -29,7 +29,6 @@ export class UserPropertiesControllerImpl implements UserPropertiesController {
   }
 
   setProperty(key: string, value: string): void {
-    this.logger.verbose('Setting user property', {key, value});
     this.setProperties({[key]: value})
   }
 
