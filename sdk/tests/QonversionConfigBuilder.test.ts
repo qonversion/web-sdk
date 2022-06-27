@@ -1,6 +1,5 @@
 import {
   Environment,
-  LaunchMode,
   LogLevel,
   QonversionConfig,
   QonversionConfigBuilder,
@@ -16,16 +15,15 @@ test('constructor', () => {
   const projectKey = "test_key";
 
   // when
-  const builder = new QonversionConfigBuilder(projectKey, LaunchMode.InfrastructureMode);
+  const builder = new QonversionConfigBuilder(projectKey);
 
   // then
   expect(builder["projectKey"]).toBe(projectKey);
-  expect(builder["launchMode"]).toBe(LaunchMode.InfrastructureMode);
 });
 
 test('setting environment type', () => {
   // given
-  const builder = new QonversionConfigBuilder('test', LaunchMode.InfrastructureMode);
+  const builder = new QonversionConfigBuilder('test');
   const environment = Environment.Sandbox;
 
   // when
@@ -37,7 +35,7 @@ test('setting environment type', () => {
 
 test('setting log level', () => {
   // given
-  const builder = new QonversionConfigBuilder('test', LaunchMode.InfrastructureMode);
+  const builder = new QonversionConfigBuilder('test');
   const logLevel = LogLevel.Error;
 
   // when
@@ -49,7 +47,7 @@ test('setting log level', () => {
 
 test('setting log tag', () => {
   // given
-  const builder = new QonversionConfigBuilder('test', LaunchMode.InfrastructureMode);
+  const builder = new QonversionConfigBuilder('test');
   const logTag = "test tag";
 
   // when
@@ -65,16 +63,14 @@ test('successful build with full list of arguments', () => {
   const mockLogTag = "test tag";
   const mockEnvironment = Environment.Sandbox;
   const projectKey = "test key";
-  const launchMode = LaunchMode.InfrastructureMode;
 
-  const builder = new QonversionConfigBuilder(projectKey, launchMode);
+  const builder = new QonversionConfigBuilder(projectKey);
   builder["logLevel"] = mockLogLevel;
   builder["logTag"] = mockLogTag;
   builder["environment"] = mockEnvironment;
 
   const expPrimaryConfig: PrimaryConfig = {
     projectKey,
-    launchMode: launchMode,
     environment: mockEnvironment,
     sdkVersion: packageJson.version,
   };
@@ -105,13 +101,11 @@ test('successful build without full list of arguments', () => {
   const defaultEnvironment = Environment.Production;
   const defaultCanSendRequests = true;
   const projectKey = "test key";
-  const launchMode = LaunchMode.InfrastructureMode;
 
-  const builder = new QonversionConfigBuilder(projectKey, launchMode);
+  const builder = new QonversionConfigBuilder(projectKey);
 
   const expPrimaryConfig: PrimaryConfig = {
     projectKey,
-    launchMode: launchMode,
     environment: defaultEnvironment,
     sdkVersion: packageJson.version,
   };
@@ -137,7 +131,7 @@ test('successful build without full list of arguments', () => {
 
 test('building with blank project key', () => {
   // given
-  const builder = new QonversionConfigBuilder("", LaunchMode.InfrastructureMode);
+  const builder = new QonversionConfigBuilder("");
   const testingMethod = builder.build.bind(builder);
 
   // when and then

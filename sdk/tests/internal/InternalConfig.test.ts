@@ -1,5 +1,5 @@
 import {LoggerConfig, NetworkConfig, PrimaryConfig, QonversionConfig} from '../../src/types';
-import {Environment, LaunchMode, LogLevel} from '../../src';
+import {Environment, LogLevel} from '../../src';
 import {
   InternalConfig,
   EnvironmentProvider,
@@ -18,7 +18,6 @@ const canSendRequestsInitial = true;
 beforeAll(() => {
   primaryConfig = {
     environment: Environment.Sandbox,
-    launchMode: LaunchMode.InfrastructureMode,
     projectKey: '',
     sdkVersion: '',
   };
@@ -40,12 +39,11 @@ beforeEach(() => {
 
 describe('EnvironmentProvider tests', () => {
   const projectKey = "projectKey";
-  const launchMode = LaunchMode.InfrastructureMode;
   const environment = Environment.Sandbox;
 
   test('get environment', () => {
     // given
-    internalConfig.primaryConfig = {projectKey, launchMode, environment, sdkVersion: ''};
+    internalConfig.primaryConfig = {projectKey, environment, sdkVersion: ''};
     const environmentProvider: EnvironmentProvider = internalConfig;
 
     // when
@@ -57,7 +55,7 @@ describe('EnvironmentProvider tests', () => {
 
   test('is sandbox when sandbox env', () => {
     // given
-    internalConfig.primaryConfig = {projectKey, launchMode, environment: Environment.Sandbox, sdkVersion: ''};
+    internalConfig.primaryConfig = {projectKey, environment: Environment.Sandbox, sdkVersion: ''};
     const environmentProvider: EnvironmentProvider = internalConfig;
 
     // when
@@ -69,7 +67,7 @@ describe('EnvironmentProvider tests', () => {
 
   test('is not sandbox when prod env', () => {
     // given
-    internalConfig.primaryConfig = {projectKey, launchMode, environment: Environment.Production, sdkVersion: ''};
+    internalConfig.primaryConfig = {projectKey, environment: Environment.Production, sdkVersion: ''};
     const environmentProvider: EnvironmentProvider = internalConfig;
 
     // when

@@ -1,5 +1,4 @@
 import {LogLevel} from './dto/LogLevel';
-import {LaunchMode} from './dto/LaunchMode';
 import {Environment} from './dto/Environment';
 import {UserProperty} from './dto/UserProperty';
 import {Entitlement} from './dto/Entitlement';
@@ -141,7 +140,6 @@ export type NetworkConfig = {
 
 export type PrimaryConfig = {
   readonly projectKey: string;
-  readonly launchMode: LaunchMode;
   readonly environment: Environment;
   readonly sdkVersion: string;
 };

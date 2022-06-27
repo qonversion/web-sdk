@@ -4,7 +4,6 @@ import {LoggerConfig, NetworkConfig, PrimaryConfig} from '../../src/types';
 import Qonversion, {
   Entitlement,
   Environment,
-  LaunchMode,
   LogLevel,
   PurchaseCoreData,
   StripeStoreData,
@@ -37,7 +36,6 @@ let qonversionInternal: QonversionInternal;
 beforeEach(() => {
   primaryConfig = {
     environment: Environment.Sandbox,
-    launchMode: LaunchMode.InfrastructureMode,
     projectKey: '',
     sdkVersion: '',
   };
