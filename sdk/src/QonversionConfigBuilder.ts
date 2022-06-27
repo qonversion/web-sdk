@@ -1,7 +1,6 @@
 import {QonversionError} from './exception/QonversionError';
 import {QonversionErrorCode} from './exception/QonversionErrorCode';
 import {Environment} from './dto/Environment';
-import {LaunchMode} from './dto/LaunchMode';
 import {LogLevel} from './dto/LogLevel';
 import {LoggerConfig, NetworkConfig, PrimaryConfig, QonversionConfig} from './types';
 
@@ -17,7 +16,6 @@ const DEFAULT_LOG_TAG = "Qonversion";
  */
 export class QonversionConfigBuilder {
   private readonly projectKey: string;
-  private readonly launchMode: LaunchMode;
   private environment = Environment.Production;
   private logLevel = LogLevel.Info;
   private logTag = DEFAULT_LOG_TAG;
@@ -25,11 +23,9 @@ export class QonversionConfigBuilder {
   /**
    * Creates an instance of a builder
    * @param projectKey your Project Key from Qonversion Dashboard
-   * @param launchMode launch mode of the Qonversion SDK todo add link
    */
-  constructor(projectKey: string, launchMode: LaunchMode) {
+  constructor(projectKey: string) {
     this.projectKey = projectKey;
-    this.launchMode = launchMode;
   };
 
   /**
@@ -81,7 +77,6 @@ export class QonversionConfigBuilder {
 
     const primaryConfig: PrimaryConfig = {
       projectKey: this.projectKey,
-      launchMode: this.launchMode,
       environment: this.environment,
       sdkVersion: packageJson.version,
     };
