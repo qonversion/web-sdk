@@ -11,7 +11,7 @@
   "scripts": {
     "build": "yarn tsc",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint . --max-warnings=0"
   },
   "repository": {
     "type": "git",
