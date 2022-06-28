@@ -32,7 +32,7 @@ Qonversion is the data platform to power subscription revenue growth.
 2. If a purchase is successful, you send its' data to the Qonversion SDK.
 3. The SDK sends a request to Qonversion API for server-to-server purchase validation.
 4. Qonversion server receives accurate information on the purchase status and user entitlements.
-5. The SDK returns handled user purchase to you.
+5. The SDK returns handled user purchase.
 
 ## Analytics
 
