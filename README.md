@@ -30,7 +30,7 @@ Qonversion is the data platform to power subscription revenue growth.
 
 1. You communicate with Stripe to make a purchase.
 2. If a purchase is successful, you send its' data to the Qonversion SDK and it sends a request to Qonversion API for server-to-server purchase validation. Qonversion server receives accurate information on the purchase status and user entitlements.
-4. SDK returns control to the website with a processed state.
+3. SDK returns control to the website with a processed state.
 
 ## Analytics
 
