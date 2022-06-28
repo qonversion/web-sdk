@@ -6,7 +6,7 @@ Qonversion is the data platform to power subscription revenue growth.
 
 * fast subscriptions implementation
 * back-end infrastructure to validate user receipts
-* manage cross-platform user access to paid content on your app or website
+* manage cross-platform user access to paid content on your mobile or web app
 * comprehensive subscription analytics
 * out-of-the-box integrations with the leading marketing, attribution, and product analytics platforms
 * push notifications and in-app messaging for mobile apps to win back lapsed subscribers
@@ -29,8 +29,10 @@ Qonversion is the data platform to power subscription revenue growth.
 </p>
 
 1. You communicate with Stripe to make a purchase.
-2. If a purchase is successful, you send its' data to the Qonversion SDK and it sends a request to Qonversion API for server-to-server purchase validation. Qonversion server receives accurate information on the purchase status and user entitlements.
-3. SDK returns control to the website with a processed state.
+2. If a purchase is successful, you send its' data to the Qonversion SDK.
+3. The SDK sends a request to Qonversion API for server-to-server purchase validation.
+4. Qonversion server receives accurate information on the purchase status and user entitlements.
+5. The SDK returns handled user purchase to you.
 
 ## Analytics
 
@@ -68,7 +70,7 @@ Convinced? Let's go!
 
 ## Getting Started
 
-1. [Create a project and register your website](https://documentation.qonversion.io/docs/quickstart#1-create-a-project-and-register-your-app)
+1. [Create a project and register your web app](https://documentation.qonversion.io/docs/quickstart#1-create-a-project-and-register-your-app)
 2. [Configure entitlements](https://documentation.qonversion.io/docs/quickstart#2-configure-products--permissions-entitlements)
 3. [Install the SDK](https://documentation.qonversion.io/docs/android-sdk) // todo correct link
 4. [Use all SDK features in a few lines](https://documentation.qonversion.io/docs/using-the-sdks) // todo correct link
