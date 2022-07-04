@@ -26,7 +26,7 @@ export type QonversionInstance = {
   /**
    * Call this function to link a user to his unique id in your system and share purchase data.
    * If you want to check identified user permissions await for returned promise to resolve and
-   * call [todo checkEntitlements link] then.
+   * call {@link getEntitlements} then.
    *
    * @param userId - unique user id in your system
    */
@@ -34,8 +34,8 @@ export type QonversionInstance = {
 
   /**
    * Call this function to unlink a user from his unique ID in your system and his purchase data.
-   * If you want to check logged out user permissions await for returned promise to resolve and
-   * call [todo checkEntitlements link] then.
+   * If you want to check logged-out user permissions await for returned promise to resolve and
+   * call {@link getEntitlements} then.
    */
   logout: () => Promise<void>;
 
