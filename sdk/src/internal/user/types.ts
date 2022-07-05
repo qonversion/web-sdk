@@ -40,7 +40,7 @@ export type UserController = {
 export type UserApi = {
   id: string,
   identity_id: string,
-  created: number, // todo check type
+  created: number,
   environment: 'prod' | 'sandbox',
 };
 

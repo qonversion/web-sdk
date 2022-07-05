@@ -16,8 +16,8 @@ export type EntitlementsResponse = {
 export type EntitlementApi = {
   id: string;
   active: boolean;
-  started: number; // todo check data type
-  expires: number; // todo check data type
+  started: number;
+  expires: number;
   product?: ProductApi;
 }
 

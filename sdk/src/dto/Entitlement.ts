@@ -1,8 +1,8 @@
 export type Entitlement = {
    id: string;
    active: boolean;
-   started: number; // todo check data type
-   expires: number; // todo check data type
+   started: number;
+   expires: number;
    product?: Product;
 }
 

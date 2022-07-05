@@ -1,6 +1,6 @@
 export type User = {
   id: string,
   identityId: string,
-  created: number, // todo check type
+  created: number,
   environment: 'prod' | 'sandbox',
 };
