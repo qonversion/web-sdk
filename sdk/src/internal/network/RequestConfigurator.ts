@@ -45,7 +45,6 @@ export class RequestConfiguratorImpl implements RequestConfigurator {
 
   configureUserPropertiesRequest(properties: Record<string, string>): NetworkRequest {
     const url = `${this.baseUrl}/${ApiEndpoint.Properties}`;
-    // TODO delete access_token and q_uid from the body after migrating API to v2
     const body = {
       "access_token": this.primaryConfigProvider.getPrimaryConfig().projectKey,
       "q_uid": this.userDataProvider.getOriginalUserId(),
