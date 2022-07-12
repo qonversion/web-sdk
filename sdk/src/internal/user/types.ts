@@ -30,7 +30,7 @@ export type IdentityService = {
   obtainIdentity: (identityId: string) => Promise<string>;
 };
 
-export type UserController = {
+export type UserController = UserChangedNotifier & {
   getUser: () => Promise<User>;
   createUser: () => Promise<User>;
   identify: (identityId: string) => Promise<void>;

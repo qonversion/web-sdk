@@ -11,7 +11,7 @@ import {Logger} from '../logger';
 import {QonversionError} from '../../exception/QonversionError';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
 
-export class UserControllerImpl implements UserController, UserChangedNotifier {
+export class UserControllerImpl implements UserController {
   private readonly userService: UserService;
   private readonly identityService: IdentityService;
   private readonly userDataStorage: UserDataStorage;
