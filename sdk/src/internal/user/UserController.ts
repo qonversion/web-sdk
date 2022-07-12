@@ -1,5 +1,6 @@
 import {
-  IdentityService, UserChangedListener,
+  IdentityService,
+  UserChangedListener,
   UserController,
   UserDataStorage,
   UserIdGenerator,

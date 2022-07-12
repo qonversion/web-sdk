@@ -33,6 +33,7 @@ beforeEach(() => {
   // @ts-ignore
   userDataStorage = {
     getOriginalUserId: jest.fn(() => testQonversionUserId),
+    getIdentityUserId: jest.fn(() => testIdentityUserId),
     clearIdentityUserId: jest.fn(),
     setOriginalUserId: jest.fn(),
     setIdentityUserId: jest.fn(),
@@ -264,7 +265,6 @@ describe('createUser tests', function () {
   test('simple user creation', async () => {
     // given
     userIdGenerator.generate = jest.fn(() => testNewQonversionUserId);
-    userDataStorage.getIdentityUserId = jest.fn(() => testIdentityUserId);
     userController['fireUserChangedEvent'] = jest.fn();
 
     // when
