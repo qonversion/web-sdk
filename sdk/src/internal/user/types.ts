@@ -47,3 +47,11 @@ export type UserApi = {
 export type IdentityApi = {
   user_id: string;
 };
+
+export type UserChangedListener = {
+  onUserChanged: (newUserOriginalId: string, oldUserOriginalId?: string, oldUserIdentityId?: string) => void;
+};
+
+export type UserChangedNotifier = {
+  subscribeOnUserChanges: (listener: UserChangedListener) => void;
+}

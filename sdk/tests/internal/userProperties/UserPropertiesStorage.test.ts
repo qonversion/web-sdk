@@ -190,4 +190,20 @@ describe('UserPropertiesStorage tests', () => {
     expect(userPropertiesStorage['properties']).toStrictEqual(expProperties);
     expect(savePropertiesSpy).toBeCalled();
   });
+
+  test('clear', () => {
+    // given
+    userPropertiesStorage['properties'] = {
+      a: 'aa',
+      b: 'bb',
+      c: 'cc',
+    };
+
+    // when
+    userPropertiesStorage.clear();
+
+    // then
+    expect(userPropertiesStorage['properties']).toStrictEqual({});
+    expect(savePropertiesSpy).toBeCalled();
+  });
 });

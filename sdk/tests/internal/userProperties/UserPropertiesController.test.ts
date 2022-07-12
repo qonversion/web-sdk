@@ -6,6 +6,7 @@ import {
 import {DelayedWorker} from '../../../src/internal/utils/DelayedWorker';
 import {Logger} from '../../../src/internal/logger';
 import {QonversionError, QonversionErrorCode, UserProperty} from '../../../src';
+import {UserChangedNotifier} from '../../../src/internal/user';
 
 let userPropertiesController: UserPropertiesControllerImpl;
 let pendingUserPropertiesStorage: UserPropertiesStorage;
@@ -13,6 +14,7 @@ let sentUserPropertiesStorage: UserPropertiesStorage;
 let userPropertiesService: UserPropertiesService;
 let delayedWorker: DelayedWorker;
 let logger: Logger;
+let userChangedNotifier: UserChangedNotifier;
 const testSendingDelayMs = 10000;
 
 beforeEach(() => {
@@ -28,6 +30,9 @@ beforeEach(() => {
   logger = {
     verbose: jest.fn(),
   };
+  userChangedNotifier = {
+    subscribeOnUserChanges: jest.fn(),
+  }
 
   userPropertiesController = new UserPropertiesControllerImpl(
     pendingUserPropertiesStorage,
@@ -35,8 +40,20 @@ beforeEach(() => {
     userPropertiesService,
     delayedWorker,
     logger,
+    userChangedNotifier,
     testSendingDelayMs
   );
+});
+
+describe('constructor tests', () => {
+  test('subscribing on user changes', () => {
+    // given
+
+    // when
+
+    // then
+    expect(userChangedNotifier.subscribeOnUserChanges).toBeCalledWith(userPropertiesController);
+  });
 });
 
 describe('set property/properties tests', () => {
@@ -265,6 +282,21 @@ describe('sendUserProperties tests', () => {
   });
 });
 
+describe('onUserChanged tests', () => {
+  test('user changed handling', () => {
+    // given
+    pendingUserPropertiesStorage.clear = jest.fn();
+    sentUserPropertiesStorage.clear = jest.fn();
+
+    // when
+    userPropertiesController.onUserChanged();
+
+    // then
+    expect(pendingUserPropertiesStorage.clear).toBeCalled();
+    expect(sentUserPropertiesStorage.clear).toBeCalled();
+  });
+});
+
 describe('Validator tests', () => {
   beforeEach(() => {
     logger.info = jest.fn();
@@ -328,8 +360,8 @@ describe('Validator tests', () => {
     const key = 'test_key';
     const value = 'test value';
     sentUserPropertiesStorage.getProperties = jest.fn(() => ({[key]: value}));
-    const expInfoMessage = `The same property with key: "${key}" and value: "${value}" ` +
-      'has already been sent for the current user. To avoid any confusion, it will not be sent again.';
+    const expInfoMessage = `The property with key: "${key}" and value: "${value}" ` +
+      'has been sent already for the current user. SDK will not send it again to avoid any confusion.';
 
     // when
     const res = userPropertiesController['shouldSendProperty'](key, value);
