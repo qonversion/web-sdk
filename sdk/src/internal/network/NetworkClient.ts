@@ -2,12 +2,12 @@ import {ApiHeader, NetworkClient, NetworkRequest, RawNetworkResponse} from './ty
 
 export class NetworkClientImpl implements NetworkClient {
   async execute(request: NetworkRequest): Promise<RawNetworkResponse> {
-    const headers = {
+    const headers: HeadersInit = {
       ...request.headers,
       [ApiHeader.ContentType]: 'application/json',
       [ApiHeader.Accept]: 'application/json',
     };
-    const body = request.body ? JSON.stringify(request.body) : undefined;
+    const body: BodyInit | undefined = request.body ? JSON.stringify(request.body) : undefined;
     const requestInit: RequestInit = {
       method: request.type,
       headers,

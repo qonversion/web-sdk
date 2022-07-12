@@ -116,7 +116,7 @@ export class UserPropertiesControllerImpl implements UserPropertiesController {
       shouldSend = false;
       this.logger.info(
         `The same property with key: "${key}" and value: "${value}" ` +
-        'was already sent for the current user. To avoid any confusion, it will not be sent again.'
+        'has already been sent for the current user. To avoid any confusion, it will not be sent again.'
       );
     }
 

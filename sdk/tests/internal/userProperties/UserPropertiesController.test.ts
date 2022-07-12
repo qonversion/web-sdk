@@ -329,7 +329,7 @@ describe('Validator tests', () => {
     const value = 'test value';
     sentUserPropertiesStorage.getProperties = jest.fn(() => ({[key]: value}));
     const expInfoMessage = `The same property with key: "${key}" and value: "${value}" ` +
-      'was already sent for the current user. To avoid any confusion, it will not be sent again.';
+      'has already been sent for the current user. To avoid any confusion, it will not be sent again.';
 
     // when
     const res = userPropertiesController['shouldSendProperty'](key, value);
