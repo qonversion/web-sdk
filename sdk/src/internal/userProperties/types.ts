@@ -8,6 +8,8 @@ export type UserPropertiesStorage = {
   deleteOne: (key: string, value: string) => void;
 
   delete: (properties: Record<string, string>) => void;
+
+  clear: () => void;
 };
 
 export type UserPropertiesService = {

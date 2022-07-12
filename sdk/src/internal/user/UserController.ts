@@ -1,4 +1,11 @@
-import {IdentityService, UserController, UserDataStorage, UserIdGenerator, UserService} from './types';
+import {
+  IdentityService,
+  UserChangedListener,
+  UserController,
+  UserDataStorage,
+  UserIdGenerator,
+  UserService
+} from './types';
 import {User} from '../../dto/User';
 import {Logger} from '../logger';
 import {QonversionError} from '../../exception/QonversionError';
@@ -10,6 +17,7 @@ export class UserControllerImpl implements UserController {
   private readonly userDataStorage: UserDataStorage;
   private readonly userIdGenerator: UserIdGenerator;
   private readonly logger: Logger;
+  private userChangedListeners: UserChangedListener[] = [];
 
   constructor(
     userService: UserService,
@@ -90,18 +98,45 @@ export class UserControllerImpl implements UserController {
   }
 
   async createUser(): Promise<User> {
+    const oldOriginalId = this.userDataStorage.getOriginalUserId();
+    const oldIdentityId = this.userDataStorage.getIdentityUserId();
+
     this.userDataStorage.clearIdentityUserId();
     const newOriginalId = this.userIdGenerator.generate();
     this.userDataStorage.setOriginalUserId(newOriginalId);
 
     this.logger.verbose('Creating new user', {userId: newOriginalId});
-    return this.userService.createUser(newOriginalId);
+    const user = this.userService.createUser(newOriginalId);
+
+    this.fireUserChangedEvent(newOriginalId, oldOriginalId, oldIdentityId);
+
+    return user;
+  }
+
+  subscribeOnUserChanges(listener: UserChangedListener): void {
+    this.userChangedListeners.push(listener);
   }
 
   private handleSuccessfulIdentity(originalId: string, identityId: string) {
+    const oldOriginalId = this.userDataStorage.getOriginalUserId();
+    const oldIdentityId = this.userDataStorage.getIdentityUserId();
+
     this.logger.info(`User with id ${identityId} is successfully identified.`);
 
     this.userDataStorage.setOriginalUserId(originalId);
     this.userDataStorage.setIdentityUserId(identityId);
+
+    this.fireUserChangedEvent(originalId, oldOriginalId, oldIdentityId);
+  }
+
+  private fireUserChangedEvent(newUserOriginalId: string, oldUserOriginalId?: string, oldUserIdentityId?: string): void {
+    if (oldUserOriginalId != newUserOriginalId) {
+      this.logger.verbose(
+        `Current user has changed. Notifying ${this.userChangedListeners.length} listeners.`,
+        {newUserOriginalId, oldUserOriginalId, oldUserIdentityId}
+      );
+
+      this.userChangedListeners.forEach(listener => listener.onUserChanged(newUserOriginalId, oldUserOriginalId, oldUserIdentityId))
+    }
   }
 }

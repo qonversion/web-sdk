@@ -3,8 +3,9 @@ import {DelayedWorker} from '../utils/DelayedWorker';
 import {Logger} from '../logger';
 import {KEY_REGEX, SENDING_DELAY_MS} from './constants';
 import {QonversionError} from '../../exception/QonversionError';
+import {UserChangedListener, UserChangedNotifier} from '../user';
 
-export class UserPropertiesControllerImpl implements UserPropertiesController {
+export class UserPropertiesControllerImpl implements UserPropertiesController, UserChangedListener {
   private readonly pendingUserPropertiesStorage: UserPropertiesStorage;
   private readonly sentUserPropertiesStorage: UserPropertiesStorage;
   private readonly userPropertiesService: UserPropertiesService;
@@ -18,7 +19,8 @@ export class UserPropertiesControllerImpl implements UserPropertiesController {
     userPropertiesService: UserPropertiesService,
     delayedWorker: DelayedWorker,
     logger: Logger,
-    sendingDelayMs: number = SENDING_DELAY_MS,
+    userChangedNotifier: UserChangedNotifier,
+    sendingDelayMs: number = SENDING_DELAY_MS
   ) {
     this.pendingUserPropertiesStorage = pendingUserPropertiesStorage;
     this.sentUserPropertiesStorage = sentUserPropertiesStorage;
@@ -26,6 +28,8 @@ export class UserPropertiesControllerImpl implements UserPropertiesController {
     this.delayedWorker = delayedWorker;
     this.logger = logger;
     this.sendingDelayMs = sendingDelayMs;
+
+    userChangedNotifier.subscribeOnUserChanges(this);
   }
 
   setProperty(key: string, value: string): void {
@@ -42,6 +46,11 @@ export class UserPropertiesControllerImpl implements UserPropertiesController {
     });
     this.pendingUserPropertiesStorage.add(validatedProperties);
     this.sendUserPropertiesIfNeeded();
+  }
+
+  onUserChanged(): void {
+    this.pendingUserPropertiesStorage.clear();
+    this.sentUserPropertiesStorage.clear();
   }
 
   private sendUserPropertiesIfNeeded(ignoreExistingJob: boolean = false) {
@@ -115,8 +124,8 @@ export class UserPropertiesControllerImpl implements UserPropertiesController {
     if (shouldSend && this.sentUserPropertiesStorage.getProperties()[key] == value) {
       shouldSend = false;
       this.logger.info(
-        `The same property with key: "${key}" and value: "${value}" ` +
-        'was already sent for the current user. To avoid any confusion, it will not be sent again.'
+        `The property with key: "${key}" and value: "${value}" ` +
+        'has been sent already for the current user. SDK will not send it again to avoid any confusion.'
       );
     }
 

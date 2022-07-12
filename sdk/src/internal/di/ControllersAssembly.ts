@@ -24,6 +24,7 @@ export class ControllersAssemblyImpl implements ControllersAssembly {
       this.servicesAssembly.userPropertiesService(),
       this.miscAssembly.delayedWorker(),
       this.miscAssembly.logger(),
+      this.userController(),
     );
   }
 

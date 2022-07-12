@@ -44,6 +44,11 @@ export class UserPropertiesStorageImpl implements UserPropertiesStorage {
     }
   }
 
+  clear(): void {
+    this.properties = {};
+    this.saveProperties();
+  }
+
   getProperties(): Record<string, string> {
     return this.properties;
   }

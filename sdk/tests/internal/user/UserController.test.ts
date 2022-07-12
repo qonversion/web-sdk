@@ -1,5 +1,5 @@
 import {
-  IdentityService,
+  IdentityService, UserChangedListener,
   UserControllerImpl,
   UserDataStorage,
   UserIdGenerator,
@@ -33,6 +33,7 @@ beforeEach(() => {
   // @ts-ignore
   userDataStorage = {
     getOriginalUserId: jest.fn(() => testQonversionUserId),
+    getIdentityUserId: jest.fn(() => testIdentityUserId),
     clearIdentityUserId: jest.fn(),
     setOriginalUserId: jest.fn(),
     setIdentityUserId: jest.fn(),
@@ -264,30 +265,85 @@ describe('createUser tests', function () {
   test('simple user creation', async () => {
     // given
     userIdGenerator.generate = jest.fn(() => testNewQonversionUserId);
+    userController['fireUserChangedEvent'] = jest.fn();
 
     // when
     const user = await userController['createUser']();
 
     // then
     expect(user).toStrictEqual(testUser);
+    expect(userDataStorage.getOriginalUserId).toBeCalled();
+    expect(userDataStorage.getIdentityUserId).toBeCalled();
     expect(userDataStorage.clearIdentityUserId).toBeCalled();
     expect(userIdGenerator.generate).toBeCalled();
     expect(userDataStorage.setOriginalUserId).toBeCalledWith(testNewQonversionUserId);
     expect(userService.createUser).toBeCalledWith(testNewQonversionUserId);
     expect(logger.verbose).toBeCalledWith('Creating new user', {userId: testNewQonversionUserId});
+    expect(userController['fireUserChangedEvent']).toBeCalledWith(testNewQonversionUserId, testQonversionUserId, testIdentityUserId);
   });
 });
 
 describe('handleSuccessfulIdentity tests', function () {
   test('handle successful identity', () => {
     // given
+    const oldIdentityId = 'test old identity id';
+    userDataStorage.getIdentityUserId = jest.fn(() => oldIdentityId);
+    userController['fireUserChangedEvent'] = jest.fn();
 
     // when
-    userController['handleSuccessfulIdentity'](testQonversionUserId, testIdentityUserId);
+    userController['handleSuccessfulIdentity'](testNewQonversionUserId, testIdentityUserId);
 
     // then
+    expect(userDataStorage.getOriginalUserId).toBeCalled();
+    expect(userDataStorage.getIdentityUserId).toBeCalled();
     expect(logger.info).toBeCalledWith(`User with id ${testIdentityUserId} is successfully identified.`);
-    expect(userDataStorage.setOriginalUserId).toBeCalledWith(testQonversionUserId);
+    expect(userDataStorage.setOriginalUserId).toBeCalledWith(testNewQonversionUserId);
     expect(userDataStorage.setIdentityUserId).toBeCalledWith(testIdentityUserId);
+    expect(userController['fireUserChangedEvent']).toBeCalledWith(testNewQonversionUserId, testQonversionUserId, oldIdentityId);
+  });
+});
+
+describe('fireUserChangedEvent tests', function () {
+  test('original id didn\'t change', () => {
+    // given
+    const listener: UserChangedListener = {
+      onUserChanged: jest.fn(),
+    }
+    userController['userChangedListeners'] = [listener];
+
+    // when
+    userController['fireUserChangedEvent'](testQonversionUserId, testQonversionUserId);
+
+    // then
+    expect(listener.onUserChanged).not.toBeCalled();
+  });
+  test('original id changed', () => {
+    // given
+    const listener: UserChangedListener = {
+      onUserChanged: jest.fn(),
+    }
+    userController['userChangedListeners'] = [listener];
+
+    // when
+    userController['fireUserChangedEvent'](testNewQonversionUserId, testQonversionUserId, testIdentityUserId);
+
+    // then
+    expect(listener.onUserChanged).toBeCalledWith(testNewQonversionUserId, testQonversionUserId, testIdentityUserId);
+  });
+});
+
+describe('subscribeOnUserChanges tests', function () {
+  test('subscribing listener', () => {
+    // given
+    const listener: UserChangedListener = {
+      onUserChanged: jest.fn(),
+    }
+    userController['userChangedListeners'] = [];
+
+    // when
+    userController.subscribeOnUserChanges(listener);
+
+    // then
+    expect(userController['userChangedListeners']).toStrictEqual([listener]);
   });
 });

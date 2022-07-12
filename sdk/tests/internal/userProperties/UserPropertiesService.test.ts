@@ -40,9 +40,9 @@ describe('UserPropertiesService tests', () => {
   test('send properties success', async () => {
     // given
     const expResult = ['a', 'b'];
-    const response: NetworkResponseSuccess<{processed: string[]}> = {
+    const response: NetworkResponseSuccess<{data: {processed: string[]}}> = {
       code: 200,
-      data: {processed: expResult},
+      data: {data: {processed: expResult}},
       isSuccess: true,
     };
     // @ts-ignore

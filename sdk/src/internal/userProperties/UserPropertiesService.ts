@@ -14,10 +14,10 @@ export class UserPropertiesServiceImpl implements UserPropertiesService {
 
   async sendProperties(properties: Record<string, string>): Promise<string[]> {
     const request = this.requestConfigurator.configureUserPropertiesRequest(properties);
-    const response = await this.apiInteractor.execute<{processed: string[]}>(request);
+    const response = await this.apiInteractor.execute<{data: {processed: string[]}}>(request);
 
     if (response.isSuccess) {
-      return response.data.processed;
+      return response.data.data.processed;
     }
 
     const errorMessage = `Response code ${response.code}, message: ${response.message}`;

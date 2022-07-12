@@ -51,7 +51,8 @@ beforeEach(() => {
     networkConfig,
     loggerConfig,
   });
-  userPropertyController = new (UserPropertiesControllerImpl as any)();
+  // @ts-ignore
+  userPropertyController = {};
   entitlementsController = new (EntitlementsControllerImpl as any)();
   purchasesController = new (PurchasesControllerImpl as any)();
   // @ts-ignore
