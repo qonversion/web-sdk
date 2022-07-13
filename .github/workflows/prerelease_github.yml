@@ -3,7 +3,7 @@ name: Pre-release Github
 on:
   push:
     branches:
-      - "tech/release_automation"
+      - "main"
 
 jobs:
   pre-release:
