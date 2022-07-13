@@ -1,7 +1,7 @@
 {
   "name": "qonversion-web-sdk-test",
   "title": "Qonversion Web SDK",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Qonversion provides full in-app purchases infrastructure, so you do not need to build your own server for receipt validation. Implement in-app subscriptions, validate user receipts, check subscription status, and provide access to your app features and content using our Stripe wrapper, StoreKit wrapper and Google Play Billing wrapper.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
