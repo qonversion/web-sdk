@@ -1,0 +1,38 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:mac)
+
+def update_package_json(new_version)
+	path = "../sdk/package.json"
+    regex = /"version": ".*",/
+    result_value = "\"version\": \"#{new_version}\","
+
+    update_file(path, regex, result_value)
+end
+
+def update_file(path, regex, result_value)
+	file = File.read(path)
+    new_content = file.gsub(regex, result_value)
+    File.open(path, 'w') { |line| line.puts new_content }
+end
+
+platform :mac do
+  lane :bump do |options|
+  	new_version = options[:version]
+
+	update_package_json(new_version)
+  end
+end
