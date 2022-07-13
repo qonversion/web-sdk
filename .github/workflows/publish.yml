@@ -16,6 +16,7 @@ jobs:
       - name: Build typescript
         run: |
           cd sdk/
+          yarn
           yarn build
 
       - name: Setup node for publishing
@@ -24,9 +25,9 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npm ci
-
       - name: Publish to npm
-        run: npm publish
+        run: |
+          npm ci
+          npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
