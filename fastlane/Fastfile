@@ -29,7 +29,8 @@ def update_file(path, regex, result_value)
     File.open(path, 'w') { |line| line.puts new_content }
 end
 
-lane :bump do |options|
+platform :mac do
+  lane :bump do |options|
   	new_version = options[:version]
 
 	update_package_json(new_version)
