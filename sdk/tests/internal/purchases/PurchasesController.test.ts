@@ -54,7 +54,7 @@ describe('sendStripePurchase tests', () => {
     expect(res).toStrictEqual(testUserPurchase);
     expect(userDataStorage.requireOriginalUserId).toBeCalled();
     expect(purchasesService.sendStripePurchase).toBeCalledWith(testUserId, testStripePurchaseData);
-    expect(logger.info).toBeCalledWith('Successfully send the Stripe purchase', testUserPurchase);
+    expect(logger.info).toBeCalledWith('Successfully sent the Stripe purchase', testUserPurchase);
     expect(logger.verbose).toBeCalledWith('Sending Stripe purchase', {userId: testUserId, data: testStripePurchaseData});
   });
 

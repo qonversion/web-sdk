@@ -19,7 +19,7 @@ export class PurchasesControllerImpl implements PurchasesController {
       const userId = this.userDataStorage.requireOriginalUserId();
       this.logger.verbose('Sending Stripe purchase', {userId, data});
       const userPurchase = await this.purchasesService.sendStripePurchase(userId, data);
-      this.logger.info('Successfully send the Stripe purchase', userPurchase);
+      this.logger.info('Successfully sent the Stripe purchase', userPurchase);
       return userPurchase;
     } catch (error) {
       this.logger.error('Failed to send the Stripe purchase', error);
