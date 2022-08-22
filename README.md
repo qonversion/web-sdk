@@ -1,6 +1,6 @@
-<p align="center">
- <a href="https://qonversion.io" target="_blank"><img width="360" height="45" src="https://qcdn3.sfo3.digitaloceanspaces.com/github/qonversion_logo.png"></a>
-</p>
+<h1 align="center">
+    Qonversion
+</h1>
 
 Qonversion is the data platform to power subscription revenue growth.
 
@@ -24,8 +24,7 @@ Qonversion is the data platform to power subscription revenue growth.
 ## How It Works: Product Center
 
 <p align="center">
-     <a href="https://documentation.qonversion.io/docs/integrations-overview"><img width="90%" src="https://qcdn3.sfo3.digitaloceanspaces.com/github/qonversion_pc.png">
-     </a>
+    <a href="https://documentation.qonversion.io/docs/integrations-overview"><img width="90%" src="https://user-images.githubusercontent.com/13959241/161107203-8ef3ecee-86be-47a2-ac57-b21d3da19339.png">
 </p>
 
 1. You communicate with Stripe to make a purchase.
