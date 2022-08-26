@@ -91,6 +91,18 @@ describe('UserPropertiesBuilder tests', () => {
     expect(builder['properties']).toStrictEqual(expProperties);
   });
 
+  test('set Firebase app instance id', () => {
+    // given
+    const appId = "test Firebase app id";
+    const expProperties = {'_q_firebase_instance_id': appId};
+
+    // when
+    builder.setFirebaseAppInstanceId(appId);
+
+    // then
+    expect(builder['properties']).toStrictEqual(expProperties);
+  });
+
   test('set custom user property', () => {
     // given
     const key = "test key";
