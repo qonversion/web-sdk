@@ -84,6 +84,16 @@ export class UserPropertiesBuilder {
   }
 
   /**
+   * Set Firebase application id.
+   * @param firebaseAppInstanceId firebase app id
+   * @return builder instance for chain calls
+   */
+  setFirebaseAppInstanceId(firebaseAppInstanceId: string): UserPropertiesBuilder {
+    this.properties[UserProperty.FirebaseAppInstanceId] = firebaseAppInstanceId;
+    return this;
+  }
+
+  /**
    * Set a user property with a custom key different from defined ones.
    *
    * Can be called multiple times for different keys.
