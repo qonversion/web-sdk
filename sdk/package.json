@@ -18,6 +18,7 @@
     "url": "git+https://github.com/qonversion/web-sdk.git",
     "baseUrl": "https://github.com/qonversion/web-sdk"
   },
+  "homepage": "https://github.com/qonversion/web-sdk#readme",
   "keywords": [
     "web",
     "qonversion",
