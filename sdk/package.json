@@ -18,6 +18,7 @@
     "url": "git+https://github.com/qonversion/web-sdk.git",
     "baseUrl": "https://github.com/qonversion/web-sdk"
   },
+  "homepage": "https://github.com/qonversion/web-sdk#readme",
   "keywords": [
     "web",
     "qonversion",
@@ -32,7 +33,7 @@
   },
   "license": "MIT",
   "licenseFilename": "LICENSE",
-  "readmeFilename": "../README.md",
+  "readmeFilename": "README.md",
   "devDependencies": {
     "@babel/core": "^7.18.2",
     "@babel/preset-env": "^7.18.2",
