@@ -1,1 +1,21 @@
 .idea
+
+# OSX
+#
+.DS_Store
+
+# node.js
+#
+node_modules/
+npm-debug.log
+yarn-error.log
+
+build/
+
+# BUCK
+buck-out/
+\.buckd/
+*.keystore
+
+# vscode
+.vscode
