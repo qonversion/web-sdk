@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "module": "commonjs",
+    "target": "es2017",
+    "strict": true,
+    "rootDir": "./sdk/src",
+    "outDir": "./sdk/build"
+  },
+  "include": [
+    "sdk/src/**/*"
+  ],
+  "exclude": [
+    "sdk/src/__tests__/*"
+  ]
+}

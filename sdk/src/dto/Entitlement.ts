@@ -3,6 +3,7 @@ export type Entitlement = {
    active: boolean;
    started: number;
    expires: number;
+   source: EntitlementSource;
    product?: Product;
 }
 
@@ -26,4 +27,12 @@ export enum PeriodType {
    Normal = 'normal',
    Trial = 'trial',
    Intro = 'intro',
+}
+
+export enum EntitlementSource {
+   Unknown = 'unknown',
+   AppStore = 'appStore',
+   PlayStore = 'playStore',
+   Stripe = 'stripe',
+   Manual = 'manual'
 }
