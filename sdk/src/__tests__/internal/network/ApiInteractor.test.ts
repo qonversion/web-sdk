@@ -64,6 +64,7 @@ describe('execute tests', () => {
   }
   let retryConfig: NetworkRetryConfig;
 
+  // @ts-ignore
   let savedGetErrorResponse;
 
   beforeAll(() => {
@@ -85,6 +86,7 @@ describe('execute tests', () => {
   });
 
   afterAll(() => {
+    // @ts-ignore
     ApiInteractorImpl.getErrorResponse = savedGetErrorResponse;
   });
 
@@ -391,32 +393,4 @@ describe('getErrorResponse tests', () => {
       ApiInteractorImpl.getErrorResponse();
     }).toThrow();
   });
-});
-
-class OtherTest {
-  async mockFn() {}
-}
-class Test {
-  readonly other;
-
-  constructor(other) {
-    this.other = other;
-  }
-
-  fun = async (index: number) => {
-    if (index == 5) return;
-    try {
-      await this.other.mockFn();
-    } catch (e) {
-
-    }
-    await this.fun(index + 1);
-  };
-}
-test('',  async () => {
-  const other = new OtherTest();
-  const t = new Test(other);
-  other.mockFn = jest.fn(async () => {throw new Error()});
-  await t.fun(1);
-  expect(other.mockFn).toBeCalledTimes(4);
 });

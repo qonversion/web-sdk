@@ -22,6 +22,7 @@ const testUserId = 'test user id'
 const testProjectKey = 'test project key';
 
 let primaryConfig: PrimaryConfig = {
+  // @ts-ignore
   environment: undefined,
   launchMode: undefined,
   projectKey: testProjectKey,

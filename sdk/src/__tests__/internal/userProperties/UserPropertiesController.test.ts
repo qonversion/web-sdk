@@ -305,7 +305,7 @@ describe('Validator tests', () => {
 
   test('values', () => {
     // given
-    const testCases = {
+    const testCases: Record<string, boolean> = {
       test_value: true,
       ['']: false,
     };
@@ -322,7 +322,7 @@ describe('Validator tests', () => {
 
   test('keys', () => {
     // given
-    const testCases = {
+    const testCases: Record<string, boolean> = {
       test_key: true,
       [UserProperty.AppsFlyerUserId]: true,
       ['']: false,

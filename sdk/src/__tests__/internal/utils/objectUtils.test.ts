@@ -3,7 +3,7 @@ import {camelCaseObjectKeys, snakeToCamelCase} from '../../../internal/utils/obj
 describe('snakeToCamelCase tests', function () {
   test('simple case', () => {
     // given
-    const testCases = {
+    const testCases: Record<string, string> = {
       snake_case_string: 'snakeCaseString',
       snake: 'snake',
       snake_CASE_string: 'snakeCASEString',

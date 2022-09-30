@@ -6,7 +6,7 @@ describe('UserPropertiesStorage tests', () => {
   const mockLocalStorage: LocalStorage = new LocalStorageImpl();
   const testStorageKey = 'storage key';
   const initialProperties = {a: 'a'};
-  let savePropertiesSpy;
+  let savePropertiesSpy: jest.SpyInstance;
 
   beforeEach(() => {
     // @ts-ignore

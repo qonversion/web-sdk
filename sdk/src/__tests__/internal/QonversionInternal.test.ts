@@ -10,7 +10,7 @@ import Qonversion, {
   UserProperty,
   UserPurchase,
 } from '../../index';
-import {UserPropertiesController, UserPropertiesControllerImpl} from '../../internal/userProperties';
+import {UserPropertiesController} from '../../internal/userProperties';
 import {UserController} from '../../internal/user';
 import {EntitlementsController, EntitlementsControllerImpl} from '../../internal/entitlements';
 import {PurchasesController, PurchasesControllerImpl} from '../../internal/purchases';

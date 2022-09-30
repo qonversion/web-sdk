@@ -14,8 +14,11 @@ test('get non-initialized backing instance', () => {
 test('initialize and get shared instance', () => {
   // given
   const mockQonversionConfig: QonversionConfig = {
+    // @ts-ignore
     loggerConfig: undefined,
+    // @ts-ignore
     networkConfig: undefined,
+    // @ts-ignore
     primaryConfig: undefined,
   };
 
