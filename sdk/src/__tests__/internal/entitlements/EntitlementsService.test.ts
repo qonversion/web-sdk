@@ -5,7 +5,14 @@ import {
   NetworkResponseError,
   NetworkResponseSuccess
 } from '../../../internal/network';
-import {Entitlement, PeriodType, QonversionError, QonversionErrorCode, RenewState} from '../../../index';
+import {
+  Entitlement,
+  EntitlementSource,
+  PeriodType,
+  QonversionError,
+  QonversionErrorCode,
+  RenewState
+} from '../../../index';
 import {HTTP_CODE_NOT_FOUND} from '../../../internal/network/constants';
 import {
   EntitlementApi,
@@ -24,6 +31,7 @@ const apiEntitlement: EntitlementApi = {
   started: 10,
   expires: 100,
   id: 'test entitlement',
+  source: 'stripe',
   product: {
     product_id: 'test product',
     subscription: {
@@ -56,6 +64,7 @@ const expRes: Entitlement[] = [{
   started: 10,
   expires: 100,
   id: 'test entitlement',
+  source: EntitlementSource.Stripe,
   product: {
     productId: 'test product',
     subscription: {
