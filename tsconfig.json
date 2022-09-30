@@ -9,5 +9,8 @@
   },
   "include": [
     "sdk/src/**/*"
+  ],
+  "exclude": [
+    "sdk/src/__tests__/*"
   ]
 }
