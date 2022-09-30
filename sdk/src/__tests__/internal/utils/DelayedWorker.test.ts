@@ -24,6 +24,7 @@ describe('DelayedWorker tests', () => {
 
     // then
     expect(delayedWorker.isInProgress).toBeCalled();
+    // @ts-ignore
     expect(delayedWorker['timeoutId']).not.toBeUndefined();
     expect(testAction).not.toBeCalled();
 
@@ -32,6 +33,7 @@ describe('DelayedWorker tests', () => {
 
     jest.advanceTimersByTime(testDelay / 2 + 1);
     await expect(testAction).toBeCalled();
+    // @ts-ignore
     expect(delayedWorker['timeoutId']).toBeUndefined();
   });
 
@@ -53,6 +55,7 @@ describe('DelayedWorker tests', () => {
 
   test('do delayed job ignoring existing one', () => {
     // given
+    // @ts-ignore
     delayedWorker['timeoutId'] = 500;
     const cancelSpy = jest.spyOn(delayedWorker, 'cancel');
 
@@ -61,6 +64,7 @@ describe('DelayedWorker tests', () => {
 
     // then
     expect(cancelSpy).toBeCalled();
+    // @ts-ignore
     expect(delayedWorker['timeoutId']).not.toBeUndefined();
     expect(testAction).not.toBeCalled();
 
@@ -84,6 +88,7 @@ describe('DelayedWorker tests', () => {
   test('cancelling started timeout', () => {
     // given
     const timeoutId = 500;
+    // @ts-ignore
     delayedWorker['timeoutId'] = timeoutId;
 
     // when
@@ -91,6 +96,7 @@ describe('DelayedWorker tests', () => {
 
     // then
     expect(clearTimeout).toBeCalledWith(timeoutId);
+    // @ts-ignore
     expect(delayedWorker['timeoutId']).toBeUndefined();
   });
 
@@ -102,11 +108,13 @@ describe('DelayedWorker tests', () => {
 
     // then
     expect(clearTimeout).not.toBeCalled();
+    // @ts-ignore
     expect(delayedWorker['timeoutId']).toBeUndefined();
   });
 
   test('work is in progress', () => {
     // given
+    // @ts-ignore
     delayedWorker['timeoutId'] = 500;
 
     // when

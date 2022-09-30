@@ -10,14 +10,14 @@ import Qonversion, {
   UserProperty,
   UserPurchase,
 } from '../../index';
-import {UserPropertiesController, UserPropertiesControllerImpl} from '../../internal/userProperties';
+import {UserPropertiesController} from '../../internal/userProperties';
 import {UserController} from '../../internal/user';
 import {EntitlementsController, EntitlementsControllerImpl} from '../../internal/entitlements';
 import {PurchasesController, PurchasesControllerImpl} from '../../internal/purchases';
 import {Logger} from '../../internal/logger';
 
-jest.mock('../../src/internal/di/DependenciesAssembly', () => {
-  const originalModule = jest.requireActual('../../src/internal/di/DependenciesAssembly');
+jest.mock('../../internal/di/DependenciesAssembly', () => {
+  const originalModule = jest.requireActual('../../internal/di/DependenciesAssembly');
   return {__esModule: true, ...originalModule};
 });
 

@@ -1,6 +1,6 @@
 import {LocalStorage, LocalStorageImpl} from '../../../internal/common';
 
-let savedJSON;
+let savedJSON: JSON;
 
 beforeAll(() => {
   savedJSON = JSON;
@@ -116,7 +116,7 @@ describe('local storage tests', () => {
 
   test('get int from undefined string', () => {
     // given
-    localStorage.getItem = jest.fn(() => undefined);
+    localStorage.getItem = jest.fn(() => null);
 
     // when
     const res = myLocalStorage.getInt(testKey);
@@ -152,7 +152,7 @@ describe('local storage tests', () => {
 
   test('get float from undefined string', () => {
     // given
-    localStorage.getItem = jest.fn(() => undefined);
+    localStorage.getItem = jest.fn(() => null);
 
     // when
     const res = myLocalStorage.getFloat(testKey);
@@ -191,7 +191,7 @@ describe('local storage tests', () => {
 
   test('get object from undefined string', () => {
     // given
-    localStorage.getItem = jest.fn(() => undefined);
+    localStorage.getItem = jest.fn(() => null);
 
     // when
     const res = myLocalStorage.getObject(testKey);

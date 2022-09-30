@@ -9,6 +9,7 @@ const testSdkVersion = '500.1.1';
 const testUserId = 'test uid';
 
 let currentPrimaryConfig: PrimaryConfig = {
+  // @ts-ignore
   environment: undefined,
   launchMode: undefined,
   projectKey: testProjectKey,

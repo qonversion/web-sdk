@@ -10,3 +10,5 @@ export function expectQonversionError(code: QonversionErrorCode, method: () => u
     expect(e.code).toBe(code);
   }
 }
+
+test('skip', () => {});
