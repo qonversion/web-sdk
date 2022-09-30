@@ -16,7 +16,7 @@
 default_platform(:mac)
 
 def update_package_json(new_version)
-	path = "../sdk/package.json"
+	path = "../package.json"
     regex = /"version": ".*",/
     result_value = "\"version\": \"#{new_version}\","
 
