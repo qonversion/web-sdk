@@ -1,11 +1,18 @@
 import {
   ApiInteractor,
-  RequestConfigurator,
   NetworkRequest,
   NetworkResponseError,
-  NetworkResponseSuccess
+  NetworkResponseSuccess,
+  RequestConfigurator
 } from '../../../src/internal/network';
-import {Entitlement, PeriodType, QonversionError, QonversionErrorCode, RenewState} from '../../../src';
+import {
+  Entitlement,
+  EntitlementSource,
+  PeriodType,
+  QonversionError,
+  QonversionErrorCode,
+  RenewState
+} from '../../../src';
 import {HTTP_CODE_NOT_FOUND} from '../../../src/internal/network/constants';
 import {
   EntitlementApi,
@@ -56,6 +63,7 @@ const expRes: Entitlement[] = [{
   started: 10,
   expires: 100,
   id: 'test entitlement',
+  source: EntitlementSource.Stripe,
   product: {
     productId: 'test product',
     subscription: {
