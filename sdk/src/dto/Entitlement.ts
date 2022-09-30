@@ -30,9 +30,9 @@ export enum PeriodType {
 }
 
 export enum EntitlementSource {
-   Unknown = 'Unknown',
-   AppStore = 'AppStore',
-   PlayStore = 'PlayStore',
-   Stripe = 'Stripe',
-   Manual = 'Manual'
+   Unknown = 'unknown',
+   AppStore = 'appStore',
+   PlayStore = 'playStore',
+   Stripe = 'stripe',
+   Manual = 'manual'
 }
