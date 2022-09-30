@@ -2,7 +2,7 @@ import {expectQonversionError} from './utils';
 import Qonversion, {QonversionConfig, QonversionErrorCode} from '../index';
 import {QonversionInternal} from '../internal';
 
-jest.mock('../src/internal/QonversionInternal');
+jest.mock('../internal/QonversionInternal');
 
 test('get non-initialized backing instance', () => {
   // given

@@ -16,8 +16,8 @@ import {EntitlementsController, EntitlementsControllerImpl} from '../../internal
 import {PurchasesController, PurchasesControllerImpl} from '../../internal/purchases';
 import {Logger} from '../../internal/logger';
 
-jest.mock('../../src/internal/di/DependenciesAssembly', () => {
-  const originalModule = jest.requireActual('../../src/internal/di/DependenciesAssembly');
+jest.mock('../../internal/di/DependenciesAssembly', () => {
+  const originalModule = jest.requireActual('../../internal/di/DependenciesAssembly');
   return {__esModule: true, ...originalModule};
 });
 
