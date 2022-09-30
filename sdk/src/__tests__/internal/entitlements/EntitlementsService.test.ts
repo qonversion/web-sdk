@@ -31,6 +31,7 @@ const apiEntitlement: EntitlementApi = {
   started: 10,
   expires: 100,
   id: 'test entitlement',
+  source: 'stripe',
   product: {
     product_id: 'test product',
     subscription: {
