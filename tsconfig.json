@@ -4,10 +4,10 @@
     "module": "commonjs",
     "target": "es2017",
     "strict": true,
-    "rootDir": "./src",
-    "outDir": "./build"
+    "rootDir": "./sdk/src",
+    "outDir": "./sdk/build"
   },
   "include": [
-    "src/**/*"
+    "sdk/src/**/*"
   ]
 }

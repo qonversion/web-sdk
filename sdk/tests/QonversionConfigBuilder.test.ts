@@ -8,7 +8,7 @@ import {
 import {LoggerConfig, NetworkConfig, PrimaryConfig} from "../src/types";
 import {expectQonversionError} from './utils';
 
-const packageJson = require('../package.json');
+const packageJson = require('../../package.json');
 
 test('constructor', () => {
   // given
