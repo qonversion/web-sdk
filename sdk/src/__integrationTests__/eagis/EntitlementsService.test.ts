@@ -1,8 +1,6 @@
-import {PRIVATE_TOKEN_FOR_TESTS} from '../constants';
+import {AEGIS_URL, PRIVATE_TOKEN_FOR_TESTS} from '../constants';
 import {executeGrantEntitlementsRequest} from '../apiV3Utils';
-import {expectQonversionErrorAsync, getCurrentTs, getDependencyAssembly} from '../utils';
-import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
-import {API_URL} from '../../internal/network';
+import {getCurrentTs, getDependencyAssembly} from '../utils';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -12,7 +10,7 @@ global.localStorage = {
 };
 
 describe('entitlements tests', function () {
-  const dependenciesAssembly = getDependencyAssembly();
+  const dependenciesAssembly = getDependencyAssembly({apiUrl: AEGIS_URL});
 
   const userService = dependenciesAssembly.userService();
   const entitlementsService = dependenciesAssembly.entitlementsService();
@@ -36,7 +34,7 @@ describe('entitlements tests', function () {
       await userService.createUser(userId);
       const entitlementId = 'Test Permission';
       const expires = getCurrentTs() + 10000;
-      const entitlementResponse = await executeGrantEntitlementsRequest(API_URL, PRIVATE_TOKEN_FOR_TESTS, userId, entitlementId, expires);
+      const entitlementResponse = await executeGrantEntitlementsRequest(AEGIS_URL, PRIVATE_TOKEN_FOR_TESTS, userId, entitlementId, expires);
       const entitlement = await entitlementResponse.json();
 
       // when
@@ -50,14 +48,11 @@ describe('entitlements tests', function () {
       // given
       const userId = 'testNonExistentUserId' + Date.now();
 
-      // when and then
-      await expectQonversionErrorAsync(
-        QonversionErrorCode.UserNotFound,
-        'Qonversion user not found. User id: ' + userId,
-        async () => {
-          await entitlementsService.getEntitlements(userId);
-        },
-      );
+      // when
+      const res = await entitlementsService.getEntitlements(userId);
+
+      // then
+      expect(res).toEqual([]);
     });
   });
 });

@@ -3,6 +3,7 @@ import {QonversionErrorCode} from './exception/QonversionErrorCode';
 import {Environment} from './dto/Environment';
 import {LogLevel} from './dto/LogLevel';
 import {LoggerConfig, NetworkConfig, PrimaryConfig, QonversionConfig} from './types';
+import {API_URL} from './internal/network';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageJson = require('../../package.json');
@@ -88,6 +89,7 @@ export class QonversionConfigBuilder {
 
     const networkConfig: NetworkConfig = {
       canSendRequests: true,
+      apiUrl: API_URL,
     };
 
     return {

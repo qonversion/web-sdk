@@ -1,7 +1,7 @@
 import {User} from '../../dto/User';
 import {Environment} from '../../dto/Environment';
-import {expectQonversionErrorAsync, getCurrentTs, getDependencyAssembly} from '../utils';
-import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
+import {getDependencyAssembly} from '../utils';
+import {AEGIS_URL} from '../constants';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -11,15 +11,14 @@ global.localStorage = {
 };
 
 describe('users tests', function () {
-  const dependenciesAssembly = getDependencyAssembly();
+  const dependenciesAssembly = getDependencyAssembly({apiUrl: AEGIS_URL});
 
   const userService = dependenciesAssembly.userService();
 
   describe('POST users', function () {
     it('create production user', async () => {
       // given
-      const testsStartTs = getCurrentTs();
-      const testUserId = 'testProd' + testsStartTs;
+      const testUserId = 'testProd' + Date.now();
       const expectedUser: User = {
         created: 0,
         environment: Environment.Production,
@@ -29,40 +28,39 @@ describe('users tests', function () {
 
       // when
       const res = await userService.createUser(testUserId);
-      const requestEndTs = getCurrentTs();
 
       // then
-      expect(res.created).toBeGreaterThanOrEqual(testsStartTs);
-      expect(res.created).toBeLessThanOrEqual(requestEndTs);
-      expectedUser.created = res.created;
       expect(res).toEqual(expectedUser);
     });
 
     it('create existing user', async () => {
       // given
-      const testsStartTs = getCurrentTs();
-      const testUserId = 'testExistingUser' + testsStartTs;
+      const testUserId = 'testExistingUser' + Date.now();
       await userService.createUser(testUserId);
+      const expectedUser: User = {
+        created: 0,
+        environment: Environment.Production,
+        id: testUserId,
+        identityId: undefined,
+      };
 
-      // when and then
-      await expectQonversionErrorAsync(
-        QonversionErrorCode.BackendError,
-        'Qonversion API returned an error. Response code 422, message: User with given uid already exists',
-        async () => {
-          await userService.createUser(testUserId);
-        },
-      );
+      // when
+      const res = await userService.createUser(testUserId);
+
+      // then
+      expect(res).toEqual(expectedUser);
     });
 
     it('create sandbox user', async () => {
       // given
-      const dependenciesAssembly = getDependencyAssembly({environment: Environment.Sandbox});
+      const dependenciesAssembly = getDependencyAssembly({
+        environment: Environment.Sandbox,
+        apiUrl: AEGIS_URL,
+      });
 
       const userService = dependenciesAssembly.userService();
 
-      const testsStartTs = getCurrentTs();
-
-      const testUserId = 'testSandbox' + testsStartTs;
+      const testUserId = 'testSandbox' + Date.now();
       const expectedUser: User = {
         created: 0,
         environment: Environment.Sandbox,
@@ -72,12 +70,8 @@ describe('users tests', function () {
 
       // when
       const res = await userService.createUser(testUserId);
-      const requestEndTs = getCurrentTs();
 
       // then
-      expect(res.created).toBeGreaterThanOrEqual(testsStartTs);
-      expect(res.created).toBeLessThanOrEqual(requestEndTs);
-      expectedUser.created = res.created;
       expect(res).toEqual(expectedUser);
     });
   });
@@ -98,15 +92,18 @@ describe('users tests', function () {
     it('get non-existent user', async () => {
       // given
       const nonExistentUserId = 'testNonExistent' + Date.now();
+      const expectedUser: User = {
+        created: 0,
+        environment: Environment.Production,
+        id: nonExistentUserId,
+        identityId: undefined,
+      };
 
-      // when and then
-      await expectQonversionErrorAsync(
-        QonversionErrorCode.UserNotFound,
-        'Qonversion user not found. Id: ' + nonExistentUserId,
-        async () => {
-          await userService.getUser(nonExistentUserId);
-        },
-      );
+      // when
+      const res = await userService.getUser(nonExistentUserId);
+
+      // then
+      expect(res).toEqual(expectedUser);
     });
   });
 });

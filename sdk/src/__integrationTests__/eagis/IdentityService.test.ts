@@ -1,5 +1,6 @@
 import {expectQonversionErrorAsync, getDependencyAssembly} from '../utils';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
+import {AEGIS_URL} from '../constants';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -9,7 +10,7 @@ global.localStorage = {
 };
 
 describe('identities tests', function () {
-  const dependenciesAssembly = getDependencyAssembly();
+  const dependenciesAssembly = getDependencyAssembly({apiUrl: AEGIS_URL});
 
   const userService = dependenciesAssembly.userService();
   const identityService = dependenciesAssembly.identityService();
@@ -38,7 +39,7 @@ describe('identities tests', function () {
       // when and then
       await expectQonversionErrorAsync(
         QonversionErrorCode.BackendError,
-        'Qonversion API returned an error. Response code 422, message: user already has identity',
+        'Qonversion API returned an error. Response code 422, message: identity already exists: user already converted',
         async () => {
           await identityService.createIdentity(userId, identityId);
         },
@@ -55,7 +56,7 @@ describe('identities tests', function () {
       // when and then
       await expectQonversionErrorAsync(
         QonversionErrorCode.BackendError,
-        'Qonversion API returned an error. Response code 422, message: user already converted',
+        'Qonversion API returned an error. Response code 422, message: identity for provided user id already exists',
         async () => {
           await identityService.createIdentity(userId, identityId + 'another');
         },
@@ -87,14 +88,11 @@ describe('identities tests', function () {
       const identityId = 'testIdentityForNonExistentUser' + Date.now();
       const nonExistentUserId = 'testNonExistentUid' + Date.now();
 
-      // when and then
-      await expectQonversionErrorAsync(
-        QonversionErrorCode.BackendError,
-        'Qonversion API returned an error. Response code 400, message: user not found',
-        async () => {
-          await identityService.createIdentity(nonExistentUserId, identityId);
-        },
-      );
+      // when
+      const res = await identityService.createIdentity(nonExistentUserId, identityId);
+
+      // then
+      expect(res).toEqual(nonExistentUserId);
     });
   });
 

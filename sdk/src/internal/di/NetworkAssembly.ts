@@ -1,6 +1,5 @@
 import {MiscAssembly, NetworkAssembly, StorageAssembly} from './types';
 import {
-  API_URL,
   ApiInteractorImpl,
   HeaderBuilderImpl,
   ApiInteractor,
@@ -33,7 +32,7 @@ export class NetworkAssemblyImpl implements NetworkAssembly {
   requestConfigurator(): RequestConfigurator {
     return new RequestConfiguratorImpl(
       this.headerBuilder(),
-      API_URL,
+      this.internalConfig.networkConfig.apiUrl,
       this.internalConfig,
       this.storageAssembly.userDataProvider()
     );

@@ -1,9 +1,5 @@
-import {QonversionConfigBuilder} from '../../QonversionConfigBuilder';
-import {InternalConfig} from '../../internal';
-import {DependenciesAssemblyBuilder} from '../../internal/di/DependenciesAssembly';
 import {PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
-import {PROJECT_KEY_FOR_TESTS} from '../constants';
-import {expectQonversionErrorAsync, getCurrentTs} from '../utils';
+import {expectQonversionErrorAsync, getCurrentTs, getDependencyAssembly} from '../utils';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -14,9 +10,7 @@ global.localStorage = {
 };
 
 describe('purchases tests', function () {
-  const qonversionConfig = new QonversionConfigBuilder(PROJECT_KEY_FOR_TESTS).build();
-  const internalConfig = new InternalConfig(qonversionConfig);
-  const dependenciesAssembly = new DependenciesAssemblyBuilder(internalConfig).build();
+  const dependenciesAssembly = getDependencyAssembly();
 
   const userService = dependenciesAssembly.userService();
   const purchasesService = dependenciesAssembly.purchasesService();
