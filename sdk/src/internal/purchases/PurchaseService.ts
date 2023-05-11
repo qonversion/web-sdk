@@ -4,6 +4,7 @@ import {ApiInteractor, RequestConfigurator} from '../network';
 import {camelCaseKeys} from '../utils/objectUtils';
 import {QonversionError} from '../../exception/QonversionError';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
+import {HTTP_CODE_NOT_FOUND} from '../network/constants';
 
 export class PurchaseServiceImpl implements PurchasesService {
   private readonly requestConfigurator: RequestConfigurator;
@@ -20,6 +21,10 @@ export class PurchaseServiceImpl implements PurchasesService {
 
     if (response.isSuccess) {
       return camelCaseKeys(response.data);
+    }
+
+    if (response.code == HTTP_CODE_NOT_FOUND) {
+      throw new QonversionError(QonversionErrorCode.UserNotFound, `Id: ${userId}`);
     }
 
     const errorMessage = `Response code ${response.code}, message: ${response.message}`;

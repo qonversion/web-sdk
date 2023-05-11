@@ -27,8 +27,8 @@ describe('purchases tests', function () {
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_MU1yDky0D9a8XG',
-        subscriptionId: 'sub_1L3wh0L9K6ILzohYiP38XCUl'
+        productId: 'prod_LkgDHk3f9Z9qb3',
+        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
       };
 
       const data = {
@@ -36,11 +36,18 @@ describe('purchases tests', function () {
         ...stripeStoreData,
       };
 
+      const expRes = {
+        ...purchaseCoreData,
+        stripeStoreData,
+        purchased: Math.floor(data.purchased / 1000) * 1000,
+        userId,
+      };
+
       // when
       const res = await purchasesService.sendStripePurchase(userId, data);
 
       // then
-      expect(res).toBeUndefined();
+      expect(res).toEqual(expRes);
     });
 
     it('create purchase for non-existing user', async () => {
@@ -52,8 +59,8 @@ describe('purchases tests', function () {
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_MU1yDky0D9a8XG',
-        subscriptionId: 'sub_1L3wh0L9K6ILzohYiP38XCUl'
+        productId: 'prod_LkgDHk3f9Z9qb3',
+        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
       };
 
       const data = {
@@ -64,7 +71,94 @@ describe('purchases tests', function () {
       // when and then
       await expectQonversionErrorAsync(
         QonversionErrorCode.UserNotFound,
-        'Qonversion user not found. User id: ' + userId,
+        'Qonversion user not found. Id: ' + userId,
+        async () => {
+          await purchasesService.sendStripePurchase(userId, data);
+        },
+      );
+    });
+
+    it('create purchase with incorrect subscription id', async () => {
+      const userId = 'testUidForPurchase' + Date.now();
+      await userService.createUser(userId);
+
+      const purchaseCoreData: PurchaseCoreData = {
+        currency: 'USD',
+        price: '21.49',
+        purchased: getCurrentTs(),
+      };
+      const stripeStoreData: StripeStoreData = {
+        productId: 'prod_LkgDHk3f9Z9qb3',
+        subscriptionId: 'incorrect subscription id'
+      };
+
+      const data = {
+        ...purchaseCoreData,
+        ...stripeStoreData,
+      };
+
+      // when and then
+      await expectQonversionErrorAsync(
+        QonversionErrorCode.BackendError,
+        'Qonversion API returned an error. Response code 422, message: Couldn\'t validate purchase with store request, potential fraud',
+        async () => {
+          await purchasesService.sendStripePurchase(userId, data);
+        },
+      );
+    });
+
+    it('create purchase with incorrect amount', async () => {
+      const userId = 'testUidForPurchase' + Date.now();
+      await userService.createUser(userId);
+
+      const purchaseCoreData: PurchaseCoreData = {
+        currency: 'USD',
+        price: '21,49',
+        purchased: getCurrentTs(),
+      };
+      const stripeStoreData: StripeStoreData = {
+        productId: 'prod_LkgDHk3f9Z9qb3',
+        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+      };
+
+      const data = {
+        ...purchaseCoreData,
+        ...stripeStoreData,
+      };
+
+      // when and then
+      await expectQonversionErrorAsync(
+        QonversionErrorCode.BackendError,
+        'Qonversion API returned an error. Response code 400, message: failed to parse price',
+        async () => {
+          await purchasesService.sendStripePurchase(userId, data);
+        },
+      );
+    });
+
+    it('create purchase with incorrect currency', async () => {
+      const userId = 'testUidForPurchase' + Date.now();
+      await userService.createUser(userId);
+
+      const purchaseCoreData: PurchaseCoreData = {
+        currency: 'USDDD',
+        price: '21.49',
+        purchased: getCurrentTs(),
+      };
+      const stripeStoreData: StripeStoreData = {
+        productId: 'prod_LkgDHk3f9Z9qb3',
+        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+      };
+
+      const data = {
+        ...purchaseCoreData,
+        ...stripeStoreData,
+      };
+
+      // when and then
+      await expectQonversionErrorAsync(
+        QonversionErrorCode.BackendError,
+        'Qonversion API returned an error. Response code 400, message: failed to recognize currency',
         async () => {
           await purchasesService.sendStripePurchase(userId, data);
         },
