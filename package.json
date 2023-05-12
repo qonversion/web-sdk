@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "build": "yarn tsc",
-    "test": "jest",
+    "test": "jest ./sdk/src/__tests__",
+    "integrationTests": "jest ./sdk/src/__integrationTests__",
     "lint": "eslint . --max-warnings=0"
   },
   "repository": {
