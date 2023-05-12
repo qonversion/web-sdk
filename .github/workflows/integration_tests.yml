@@ -33,4 +33,4 @@ jobs:
 
       - name: Tests
         run: |
-          yarn integration_tests
+          yarn integrationTests
