@@ -6,8 +6,7 @@ export function expectQonversionError(code: QonversionErrorCode, method: () => u
     fail("Exception expected but was not thrown");
   } catch (e) {
     expect(e).toBeInstanceOf(QonversionError);
-    // @ts-ignore
-    expect(e.code).toBe(code);
+    expect((e as QonversionError).code).toBe(code);
   }
 }
 

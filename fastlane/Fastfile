@@ -23,6 +23,13 @@ def update_package_json(new_version)
     update_file(path, regex, result_value)
 end
 
+def update_aegis_url_in_tests(url)
+	path = Dir['../**/__integrationTests__/constants.ts'].first
+    regex = /\<paste aegis link here\>/
+
+    update_file(path, regex, url)
+end
+
 def update_file(path, regex, result_value)
 	file = File.read(path)
     new_content = file.gsub(regex, result_value)
@@ -34,5 +41,11 @@ platform :mac do
   	new_version = options[:version]
 
 	update_package_json(new_version)
+  end
+
+  lane :setAegisUrl do |options|
+    path = options[:url]
+
+	update_aegis_url_in_tests(path)
   end
 end
