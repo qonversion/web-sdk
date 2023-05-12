@@ -10,7 +10,6 @@ global.localStorage = {
 };
 
 describe('purchases tests', function () {
-  console.log('AEGIS_URL', AEGIS_URL.substring(0, 10), AEGIS_URL.substring(10, AEGIS_URL.length));
   const dependenciesAssembly = getDependencyAssembly({apiUrl: AEGIS_URL});
 
   const userService = dependenciesAssembly.userService();
