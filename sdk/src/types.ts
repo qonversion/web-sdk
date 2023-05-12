@@ -136,6 +136,7 @@ export type LoggerConfig = {
 
 export type NetworkConfig = {
   canSendRequests: boolean;
+  readonly apiUrl: string;
 };
 
 export type PrimaryConfig = {

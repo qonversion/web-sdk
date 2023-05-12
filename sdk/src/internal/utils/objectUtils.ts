@@ -2,9 +2,9 @@
 type CamelCaseKeys = <T>(value: any) => T;
 export const camelCaseKeys: CamelCaseKeys = value => {
   let convertedValue;
-  if (value instanceof Array) {
+  if (Array.isArray(value)) {
     convertedValue = value.map(arrayValue => camelCaseKeys(arrayValue));
-  } else if (value instanceof Object) {
+  } else if (typeof value === 'object') {
     convertedValue = camelCaseObjectKeys(value);
   } else {
     convertedValue = value;

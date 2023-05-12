@@ -7,6 +7,7 @@ import {
 } from '../index';
 import {LoggerConfig, NetworkConfig, PrimaryConfig} from "../types";
 import {expectQonversionError} from './utils';
+import {API_URL} from '../internal/network';
 
 const packageJson = require('../../../package.json');
 
@@ -80,6 +81,7 @@ test('successful build with full list of arguments', () => {
   };
   const expNetworkConfig: NetworkConfig = {
     canSendRequests: true,
+    apiUrl: API_URL,
   };
   const expResult: QonversionConfig = {
     primaryConfig: expPrimaryConfig,
@@ -115,6 +117,7 @@ test('successful build without full list of arguments', () => {
   };
   const expNetworkConfig: NetworkConfig = {
     canSendRequests: defaultCanSendRequests,
+    apiUrl: API_URL,
   };
   const expResult: QonversionConfig = {
     primaryConfig: expPrimaryConfig,
