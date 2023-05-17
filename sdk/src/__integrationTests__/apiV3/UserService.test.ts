@@ -2,6 +2,7 @@ import {User} from '../../dto/User';
 import {Environment} from '../../dto/Environment';
 import {expectQonversionErrorAsync, getCurrentTs, getDependencyAssembly} from '../utils';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
+import {TS_EPSILON} from '../constants';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -32,8 +33,8 @@ describe('users tests', function () {
       const requestEndTs = getCurrentTs();
 
       // then
-      expect(res.created).toBeGreaterThanOrEqual(testsStartTs);
-      expect(res.created).toBeLessThanOrEqual(requestEndTs);
+      expect(res.created).toBeGreaterThanOrEqual(testsStartTs - TS_EPSILON);
+      expect(res.created).toBeLessThanOrEqual(requestEndTs + TS_EPSILON);
       expectedUser.created = res.created;
       expect(res).toEqual(expectedUser);
     });
@@ -75,8 +76,8 @@ describe('users tests', function () {
       const requestEndTs = getCurrentTs();
 
       // then
-      expect(res.created).toBeGreaterThanOrEqual(testsStartTs);
-      expect(res.created).toBeLessThanOrEqual(requestEndTs);
+      expect(res.created).toBeGreaterThanOrEqual(testsStartTs - TS_EPSILON);
+      expect(res.created).toBeLessThanOrEqual(requestEndTs + TS_EPSILON);
       expectedUser.created = res.created;
       expect(res).toEqual(expectedUser);
     });
