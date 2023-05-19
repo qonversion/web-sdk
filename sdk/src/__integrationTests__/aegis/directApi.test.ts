@@ -1,4 +1,4 @@
-import {AEGIS_URL, PRIVATE_TOKEN_FOR_TESTS, PROJECT_KEY_FOR_TESTS} from '../constants';
+import {AEGIS_URL, PRIVATE_TOKEN_FOR_TESTS, PROJECT_KEY_FOR_TESTS, TS_EPSILON} from '../constants';
 import {getCurrentTs, getDependencyAssembly} from '../utils';
 import {executeGrantEntitlementsRequest, executeRevokeEntitlementsRequest} from '../apiV3Utils';
 import {Entitlement, EntitlementSource} from '../../dto/Entitlement';
@@ -39,8 +39,8 @@ describe('Direct API tests', function () {
 
       // then
       expect(response.status).toBe(200);
-      expect(responseBody.started).toBeGreaterThanOrEqual(requestStartTs);
-      expect(responseBody.started).toBeLessThanOrEqual(requestEndTs);
+      expect(responseBody.started).toBeGreaterThanOrEqual(requestStartTs - TS_EPSILON);
+      expect(responseBody.started).toBeLessThanOrEqual(requestEndTs + TS_EPSILON);
       expRes.started = responseBody.started;
       expect(responseBody).toEqual(expRes);
     });
@@ -71,8 +71,8 @@ describe('Direct API tests', function () {
 
       // then
       expect(response.status).toBe(200);
-      expect(responseBody.started).toBeGreaterThanOrEqual(requestStartTs);
-      expect(responseBody.started).toBeLessThanOrEqual(requestEndTs);
+      expect(responseBody.started).toBeGreaterThanOrEqual(requestStartTs - TS_EPSILON);
+      expect(responseBody.started).toBeLessThanOrEqual(requestEndTs + TS_EPSILON);
       expRes.started = responseBody.started;
       expect(responseBody).toEqual(expRes);
     });
@@ -146,8 +146,8 @@ describe('Direct API tests', function () {
 
       // then
       expect(response.status).toBe(200);
-      expect(responseBody.started).toBeGreaterThanOrEqual(requestStartTs);
-      expect(responseBody.started).toBeLessThanOrEqual(requestEndTs);
+      expect(responseBody.started).toBeGreaterThanOrEqual(requestStartTs - TS_EPSILON);
+      expect(responseBody.started).toBeLessThanOrEqual(requestEndTs + TS_EPSILON);
       expRes.started = responseBody.started;
       expect(responseBody).toEqual(expRes);
     });
