@@ -68,16 +68,9 @@ Send subscription data to your favorite platforms. Share your mobile and web sub
 
 Convinced? Let's go!
 
-## Getting Started
-
-1. [Create a project and register your web app](https://documentation.qonversion.io/docs/quickstart#1-create-a-project-and-register-your-app)
-2. [Configure entitlements](https://documentation.qonversion.io/docs/quickstart#2-configure-products--permissions-entitlements)
-3. [Install the SDK](https://documentation.qonversion.io/docs/web-sdk#install)
-4. [Use all SDK features in a few lines](https://documentation.qonversion.io/docs/web-sdk#launching-the-sdk)
-
 ## Documentation
 
-Check the [documentation](https://docs.qonversion.io) to learn details on implementing and using Qonversion SDKs.
+Check the [documentation](https://documentation.qonversion.io/docs/quickstart) to learn details on implementing and using Qonversion SDKs.
 
 #### Help us improve the documentation
 
