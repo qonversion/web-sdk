@@ -11,6 +11,7 @@ import {PrimaryConfigProvider} from '../types';
 import {UserDataProvider} from '../user';
 import {PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
 import {Environment} from '../../dto/Environment';
+import {UserPropertyData} from '../userProperties';
 
 export class RequestConfiguratorImpl implements RequestConfigurator {
   private readonly headerBuilder: HeaderBuilder;
@@ -43,15 +44,14 @@ export class RequestConfiguratorImpl implements RequestConfigurator {
     return this.configureRequest(url, RequestType.POST, body);
   }
 
-  configureUserPropertiesRequest(properties: Record<string, string>): NetworkRequest {
-    const url = `${this.baseUrl}/${ApiEndpoint.Properties}`;
-    const body = {
-      "access_token": this.primaryConfigProvider.getPrimaryConfig().projectKey,
-      "q_uid": this.userDataProvider.getOriginalUserId(),
-      "properties": properties
-    };
+  configureUserPropertiesSendRequest(userId: string, properties: UserPropertyData[]): NetworkRequest {
+    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${userId}/${ApiEndpoint.Properties}`;
+    return this.configureRequest(url, RequestType.POST, properties);
+  }
 
-    return this.configureRequest(url, RequestType.POST, body);
+  configureUserPropertiesGetRequest(userId: string): NetworkRequest {
+    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${userId}/${ApiEndpoint.Properties}`;
+    return this.configureRequest(url, RequestType.GET);
   }
 
   configureCreateIdentityRequest(qonversionId: string, identityId: string): NetworkRequest {

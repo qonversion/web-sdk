@@ -2,8 +2,8 @@ import {
   ApiInteractor,
   RequestConfigurator,
   NetworkRequest,
-  NetworkResponseError,
-  NetworkResponseSuccess
+  ApiResponseError,
+  ApiResponseSuccess
 } from '../../../internal/network';
 import {
   PurchaseCoreData,
@@ -23,20 +23,21 @@ const apiPurchase: UserPurchaseApi = {
   currency: 'USD',
   price: '10',
   purchased: 3243523432,
+  userId: testUserId,
   stripe_store_data: {
     product_id: 'test product id',
     subscription_id: 'test subscription id'
   },
 };
 
-const testSuccessfulResponse: NetworkResponseSuccess<UserPurchaseApi> = {
+const testSuccessfulResponse: ApiResponseSuccess<UserPurchaseApi> = {
   code: 200,
   data: apiPurchase,
   isSuccess: true
 };
 const testErrorCode = 500;
 const testErrorMessage = 'Test error message';
-const testErrorResponse: NetworkResponseError = {
+const testErrorResponse: ApiResponseError = {
   code: testErrorCode,
   apiCode: '',
   message: testErrorMessage,
@@ -47,6 +48,7 @@ const expRes: UserPurchase = {
   currency: 'USD',
   price: '10',
   purchased: 3243523432,
+  userId: testUserId,
   stripeStoreData: {
     productId: 'test product id',
     subscriptionId: 'test subscription id'

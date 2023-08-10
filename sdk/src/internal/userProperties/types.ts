@@ -1,3 +1,5 @@
+import UserProperties from '../../dto/UserProperties';
+
 export type UserPropertiesStorage = {
   getProperties: () => Record<string, string>;
 
@@ -13,11 +15,27 @@ export type UserPropertiesStorage = {
 };
 
 export type UserPropertiesService = {
-  sendProperties: (properties: Record<string, string>) => Promise<string[]>;
+  sendProperties: (userId: string, properties: Record<string, string>) => Promise<UserPropertiesSendResponse>;
+  getProperties: (userId: string) => Promise<UserPropertyData[]>;
 };
 
 export type UserPropertiesController = {
   setProperty: (key: string, value: string) => void;
-
   setProperties: (properties: Record<string, string>) => void;
+  getProperties: () => Promise<UserProperties>;
+};
+
+export type UserPropertyData = {
+  key: string;
+  value: string;
+};
+
+export type UserPropertyError = {
+  key: string;
+  error: string;
+};
+
+export type UserPropertiesSendResponse = {
+  savedProperties: UserPropertyData[],
+  propertyErrors: UserPropertyError[],
 };

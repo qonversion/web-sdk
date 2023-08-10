@@ -1,8 +1,8 @@
 import {
   ApiInteractor,
   RequestConfigurator, NetworkRequest,
-  NetworkResponseError,
-  NetworkResponseSuccess
+  ApiResponseError,
+  ApiResponseSuccess
 } from '../../../internal/network';
 import {QonversionError, QonversionErrorCode} from '../../../index';
 import {HTTP_CODE_NOT_FOUND} from '../../../internal/network/constants';
@@ -17,14 +17,14 @@ const testIdentityUserId = 'test identity user id';
 const apiPayload: IdentityApi = {
   user_id: testQonversionUserId,
 };
-const testSuccessfulResponse: NetworkResponseSuccess<IdentityApi> = {
+const testSuccessfulResponse: ApiResponseSuccess<IdentityApi> = {
   code: 200,
   data: apiPayload,
   isSuccess: true
 };
 const testErrorCode = 500;
 const testErrorMessage = 'Test error message';
-const testErrorResponse: NetworkResponseError = {
+const testErrorResponse: ApiResponseError = {
   code: testErrorCode,
   apiCode: '',
   message: testErrorMessage,
@@ -77,7 +77,7 @@ describe('obtainIdentity tests', function () {
 
   test('identity does not exist', async () => {
     // given
-    const testUserNotFoundResponse: NetworkResponseError = {
+    const testUserNotFoundResponse: ApiResponseError = {
       code: HTTP_CODE_NOT_FOUND,
       apiCode: '',
       message: testErrorMessage,

@@ -3,12 +3,16 @@ import {DelayedWorker} from '../utils/DelayedWorker';
 import {Logger} from '../logger';
 import {KEY_REGEX, SENDING_DELAY_MS} from './constants';
 import {QonversionError} from '../../exception/QonversionError';
-import {UserChangedListener, UserChangedNotifier} from '../user';
+import {UserChangedListener, UserChangedNotifier, UserDataStorage} from '../user';
+import UserProperties from '../../dto/UserProperties';
+import UserProperty from '../../dto/UserProperty';
+import {UserPropertyKey} from '../../dto/UserPropertyKey';
 
 export class UserPropertiesControllerImpl implements UserPropertiesController, UserChangedListener {
   private readonly pendingUserPropertiesStorage: UserPropertiesStorage;
   private readonly sentUserPropertiesStorage: UserPropertiesStorage;
   private readonly userPropertiesService: UserPropertiesService;
+  private readonly userDataStorage: UserDataStorage;
   private readonly delayedWorker: DelayedWorker;
   private readonly logger: Logger;
   private readonly sendingDelayMs: number;
@@ -17,6 +21,7 @@ export class UserPropertiesControllerImpl implements UserPropertiesController, U
     pendingUserPropertiesStorage: UserPropertiesStorage,
     sentUserPropertiesStorage: UserPropertiesStorage,
     userPropertiesService: UserPropertiesService,
+    userDataStorage: UserDataStorage,
     delayedWorker: DelayedWorker,
     logger: Logger,
     userChangedNotifier: UserChangedNotifier,
@@ -25,6 +30,7 @@ export class UserPropertiesControllerImpl implements UserPropertiesController, U
     this.pendingUserPropertiesStorage = pendingUserPropertiesStorage;
     this.sentUserPropertiesStorage = sentUserPropertiesStorage;
     this.userPropertiesService = userPropertiesService;
+    this.userDataStorage = userDataStorage;
     this.delayedWorker = delayedWorker;
     this.logger = logger;
     this.sendingDelayMs = sendingDelayMs;
@@ -46,6 +52,20 @@ export class UserPropertiesControllerImpl implements UserPropertiesController, U
     });
     this.pendingUserPropertiesStorage.add(validatedProperties);
     this.sendUserPropertiesIfNeeded();
+  }
+
+  async getProperties(): Promise<UserProperties> {
+    this.logger.verbose('Requesting user properties');
+
+    const userId = this.userDataStorage.requireOriginalUserId();
+    const properties = await this.userPropertiesService.getProperties(userId);
+
+    this.logger.verbose('User properties were received', properties);
+
+    const mappedProperties = properties.map(userPropertyData =>
+      new UserProperty(userPropertyData.key, userPropertyData.value)
+    );
+    return new UserProperties(mappedProperties);
   }
 
   onUserChanged(): void {
@@ -70,33 +90,27 @@ export class UserPropertiesControllerImpl implements UserPropertiesController, U
     try {
       const propertiesToSend = {...this.pendingUserPropertiesStorage.getProperties()};
       if (Object.keys(propertiesToSend).length === 0) {
-        return
+        return;
       }
       this.logger.verbose('Sending user properties', propertiesToSend);
-      const processedPropertyKeys = await this.userPropertiesService.sendProperties(propertiesToSend);
 
-      const nonProcessedProperties: Record<string, string> = {};
+      const userId = this.userDataStorage.requireOriginalUserId();
+      const response = await this.userPropertiesService.sendProperties(
+        userId,
+        propertiesToSend,
+      );
+
       const processedProperties: Record<string, string> = {};
-      Object.keys(propertiesToSend).forEach(key => {
-        if (processedPropertyKeys.includes(key)) {
-          processedProperties[key] = propertiesToSend[key];
-        } else {
-          nonProcessedProperties[key] = propertiesToSend[key];
-        }
+      response.savedProperties.forEach(savedProperty => {
+        processedProperties[savedProperty.key] = savedProperty.value;
       });
 
-      this.logger.verbose('User properties were sent', {processedPropertyKeys});
+      this.logger.verbose('User properties were sent', response);
 
       // We delete all sent properties even if they were not successfully handled
       // to prevent spamming api with unacceptable properties.
       this.pendingUserPropertiesStorage.delete(propertiesToSend);
       this.sentUserPropertiesStorage.add(processedProperties);
-
-      const nonProcessedPropertyKeys = Object.keys(nonProcessedProperties);
-      if (nonProcessedPropertyKeys.length > 0) {
-        const joinedKeys = nonProcessedPropertyKeys.join(', ');
-        this.logger.warn(`Some user properties were not processed: ${joinedKeys}.`);
-      }
 
       this.sendUserPropertiesIfNeeded(true);
     } catch (e) {
@@ -108,7 +122,15 @@ export class UserPropertiesControllerImpl implements UserPropertiesController, U
 
   private shouldSendProperty(key: string, value: string): boolean {
     let shouldSend = true;
-    if (!UserPropertiesControllerImpl.isValidKey(key)) {
+    if (key == UserPropertyKey.Custom) {
+      shouldSend = false;
+      this.logger.warn(
+        "Can not set user property with the key `UserPropertyKey.Custom`. " +
+        "To set custom user property, use the `setCustomUserProperty` method."
+      );
+    }
+
+    if (shouldSend && !UserPropertiesControllerImpl.isValidKey(key)) {
       shouldSend = false;
       this.logger.error(
         `Invalid key "${key}" for user property. ` +

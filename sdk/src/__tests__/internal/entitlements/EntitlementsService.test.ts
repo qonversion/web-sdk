@@ -2,8 +2,8 @@ import {
   ApiInteractor,
   RequestConfigurator,
   NetworkRequest,
-  NetworkResponseError,
-  NetworkResponseSuccess
+  ApiResponseError,
+  ApiResponseSuccess
 } from '../../../internal/network';
 import {
   Entitlement,
@@ -45,14 +45,14 @@ const apiPayload: EntitlementsResponse = {
   data: [apiEntitlement],
   object: 'list'
 };
-const testSuccessfulResponse: NetworkResponseSuccess<EntitlementsResponse> = {
+const testSuccessfulResponse: ApiResponseSuccess<EntitlementsResponse> = {
   code: 200,
   data: apiPayload,
   isSuccess: true
 };
 const testErrorCode = 500;
 const testErrorMessage = 'Test error message';
-const testErrorResponse: NetworkResponseError = {
+const testErrorResponse: ApiResponseError = {
   code: testErrorCode,
   apiCode: '',
   message: testErrorMessage,
@@ -119,7 +119,7 @@ describe('getEntitlements tests', function () {
 
   test('user does not exist', async () => {
     // given
-    const testUserNotFoundResponse: NetworkResponseError = {
+    const testUserNotFoundResponse: ApiResponseError = {
       code: HTTP_CODE_NOT_FOUND,
       apiCode: '',
       message: testErrorMessage,

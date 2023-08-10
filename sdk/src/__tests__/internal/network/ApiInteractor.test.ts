@@ -4,8 +4,8 @@ import {
   ExponentialDelayCalculator,
   NetworkClientImpl,
   NetworkRequest,
-  NetworkResponseError,
-  NetworkResponseSuccess,
+  ApiResponseError,
+  ApiResponseSuccess,
   NetworkRetryConfig,
   RawNetworkResponse,
   RequestType,
@@ -55,7 +55,7 @@ describe('execute tests', () => {
     code: testResponseCode,
     payload: testPayload,
   };
-  let errorResponse: NetworkResponseError = {
+  let errorResponse: ApiResponseError = {
     apiCode: '',
     code: 0,
     message: '',
@@ -92,7 +92,7 @@ describe('execute tests', () => {
 
   test('execute with successful response', async () => {
     // given
-    const expResponse: NetworkResponseSuccess<typeof testPayload> = {
+    const expResponse: ApiResponseSuccess<typeof testPayload> = {
       code: testResponseCode,
       data: testPayload,
       isSuccess: true,
@@ -360,7 +360,7 @@ describe('getErrorResponse tests', () => {
       code: testErrorCode,
       payload: {error: apiError},
     };
-    const expResult: NetworkResponseError = {
+    const expResult: ApiResponseError = {
       apiCode: testErrorApiCode,
       code: testErrorCode,
       message: testErrorMessage,

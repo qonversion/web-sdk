@@ -1,4 +1,4 @@
-import {UserProperty} from './dto/UserProperty';
+import {UserPropertyKey} from './dto/UserPropertyKey';
 
 /**
  * This builder class can be used to generate a map of user properties
@@ -17,10 +17,10 @@ export class UserPropertiesBuilder {
    * @return builder instance for chain calls
    */
   setName(name: string): UserPropertiesBuilder {
-    this.properties[UserProperty.Name] = name;
+    this.properties[UserPropertyKey.Name] = name;
     return this;
   }
-  
+
   /**
    * Set custom user id. It can be an identifier used on your backend
    * to link the current Qonversion user with your one.
@@ -28,7 +28,7 @@ export class UserPropertiesBuilder {
    * @return builder instance for chain calls
    */
   setCustomUserId(customUserId: string): UserPropertiesBuilder {
-    this.properties[UserProperty.CustomUserId] = customUserId;
+    this.properties[UserPropertyKey.CustomUserId] = customUserId;
     return this;
   }
 
@@ -38,7 +38,7 @@ export class UserPropertiesBuilder {
    * @return builder instance for chain calls
    */
   setEmail(email: string): UserPropertiesBuilder {
-    this.properties[UserProperty.Email] = email;
+    this.properties[UserPropertyKey.Email] = email;
     return this;
   }
 
@@ -48,7 +48,7 @@ export class UserPropertiesBuilder {
    * @return builder instance for chain calls
    */
   setKochavaDeviceId(deviceId: string): UserPropertiesBuilder {
-    this.properties[UserProperty.KochavaDeviceId] = deviceId;
+    this.properties[UserPropertyKey.KochavaDeviceId] = deviceId;
     return this;
   }
 
@@ -59,7 +59,7 @@ export class UserPropertiesBuilder {
    * @return builder instance for chain calls
    */
   setAppsFlyerUserId(userId: string): UserPropertiesBuilder {
-    this.properties[UserProperty.AppsFlyerUserId] = userId;
+    this.properties[UserPropertyKey.AppsFlyerUserId] = userId;
     return this;
   }
 
@@ -69,7 +69,7 @@ export class UserPropertiesBuilder {
    * @return builder instance for chain calls
    */
   setAdjustAdvertisingId(advertisingId: string): UserPropertiesBuilder {
-    this.properties[UserProperty.AdjustAdId] = advertisingId;
+    this.properties[UserPropertyKey.AdjustAdId] = advertisingId;
     return this;
   }
 
@@ -79,7 +79,7 @@ export class UserPropertiesBuilder {
    * @return builder instance for chain calls
    */
   setFacebookAttribution(facebookAttribution: string): UserPropertiesBuilder {
-    this.properties[UserProperty.FacebookAttribution] = facebookAttribution;
+    this.properties[UserPropertyKey.FacebookAttribution] = facebookAttribution;
     return this;
   }
 
@@ -89,7 +89,27 @@ export class UserPropertiesBuilder {
    * @return builder instance for chain calls
    */
   setFirebaseAppInstanceId(firebaseAppInstanceId: string): UserPropertiesBuilder {
-    this.properties[UserProperty.FirebaseAppInstanceId] = firebaseAppInstanceId;
+    this.properties[UserPropertyKey.FirebaseAppInstanceId] = firebaseAppInstanceId;
+    return this;
+  }
+
+  /**
+   * Set Android app set id.
+   * @param appSetId app set id
+   * @return builder instance for chain calls
+   */
+  setAppSetId(appSetId: string): UserPropertiesBuilder {
+    this.properties[UserPropertyKey.AppSetId] = appSetId;
+    return this;
+  }
+
+  /**
+   * Set iOS advertising id.
+   * @param advertisingId advertising id
+   * @return builder instance for chain calls
+   */
+  setAdvertisingId(advertisingId: string): UserPropertiesBuilder {
+    this.properties[UserPropertyKey.AdvertisingId] = advertisingId;
     return this;
   }
 
