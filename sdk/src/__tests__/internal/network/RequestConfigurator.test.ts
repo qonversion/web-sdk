@@ -77,22 +77,34 @@ describe('RequestConfigurator tests', () => {
     expect(request).toStrictEqual(expResult);
   });
 
-  test('user properties request', () => {
+  test('user properties send request', () => {
     // given
-    const properties = {a: 'a', b: 'b'};
+    const properties = [{key: 'a', value: 'a'}, {key: 'b', value: 'b'}];
     const expResult: NetworkRequest = {
       headers: testHeaders,
       type: RequestType.POST,
-      url: testBaseUrl + '/' + ApiEndpoint.Properties,
-      body: {
-        access_token: testProjectKey,
-        q_uid: testUserId,
-        properties,
-      }
+      url: testBaseUrl + '/' + ApiEndpoint.Users + '/' + testUserId + '/' + ApiEndpoint.Properties,
+      body: properties,
     };
 
     // when
-    const request = requestConfigurator.configureUserPropertiesRequest(properties);
+    const request = requestConfigurator.configureUserPropertiesSendRequest(testUserId, properties);
+
+    // then
+    expect(request).toStrictEqual(expResult);
+  });
+
+  test('user properties get request', () => {
+    // given
+    const expResult: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.GET,
+      url: testBaseUrl + '/' + ApiEndpoint.Users + '/' + testUserId + '/' + ApiEndpoint.Properties,
+      body: undefined,
+    };
+
+    // when
+    const request = requestConfigurator.configureUserPropertiesGetRequest(testUserId);
 
     // then
     expect(request).toStrictEqual(expResult);

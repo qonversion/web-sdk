@@ -17,6 +17,7 @@ const testUserPurchase: UserPurchase = {
     productId: 'test product id',
     subscriptionId: 'test subscription id'
   },
+  userId: testUserId,
 };
 
 const testStripePurchaseData: PurchaseCoreData & StripeStoreData = {

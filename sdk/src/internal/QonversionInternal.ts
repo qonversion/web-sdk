@@ -4,7 +4,7 @@ import {LogLevel} from '../dto/LogLevel';
 import {Environment} from '../dto/Environment';
 import {DependenciesAssembly} from './di/DependenciesAssembly';
 import Qonversion from '../Qonversion';
-import {UserProperty} from '../dto/UserProperty';
+import {UserPropertyKey} from '../dto/UserPropertyKey';
 import {UserPropertiesController} from './userProperties';
 import {UserController} from './user';
 import {EntitlementsController} from './entitlements';
@@ -12,6 +12,7 @@ import {Entitlement} from '../dto/Entitlement';
 import {PurchasesController} from './purchases';
 import {PurchaseCoreData, StripeStoreData, UserPurchase} from '../dto/Purchase';
 import {Logger} from './logger';
+import {UserProperties} from '../dto/UserProperties';
 
 export class QonversionInternal implements QonversionInstance {
   private readonly internalConfig: InternalConfig;
@@ -24,11 +25,11 @@ export class QonversionInternal implements QonversionInstance {
   constructor(internalConfig: InternalConfig, dependenciesAssembly: DependenciesAssembly) {
     this.internalConfig = internalConfig;
 
+    this.logger = dependenciesAssembly.logger();
     this.userPropertiesController = dependenciesAssembly.userPropertiesController();
     this.userController = dependenciesAssembly.userController();
     this.entitlementsController = dependenciesAssembly.entitlementsController();
     this.purchasesController = dependenciesAssembly.purchasesController();
-    this.logger = dependenciesAssembly.logger();
 
     this.logger.verbose("The QonversionInstance is created");
   }
@@ -38,8 +39,8 @@ export class QonversionInternal implements QonversionInstance {
     return this.purchasesController.sendStripePurchase(data);
   }
 
-  getEntitlements(): Promise<Entitlement[]> {
-    this.logger.verbose("getEntitlements() call");
+  entitlements(): Promise<Entitlement[]> {
+    this.logger.verbose("entitlements() call");
     return this.entitlementsController.getEntitlements();
   }
 
@@ -63,9 +64,14 @@ export class QonversionInternal implements QonversionInstance {
     this.userPropertiesController.setProperties(userProperties);
   }
 
-  setUserProperty(property: UserProperty, value: string): void {
+  setUserProperty(property: UserPropertyKey, value: string): void {
     this.logger.verbose("setUserProperty() call");
     this.userPropertiesController.setProperty(property, value);
+  }
+
+  async userProperties(): Promise<UserProperties> {
+    this.logger.verbose("userProperties() call");
+    return await this.userPropertiesController.getProperties();
   }
 
   finish() {

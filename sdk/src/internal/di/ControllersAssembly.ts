@@ -22,6 +22,7 @@ export class ControllersAssemblyImpl implements ControllersAssembly {
       this.storageAssembly.pendingUserPropertiesStorage(),
       this.storageAssembly.sentUserPropertiesStorage(),
       this.servicesAssembly.userPropertiesService(),
+      this.storageAssembly.userDataStorage(),
       this.miscAssembly.delayedWorker(),
       this.miscAssembly.logger(),
       this.userController(),
