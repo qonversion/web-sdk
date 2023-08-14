@@ -1,4 +1,4 @@
-import UserProperties from '../../dto/UserProperties';
+import {UserProperties} from '../../dto/UserProperties';
 
 export type UserPropertiesStorage = {
   getProperties: () => Record<string, string>;

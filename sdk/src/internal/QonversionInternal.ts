@@ -12,7 +12,7 @@ import {Entitlement} from '../dto/Entitlement';
 import {PurchasesController} from './purchases';
 import {PurchaseCoreData, StripeStoreData, UserPurchase} from '../dto/Purchase';
 import {Logger} from './logger';
-import UserProperties from '../dto/UserProperties';
+import {UserProperties} from '../dto/UserProperties';
 
 export class QonversionInternal implements QonversionInstance {
   private readonly internalConfig: InternalConfig;

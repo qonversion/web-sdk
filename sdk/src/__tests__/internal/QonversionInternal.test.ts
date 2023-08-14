@@ -16,8 +16,8 @@ import {EntitlementsController, EntitlementsControllerImpl} from '../../internal
 import {PurchasesController, PurchasesControllerImpl} from '../../internal/purchases';
 import {Logger} from '../../internal/logger';
 import {API_URL} from '../../internal/network';
-import UserProperties from '../../dto/UserProperties';
-import UserProperty from '../../dto/UserProperty';
+import {UserProperties} from '../../dto/UserProperties';
+import {UserProperty} from '../../dto/UserProperty';
 
 jest.mock('../../internal/di/DependenciesAssembly', () => {
   const originalModule = jest.requireActual('../../internal/di/DependenciesAssembly');

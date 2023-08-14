@@ -1,7 +1,7 @@
-import UserProperty from './UserProperty';
+import {UserProperty} from './UserProperty';
 import {UserPropertyKey} from './UserPropertyKey';
 
-class UserProperties {
+export class UserProperties {
   /**
    * List of all user properties.
    */
@@ -74,5 +74,3 @@ class UserProperties {
     return this.definedProperties.find(userProperty => userProperty.definedKey == key);
   }
 }
-
-export default UserProperties;

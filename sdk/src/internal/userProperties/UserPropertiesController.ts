@@ -4,8 +4,8 @@ import {Logger} from '../logger';
 import {KEY_REGEX, SENDING_DELAY_MS} from './constants';
 import {QonversionError} from '../../exception/QonversionError';
 import {UserChangedListener, UserChangedNotifier, UserDataStorage} from '../user';
-import UserProperties from '../../dto/UserProperties';
-import UserProperty from '../../dto/UserProperty';
+import {UserProperties} from '../../dto/UserProperties';
+import {UserProperty} from '../../dto/UserProperty';
 import {UserPropertyKey} from '../../dto/UserPropertyKey';
 
 export class UserPropertiesControllerImpl implements UserPropertiesController, UserChangedListener {

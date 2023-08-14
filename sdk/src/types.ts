@@ -3,7 +3,7 @@ import {Environment} from './dto/Environment';
 import {UserPropertyKey} from './dto/UserPropertyKey';
 import {Entitlement} from './dto/Entitlement';
 import {PurchaseCoreData, StripeStoreData, UserPurchase} from './dto/Purchase';
-import UserProperties from './dto/UserProperties';
+import {UserProperties} from './dto/UserProperties';
 
 export type QonversionInstance = {
   /**

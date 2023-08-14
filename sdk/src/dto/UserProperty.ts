@@ -1,7 +1,7 @@
 import {UserPropertyKey} from './UserPropertyKey';
 import {convertDefinedUserPropertyKey} from '../internal/utils/propertyUtils';
 
-class UserProperty {
+export class UserProperty {
   key: string;
   value: string;
 
@@ -17,5 +17,3 @@ class UserProperty {
     this.definedKey = convertDefinedUserPropertyKey(key);
   }
 }
-
-export default UserProperty;
