@@ -1,17 +1,18 @@
 import {
-  UserPropertiesControllerImpl,
+  UserPropertiesControllerImpl, UserPropertiesSendResponse,
   UserPropertiesService,
   UserPropertiesStorage
 } from '../../../internal/userProperties';
 import {DelayedWorker} from '../../../internal/utils/DelayedWorker';
 import {Logger} from '../../../internal/logger';
-import {QonversionError, QonversionErrorCode, UserProperty} from '../../../index';
-import {UserChangedNotifier} from '../../../internal/user';
+import {QonversionError, QonversionErrorCode, UserPropertyKey} from '../../../index';
+import {UserChangedNotifier, UserDataStorage} from '../../../internal/user';
 
 let userPropertiesController: UserPropertiesControllerImpl;
 let pendingUserPropertiesStorage: UserPropertiesStorage;
 let sentUserPropertiesStorage: UserPropertiesStorage;
 let userPropertiesService: UserPropertiesService;
+let userDataStorage: UserDataStorage;
 let delayedWorker: DelayedWorker;
 let logger: Logger;
 let userChangedNotifier: UserChangedNotifier;
@@ -24,6 +25,8 @@ beforeEach(() => {
   sentUserPropertiesStorage = {};
   // @ts-ignore
   userPropertiesService = {};
+  // @ts-ignore
+  userDataStorage = {};
   // @ts-ignore
   delayedWorker = {};
   // @ts-ignore
@@ -38,6 +41,7 @@ beforeEach(() => {
     pendingUserPropertiesStorage,
     sentUserPropertiesStorage,
     userPropertiesService,
+    userDataStorage,
     delayedWorker,
     logger,
     userChangedNotifier,
@@ -187,10 +191,15 @@ describe('sendUserPropertiesIfNeeded tests', () => {
 });
 
 describe('sendUserProperties tests', () => {
+  const testUserId = 'Qon_test_user_id';
+
   beforeEach(() => {
     userPropertiesController['sendUserPropertiesIfNeeded'] = jest.fn();
     pendingUserPropertiesStorage.delete = jest.fn();
     sentUserPropertiesStorage.add = jest.fn();
+
+    userDataStorage.requireOriginalUserId = jest.fn(() => testUserId);
+
     logger.warn = jest.fn();
     logger.error = jest.fn();
   });
@@ -199,21 +208,27 @@ describe('sendUserProperties tests', () => {
     // given
     const properties = {a: 'aa'};
     pendingUserPropertiesStorage.getProperties = jest.fn(() => properties);
-    const processedPropertyKeys = Object.keys(properties);
-    userPropertiesService.sendProperties = jest.fn(async () => processedPropertyKeys);
+    const userPropertiesSendResponse: UserPropertiesSendResponse = {
+      propertyErrors: [],
+      savedProperties: [
+        {key: 'a', value: 'aa'},
+      ],
+    };
+    userPropertiesService.sendProperties = jest.fn(async () => userPropertiesSendResponse);
 
     // when
     await userPropertiesController['sendUserProperties']();
 
     // then
     expect(pendingUserPropertiesStorage.getProperties).toBeCalled();
-    expect(userPropertiesService.sendProperties).toBeCalledWith(properties);
+    expect(userDataStorage.requireOriginalUserId).toBeCalled();
+    expect(userPropertiesService.sendProperties).toBeCalledWith(testUserId, properties);
     expect(pendingUserPropertiesStorage.delete).toBeCalledWith(properties);
     expect(sentUserPropertiesStorage.add).toBeCalledWith(properties);
     expect(userPropertiesController['sendUserPropertiesIfNeeded']).toBeCalledWith(true);
 
     expect(logger.verbose).toBeCalledWith('Sending user properties', properties);
-    expect(logger.verbose).toBeCalledWith('User properties were sent', {processedPropertyKeys});
+    expect(logger.verbose).toBeCalledWith('User properties were sent', userPropertiesSendResponse);
     expect(logger.warn).not.toBeCalled();
     expect(logger.error).not.toBeCalled();
   });
@@ -222,13 +237,18 @@ describe('sendUserProperties tests', () => {
     // given
     const properties = {};
     pendingUserPropertiesStorage.getProperties = jest.fn(() => properties);
-    userPropertiesService.sendProperties = jest.fn(async () => []);
+    const userPropertiesSendResponse: UserPropertiesSendResponse = {
+      propertyErrors: [],
+      savedProperties: [],
+    };
+    userPropertiesService.sendProperties = jest.fn(async () => userPropertiesSendResponse);
 
     // when
     await userPropertiesController['sendUserProperties']();
 
     // then
     expect(pendingUserPropertiesStorage.getProperties).toBeCalled();
+    expect(userDataStorage.requireOriginalUserId).not.toBeCalled();
     expect(userPropertiesService.sendProperties).not.toBeCalled();
     expect(pendingUserPropertiesStorage.delete).not.toBeCalled();
     expect(sentUserPropertiesStorage.add).not.toBeCalled();
@@ -250,7 +270,8 @@ describe('sendUserProperties tests', () => {
 
     // then
     expect(pendingUserPropertiesStorage.getProperties).toBeCalled();
-    expect(userPropertiesService.sendProperties).toBeCalledWith(properties);
+    expect(userDataStorage.requireOriginalUserId).toBeCalled();
+    expect(userPropertiesService.sendProperties).toBeCalledWith(testUserId, properties);
     expect(logger.error).toBeCalledWith('Failed to send user properties to api', expError);
     expect(pendingUserPropertiesStorage.delete).not.toBeCalled();
     expect(sentUserPropertiesStorage.add).not.toBeCalled();
@@ -262,23 +283,31 @@ describe('sendUserProperties tests', () => {
     // given
     const properties = {a: 'aa', b: 'bb'};
     pendingUserPropertiesStorage.getProperties = jest.fn(() => properties);
+    const userPropertiesSendResponse: UserPropertiesSendResponse = {
+      propertyErrors: [
+        {key: 'b', error: 'failed'},
+      ],
+      savedProperties: [
+        {key: 'a', value: 'aa'},
+      ],
+    }
+    userPropertiesService.sendProperties = jest.fn(async () => userPropertiesSendResponse);
+
     const processedProperties = {a: 'aa'};
-    const processedPropertyKeys = Object.keys(processedProperties);
-    userPropertiesService.sendProperties = jest.fn(async () => processedPropertyKeys);
 
     // when
     await userPropertiesController['sendUserProperties']();
 
     // then
     expect(pendingUserPropertiesStorage.getProperties).toBeCalled();
-    expect(userPropertiesService.sendProperties).toBeCalledWith(properties);
+    expect(userDataStorage.requireOriginalUserId).toBeCalled();
+    expect(userPropertiesService.sendProperties).toBeCalledWith(testUserId, properties);
     expect(pendingUserPropertiesStorage.delete).toBeCalledWith(properties);
     expect(sentUserPropertiesStorage.add).toBeCalledWith(processedProperties);
-    expect(logger.warn).toBeCalledWith('Some user properties were not processed: b.');
     expect(userPropertiesController['sendUserPropertiesIfNeeded']).toBeCalledWith(true);
 
     expect(logger.verbose).toBeCalledWith('Sending user properties', properties);
-    expect(logger.verbose).toBeCalledWith('User properties were sent', {processedPropertyKeys});
+    expect(logger.verbose).toBeCalledWith('User properties were sent', userPropertiesSendResponse);
   });
 });
 
@@ -324,7 +353,7 @@ describe('Validator tests', () => {
     // given
     const testCases: Record<string, boolean> = {
       test_key: true,
-      [UserProperty.AppsFlyerUserId]: true,
+      [UserPropertyKey.AppsFlyerUserId]: true,
       ['']: false,
       ['   ']: false,
       ['test key']: false,

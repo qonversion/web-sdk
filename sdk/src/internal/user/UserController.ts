@@ -34,6 +34,7 @@ export class UserControllerImpl implements UserController {
 
     const existingUserId = userDataStorage.getOriginalUserId();
     if (!existingUserId) {
+      this.logger.verbose('User doesn\'t exist, creating new one...');
       this.createUser()
         .then(() => this.logger.info('New user created on initialization'))
         .catch(error => this.logger.error('Failed to create new user on initialization', error));

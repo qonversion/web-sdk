@@ -1,6 +1,7 @@
 import {RetryPolicy} from './RetryPolicy';
 import {PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
 import {Environment} from '../../dto/Environment';
+import {UserPropertyData} from '../userProperties';
 
 export enum ApiHeader {
   Accept = "Accept",
@@ -17,7 +18,7 @@ export enum ApiHeader {
 export enum ApiEndpoint {
   Users = "v3/users",
   Identity = "v3/identities",
-  Properties = "v1/properties",
+  Properties = "properties",
 }
 
 export enum RequestType {
@@ -28,7 +29,7 @@ export enum RequestType {
 }
 
 export type RequestHeaders = Record<string, string>;
-export type RequestBody = Record<string, unknown | null>;
+export type RequestBody = Record<string, unknown | null> | Array<unknown>;
 
 export type NetworkRequest = {
   url: string;
@@ -37,23 +38,23 @@ export type NetworkRequest = {
   body?: RequestBody;
 };
 
-export type NetworkResponse = {
+export type NetworkResponseBase = {
   code: number;
 };
 
-export type RawNetworkResponse = NetworkResponse & {
+export type RawNetworkResponse = NetworkResponseBase & {
   // eslint-disable-next-line
   payload: any;
 };
 
-export type NetworkResponseError = NetworkResponse & {
+export type ApiResponseError = NetworkResponseBase & {
   message: string;
   type?: string;
   apiCode?: string;
   isSuccess: false;
 };
 
-export type NetworkResponseSuccess<T> = NetworkResponse & {
+export type ApiResponseSuccess<T> = NetworkResponseBase & {
   data: T;
   isSuccess: true;
 };
@@ -75,7 +76,7 @@ export type NetworkClient = {
 };
 
 export type ApiInteractor = {
-  execute: <T>(request: NetworkRequest, retryPolicy?: RetryPolicy) => Promise<NetworkResponseSuccess<T> | NetworkResponseError>;
+  execute: <T>(request: NetworkRequest, retryPolicy?: RetryPolicy) => Promise<ApiResponseSuccess<T> | ApiResponseError>;
 };
 
 export type RequestConfigurator = {
@@ -83,7 +84,9 @@ export type RequestConfigurator = {
 
   configureCreateUserRequest: (id: string, environment: Environment) => NetworkRequest;
 
-  configureUserPropertiesRequest: (properties: Record<string, string>) => NetworkRequest;
+  configureUserPropertiesSendRequest: (userId: string, properties: UserPropertyData[]) => NetworkRequest;
+
+  configureUserPropertiesGetRequest: (userId: string) => NetworkRequest;
 
   configureIdentityRequest: (identityId: string) => NetworkRequest;
 

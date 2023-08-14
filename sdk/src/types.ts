@@ -1,8 +1,9 @@
 import {LogLevel} from './dto/LogLevel';
 import {Environment} from './dto/Environment';
-import {UserProperty} from './dto/UserProperty';
+import {UserPropertyKey} from './dto/UserPropertyKey';
 import {Entitlement} from './dto/Entitlement';
 import {PurchaseCoreData, StripeStoreData, UserPurchase} from './dto/Purchase';
+import {UserProperties} from './dto/UserProperties';
 
 export type QonversionInstance = {
   /**
@@ -21,12 +22,12 @@ export type QonversionInstance = {
    *
    * @returns a list of current user entitlements.
    */
-  getEntitlements: () => Promise<Entitlement[]>;
+  entitlements: () => Promise<Entitlement[]>;
 
   /**
    * Call this function to link a user to his unique id in your system and share purchase data.
    * If you want to check identified user permissions await for returned promise to resolve and
-   * call {@link getEntitlements} then.
+   * call {@link entitlements} then.
    *
    * @param userId - unique user id in your system
    */
@@ -35,7 +36,7 @@ export type QonversionInstance = {
   /**
    * Call this function to unlink a user from his unique ID in your system and his purchase data.
    * If you want to check logged-out user permissions await for returned promise to resolve and
-   * call {@link getEntitlements} then.
+   * call {@link entitlements} then.
    */
   logout: () => Promise<void>;
 
@@ -46,12 +47,15 @@ export type QonversionInstance = {
    * This method consumes only defined user properties. In order to pass custom property
    * consider using {@link setCustomUserProperty} method.
    *
+   * Note that using {@link UserPropertyKey.Custom} here will do nothing.
+   * To set custom user property, use {@link setCustomUserProperty} method instead.
+   *
    * You can either pass multiple properties at once using {@link setUserProperties} method.
    *
    * @param property defined user attribute
    * @param value nonempty value for the given property
    */
-  setUserProperty: (property: UserProperty, value: string) => void;
+  setUserProperty: (property: UserPropertyKey, value: string) => void;
 
   /**
    * Add property value for the current user to use it then for segmentation or analytics
@@ -68,12 +72,21 @@ export type QonversionInstance = {
   setCustomUserProperty: (key: string, value: string) => void;
 
   /**
+   * This method returns all the properties, set for the current Qonversion user.
+   * All set properties are sent to the server with delay, so if you call
+   * this function right after setting some property, it may not be included
+   * in the result.
+   * @returns the promise with the user properties
+   */
+  userProperties(): Promise<UserProperties>;
+
+  /**
    * Add a property value for the current user to use it then for segmentation or analytics
    * as well as to provide it to third-party platforms.
    *
    * This method consumes both defined and custom user properties. Consider using
    * {@link UserPropertiesBuilder} to prepare a properties map. You are also able to create it
-   * on your own using a custom key for a custom property or {@link UserProperty} code as the key for
+   * on your own using a custom key for a custom property or {@link UserPropertyKey} code as the key for
    * a Qonversion defined property.
    *
    * In order to pass a single property consider using {@link setCustomUserProperty} method for

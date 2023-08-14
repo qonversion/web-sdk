@@ -7,7 +7,7 @@ import Qonversion, {
   LogLevel,
   PurchaseCoreData,
   StripeStoreData,
-  UserProperty,
+  UserPropertyKey,
   UserPurchase,
 } from '../../index';
 import {UserPropertiesController} from '../../internal/userProperties';
@@ -15,6 +15,9 @@ import {UserController} from '../../internal/user';
 import {EntitlementsController, EntitlementsControllerImpl} from '../../internal/entitlements';
 import {PurchasesController, PurchasesControllerImpl} from '../../internal/purchases';
 import {Logger} from '../../internal/logger';
+import {API_URL} from '../../internal/network';
+import {UserProperties} from '../../dto/UserProperties';
+import {UserProperty} from '../../dto/UserProperty';
 
 jest.mock('../../internal/di/DependenciesAssembly', () => {
   const originalModule = jest.requireActual('../../internal/di/DependenciesAssembly');
@@ -41,6 +44,7 @@ beforeEach(() => {
   };
   networkConfig = {
     canSendRequests: true,
+    apiUrl: API_URL,
   };
   loggerConfig = {
     logTag: '',
@@ -190,7 +194,7 @@ describe('UserPropertiesController usage tests', () => {
 
   test('setUserProperty', () => {
     // given
-    const key = UserProperty.AppsFlyerUserId;
+    const key = UserPropertyKey.AppsFlyerUserId;
     const value = 'property_value';
     userPropertyController.setProperty = jest.fn();
 
@@ -218,21 +222,35 @@ describe('UserPropertiesController usage tests', () => {
     expect(userPropertyController.setProperties).toBeCalledWith(properties);
     expect(logger.verbose).toBeCalledWith('setUserProperties() call');
   });
+
+  test('userProperties', async () => {
+    // given
+    const response = new UserProperties([new UserProperty('testKey', 'testValue')]);
+    userPropertyController.getProperties = jest.fn(() => Promise.resolve(response));
+
+    // when
+    const res = await qonversionInternal.userProperties();
+
+    // then
+    expect(res).toEqual(response);
+    expect(userPropertyController.getProperties).toBeCalledWith();
+    expect(logger.verbose).toBeCalledWith('userProperties() call');
+  });
 });
 
 describe('EntitlementsController usage tests', () => {
-  test('getEntitlements', () => {
+  test('entitlements', () => {
     // given
     const promiseReturned = new Promise<Entitlement[]>(() => []);
     entitlementsController.getEntitlements = jest.fn(async () => promiseReturned);
 
     // when
-    const res = qonversionInternal.getEntitlements();
+    const res = qonversionInternal.entitlements();
 
     // then
     expect(res).toStrictEqual(promiseReturned);
     expect(entitlementsController.getEntitlements).toBeCalled();
-    expect(logger.verbose).toBeCalledWith('getEntitlements() call');
+    expect(logger.verbose).toBeCalledWith('entitlements() call');
   });
 });
 
@@ -248,6 +266,7 @@ describe('PurchasesController usage tests', () => {
           productId: 'test product id',
           subscriptionId: 'test subscription id',
         },
+        userId: 'Qon_test_user_id'
       };
       const requestData: PurchaseCoreData & StripeStoreData = {
         currency: 'USD',
