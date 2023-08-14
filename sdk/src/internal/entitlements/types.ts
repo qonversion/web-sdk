@@ -18,6 +18,7 @@ export type EntitlementApi = {
   active: boolean;
   started: number;
   expires: number;
+  source: string;
   product?: ProductApi;
 }
 

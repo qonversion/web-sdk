@@ -1,4 +1,4 @@
-import {UserPropertiesService} from './types';
+import {UserPropertiesSendResponse, UserPropertiesService, UserPropertyData} from './types';
 import {ApiInteractor, RequestConfigurator} from '../network';
 import {QonversionError} from '../../exception/QonversionError';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
@@ -12,12 +12,29 @@ export class UserPropertiesServiceImpl implements UserPropertiesService {
     this.apiInteractor = apiInteractor;
   }
 
-  async sendProperties(properties: Record<string, string>): Promise<string[]> {
-    const request = this.requestConfigurator.configureUserPropertiesRequest(properties);
-    const response = await this.apiInteractor.execute<{data: {processed: string[]}}>(request);
+  async sendProperties(userId: string, properties: Record<string, string>): Promise<UserPropertiesSendResponse> {
+    const propertiesList: UserPropertyData[] = Object.keys(properties).map(key => ({
+      key,
+      value: properties[key],
+    }));
+
+    const request = this.requestConfigurator.configureUserPropertiesSendRequest(userId, propertiesList);
+    const response = await this.apiInteractor.execute<UserPropertiesSendResponse>(request);
 
     if (response.isSuccess) {
-      return response.data.data.processed;
+      return response.data;
+    }
+
+    const errorMessage = `Response code ${response.code}, message: ${response.message}`;
+    throw new QonversionError(QonversionErrorCode.BackendError, errorMessage);
+  }
+
+  async getProperties(userId: string): Promise<UserPropertyData[]> {
+    const request = this.requestConfigurator.configureUserPropertiesGetRequest(userId);
+    const response = await this.apiInteractor.execute<UserPropertyData[]>(request);
+
+    if (response.isSuccess) {
+      return response.data;
     }
 
     const errorMessage = `Response code ${response.code}, message: ${response.message}`;

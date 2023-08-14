@@ -1,8 +1,9 @@
 import {
   ApiInteractor,
   RequestConfigurator,
-  NetworkRequest, NetworkResponseError,
-  NetworkResponseSuccess
+  NetworkRequest,
+  ApiResponseError,
+  ApiResponseSuccess
 } from '../../../internal/network';
 import {UserApi, UserService, UserServiceImpl} from '../../../internal/user';
 import {Environment, QonversionError, QonversionErrorCode, User} from '../../../index';
@@ -22,14 +23,14 @@ const apiPayload: UserApi = {
   id: testUserId,
   identity_id: 'some identity',
 };
-const testSuccessfulResponse: NetworkResponseSuccess<UserApi> = {
+const testSuccessfulResponse: ApiResponseSuccess<UserApi> = {
   code: 200,
   data: apiPayload,
   isSuccess: true
 };
 const testErrorCode = 500;
 const testErrorMessage = 'Test error message';
-const testErrorResponse: NetworkResponseError = {
+const testErrorResponse: ApiResponseError = {
   code: testErrorCode,
   apiCode: '',
   message: testErrorMessage,
@@ -96,7 +97,7 @@ describe('getUser tests', function () {
 
   test('user does not exist', async () => {
     // given
-    const testUserNotFoundResponse: NetworkResponseError = {
+    const testUserNotFoundResponse: ApiResponseError = {
       code: HTTP_CODE_NOT_FOUND,
       apiCode: '',
       message: testErrorMessage,

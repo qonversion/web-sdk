@@ -12,6 +12,7 @@ export type PurchaseCoreDataApi = {
   price: string;
   currency: string;
   purchased: number;
+  userId: string;
 };
 
 export type StripeStoreDataApi = {

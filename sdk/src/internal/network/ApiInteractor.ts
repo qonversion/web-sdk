@@ -3,8 +3,8 @@ import {
   ApiInteractor,
   NetworkClient,
   NetworkRequest,
-  NetworkResponseError,
-  NetworkResponseSuccess,
+  ApiResponseError,
+  ApiResponseSuccess,
   NetworkRetryConfig,
   RawNetworkResponse
 } from './types';
@@ -38,7 +38,7 @@ export class ApiInteractorImpl implements ApiInteractor {
     request: NetworkRequest,
     retryPolicy: RetryPolicy = this.defaultRetryPolicy,
     attemptIndex: number = 0,
-  ): Promise<NetworkResponseSuccess<T> | NetworkResponseError> {
+  ): Promise<ApiResponseSuccess<T> | ApiResponseError> {
     if (!this.configHolder.canSendRequests()) {
       throw new QonversionError(QonversionErrorCode.RequestDenied);
     }
@@ -81,7 +81,7 @@ export class ApiInteractorImpl implements ApiInteractor {
     return ApiInteractorImpl.getErrorResponse(response, executionError);
   }
 
-  static getErrorResponse(response?: RawNetworkResponse, executionError?: Error): NetworkResponseError {
+  static getErrorResponse(response?: RawNetworkResponse, executionError?: Error): ApiResponseError {
     if (response) {
       const apiError: ApiError = response.payload.error;
       return {
