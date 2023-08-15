@@ -23,13 +23,13 @@ describe('purchases tests', function () {
 
       const purchased = getCurrentTs();
       const purchaseCoreData: PurchaseCoreData = {
-        currency: 'USD',
-        price: '21.49',
+        currency: 'EUR',
+        price: '5',
         purchased,
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: 'prod_OSEKoJ3z29ArRM',
+        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
       };
 
       const data = {
@@ -57,12 +57,12 @@ describe('purchases tests', function () {
       await userService.createUser(userId);
 
       const purchaseCoreData: PurchaseCoreData = {
-        currency: 'USD',
-        price: '21.49',
+        currency: 'EUR',
+        price: '5',
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: 'prod_OSEKoJ3z29ArRM',
+        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
       };
 
       const data = {
@@ -88,13 +88,13 @@ describe('purchases tests', function () {
       const userId = 'testUidForPurchase' + Date.now();
 
       const purchaseCoreData: PurchaseCoreData = {
-        currency: 'USD',
-        price: '21.49',
+        currency: 'EUR',
+        price: '5',
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: 'prod_OSEKoJ3z29ArRM',
+        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
       };
 
       const data = {
@@ -104,8 +104,8 @@ describe('purchases tests', function () {
 
       // when and then
       await expectQonversionErrorAsync(
-        QonversionErrorCode.UserNotFound,
-        'Qonversion user not found. Id: ' + userId,
+        QonversionErrorCode.BackendError,
+        'Qonversion API returned an error. Response code 404, message: User not found',
         async () => {
           await purchasesService.sendStripePurchase(userId, data);
         },
@@ -117,12 +117,12 @@ describe('purchases tests', function () {
       await userService.createUser(userId);
 
       const purchaseCoreData: PurchaseCoreData = {
-        currency: 'USD',
-        price: '21.49',
+        currency: 'EUR',
+        price: '5',
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
+        productId: 'prod_OSEKoJ3z29ArRM',
         subscriptionId: 'incorrect subscription id'
       };
 
@@ -146,13 +146,13 @@ describe('purchases tests', function () {
       await userService.createUser(userId);
 
       const purchaseCoreData: PurchaseCoreData = {
-        currency: 'USD',
-        price: '21,49',
+        currency: 'EUR',
+        price: '5,01',
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: 'prod_OSEKoJ3z29ArRM',
+        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
       };
 
       const data = {
@@ -175,13 +175,13 @@ describe('purchases tests', function () {
       await userService.createUser(userId);
 
       const purchaseCoreData: PurchaseCoreData = {
-        currency: 'USDDD',
-        price: '21.49',
+        currency: 'EURRR',
+        price: '5',
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: 'prod_OSEKoJ3z29ArRM',
+        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
       };
 
       const data = {
