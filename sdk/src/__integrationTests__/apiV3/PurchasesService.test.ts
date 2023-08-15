@@ -23,13 +23,13 @@ describe('purchases tests', function () {
 
       const purchased = getCurrentTs();
       const purchaseCoreData: PurchaseCoreData = {
-        currency: 'USD',
-        price: '21.49',
+        currency: 'EUR',
+        price: '5.00',
         purchased,
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: 'prod_OSEBvB33YUIOpu',
+        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
       };
 
       const data = {
@@ -57,12 +57,12 @@ describe('purchases tests', function () {
       await userService.createUser(userId);
 
       const purchaseCoreData: PurchaseCoreData = {
-        currency: 'USD',
-        price: '21.49',
+        currency: 'EUR',
+        price: '5.00',
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: 'prod_OSEBvB33YUIOpu',
+        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
       };
 
       const data = {
@@ -88,13 +88,13 @@ describe('purchases tests', function () {
       const userId = 'testUidForPurchase' + Date.now();
 
       const purchaseCoreData: PurchaseCoreData = {
-        currency: 'USD',
-        price: '21.49',
+        currency: 'EUR',
+        price: '5.00',
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: 'prod_OSEBvB33YUIOpu',
+        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
       };
 
       const data = {
@@ -117,12 +117,12 @@ describe('purchases tests', function () {
       await userService.createUser(userId);
 
       const purchaseCoreData: PurchaseCoreData = {
-        currency: 'USD',
-        price: '21.49',
+        currency: 'EUR',
+        price: '5.00',
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
+        productId: 'prod_OSEBvB33YUIOpu',
         subscriptionId: 'incorrect subscription id'
       };
 
@@ -146,13 +146,13 @@ describe('purchases tests', function () {
       await userService.createUser(userId);
 
       const purchaseCoreData: PurchaseCoreData = {
-        currency: 'USD',
-        price: '21,49',
+        currency: 'EUR',
+        price: '5,00',
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: 'prod_OSEBvB33YUIOpu',
+        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
       };
 
       const data = {
@@ -175,13 +175,13 @@ describe('purchases tests', function () {
       await userService.createUser(userId);
 
       const purchaseCoreData: PurchaseCoreData = {
-        currency: 'USDDD',
-        price: '21.49',
+        currency: 'EURRR',
+        price: '5.00',
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: 'prod_OSEBvB33YUIOpu',
+        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
       };
 
       const data = {
