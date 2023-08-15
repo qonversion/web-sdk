@@ -1,9 +1,6 @@
 name: Planned integration tests
 
 on:
-  push:
-    branches:
-      - "fix/integration_stripe_purchases"
   workflow_dispatch:
   schedule:
     - cron: '0 3 * * *'
