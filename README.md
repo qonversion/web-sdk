@@ -23,8 +23,8 @@ Qonversion - In-app subscription monetization: implement subscriptions and grow 
 ## In-App Subscription Implementation & Management
 
 <p align="center">
-     <a href="https://documentation.qonversion.io/docs/integrations-overview"><img width="90%" src="https://user-images.githubusercontent.com/13959241/161107203-8ef3ecee-86be-47a2-ac57-b21d3da19339.png">
-     </a>
+    <a href="https://documentation.qonversion.io/docs/integrations-overview"><img width="90%" src="https://user-images.githubusercontent.com/13959241/161107203-8ef3ecee-86be-47a2-ac57-b21d3da19339.png">
+    </a>
 </p>
 
 1. Qonversion SDK provides three simple methods to manage subscriptions:
@@ -65,8 +65,8 @@ Send user-level subscription data to your favorite platforms.
 
 ## Why Qonversion?
 
-* **No headaches with Apple's StoreKit & Google Billing.** Qonversion provides simple methods to handle Apple StoreKit & Google Billing purchase flow.
-* **Receipt validation.** Qonversion validates user receipts with Apple and Google to provide 100% accurate purchase information and subscription statuses. It also prevents unauthorized access to the premium features of your app.
+* **No headaches with Stripe, Apple's StoreKit & Google Billing.** Qonversion provides simple methods to handle Stripe, Apple StoreKit & Google Billing purchase flow.
+* **Receipt validation.** Qonversion validates user receipts with Apple, Google and Stripe to provide 100% accurate purchase information and subscription statuses. It also prevents unauthorized access to the premium features of your app.
 * **Track and increase your revenue.** Qonversion provides detailed real-time revenue analytics including cohort analysis, trial conversion rates, country segmentation, and much more.
 * **Integrations with the leading mobile platforms.** Qonversion allows sending data to platforms like AppsFlyer, Adjust, Branch, Tenjin, Facebook Ads, Amplitude, Mixpanel, and many others.
 * **Change promoted in-app products.** Change promoted in-app products anytime without app releases.
