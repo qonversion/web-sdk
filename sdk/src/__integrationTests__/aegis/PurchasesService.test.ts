@@ -9,6 +9,9 @@ global.localStorage = {
   getItem: jest.fn(),
 };
 
+const stripeProductId = 'prod_ObGxAn4MF9PQvi';
+const stripeSubscriptionId = 'sub_1ONCxeHj4b8RrJvcJ2FEP08A';
+
 describe('purchases tests', function () {
   const dependenciesAssembly = getDependencyAssembly({apiUrl: AEGIS_URL});
 
@@ -28,8 +31,8 @@ describe('purchases tests', function () {
         purchased,
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: stripeProductId,
+        subscriptionId: stripeSubscriptionId,
       };
 
       const data = {
@@ -61,8 +64,8 @@ describe('purchases tests', function () {
         price: '21.49',
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: stripeProductId,
+        subscriptionId: stripeSubscriptionId,
       };
 
       const data = {
@@ -94,8 +97,8 @@ describe('purchases tests', function () {
         purchased,
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: stripeProductId,
+        subscriptionId: stripeSubscriptionId,
       };
 
       const data = {
@@ -128,7 +131,7 @@ describe('purchases tests', function () {
         purchased,
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
+        productId: stripeProductId,
         subscriptionId: 'incorrect subscription id'
       };
 
@@ -162,8 +165,8 @@ describe('purchases tests', function () {
         purchased,
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: stripeProductId,
+        subscriptionId: stripeSubscriptionId,
       };
 
       const data = {
@@ -196,8 +199,8 @@ describe('purchases tests', function () {
         purchased,
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_LkgDHk3f9Z9qb3',
-        subscriptionId: 'sub_1N6Z7sL9K6ILzohYE49VAPcq'
+        productId: stripeProductId,
+        subscriptionId: stripeSubscriptionId,
       };
 
       const data = {
