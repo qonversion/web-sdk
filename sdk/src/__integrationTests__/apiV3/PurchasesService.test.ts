@@ -9,6 +9,9 @@ global.localStorage = {
   getItem: jest.fn(),
 };
 
+const stripeProductId = 'prod_ObGxAn4MF9PQvi';
+const stripeSubscriptionId = 'sub_1ONCxeHj4b8RrJvcJ2FEP08A';
+
 describe('purchases tests', function () {
   const dependenciesAssembly = getDependencyAssembly();
 
@@ -28,8 +31,8 @@ describe('purchases tests', function () {
         purchased,
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_OSEKoJ3z29ArRM',
-        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
+        productId: stripeProductId,
+        subscriptionId: stripeSubscriptionId
       };
 
       const data = {
@@ -61,8 +64,8 @@ describe('purchases tests', function () {
         price: '5',
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_OSEKoJ3z29ArRM',
-        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
+        productId: stripeProductId,
+        subscriptionId: stripeSubscriptionId
       };
 
       const data = {
@@ -93,8 +96,8 @@ describe('purchases tests', function () {
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_OSEKoJ3z29ArRM',
-        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
+        productId: stripeProductId,
+        subscriptionId: stripeSubscriptionId
       };
 
       const data = {
@@ -122,7 +125,7 @@ describe('purchases tests', function () {
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_OSEKoJ3z29ArRM',
+        productId: stripeProductId,
         subscriptionId: 'incorrect subscription id'
       };
 
@@ -151,8 +154,8 @@ describe('purchases tests', function () {
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_OSEKoJ3z29ArRM',
-        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
+        productId: stripeProductId,
+        subscriptionId: stripeSubscriptionId
       };
 
       const data = {
@@ -180,8 +183,8 @@ describe('purchases tests', function () {
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: 'prod_OSEKoJ3z29ArRM',
-        subscriptionId: 'sub_1NfJsSHj4b8RrJvc78ALkOzh'
+        productId: stripeProductId,
+        subscriptionId: stripeSubscriptionId
       };
 
       const data = {
