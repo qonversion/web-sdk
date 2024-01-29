@@ -103,6 +103,78 @@ describe('UserPropertiesBuilder tests', () => {
     expect(builder['properties']).toStrictEqual(expProperties);
   });
 
+  test('set app set id', () => {
+    // given
+    const appSetId = "test App Set id";
+    const expProperties = {'_q_app_set_id': appSetId};
+
+    // when
+    builder.setAppSetId(appSetId);
+
+    // then
+    expect(builder['properties']).toStrictEqual(expProperties);
+  });
+
+  test('set advertising id', () => {
+    // given
+    const advertisingId = "test advertising id";
+    const expProperties = {'_q_advertising_id': advertisingId};
+
+    // when
+    builder.setAdvertisingId(advertisingId);
+
+    // then
+    expect(builder['properties']).toStrictEqual(expProperties);
+  });
+
+  test('set AppMetrica device id', () => {
+    // given
+    const appMetricaDeviceId = "test AppMetrica device id";
+    const expProperties = {'_q_appmetrica_device_id': appMetricaDeviceId};
+
+    // when
+    builder.setAppMetricaDeviceId(appMetricaDeviceId);
+
+    // then
+    expect(builder['properties']).toStrictEqual(expProperties);
+  });
+
+  test('set AppMetrica user profile id', () => {
+    // given
+    const appMetricaUserProfileId = "test AppMetrica user profile id";
+    const expProperties = {'_q_appmetrica_user_profile_id': appMetricaUserProfileId};
+
+    // when
+    builder.setAppMetricaUserProfileId(appMetricaUserProfileId);
+
+    // then
+    expect(builder['properties']).toStrictEqual(expProperties);
+  });
+
+  test('set PushWoosh hardware id', () => {
+    // given
+    const pushWooshHwId = "test PushWoosh hw id";
+    const expProperties = {'_q_pushwoosh_hwid': pushWooshHwId};
+
+    // when
+    builder.setPushWooshHwId(pushWooshHwId);
+
+    // then
+    expect(builder['properties']).toStrictEqual(expProperties);
+  });
+
+  test('set PushWoosh user id', () => {
+    // given
+    const pushWooshUserId = "test PushWoosh user id";
+    const expProperties = {'_q_pushwoosh_user_id': pushWooshUserId};
+
+    // when
+    builder.setPushWooshUserId(pushWooshUserId);
+
+    // then
+    expect(builder['properties']).toStrictEqual(expProperties);
+  });
+
   test('set custom user property', () => {
     // given
     const key = "test key";
