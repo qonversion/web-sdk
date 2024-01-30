@@ -114,6 +114,46 @@ export class UserPropertiesBuilder {
   }
 
   /**
+   * Set AppMetrica device id.
+   * @param deviceId device id
+   * @return builder instance for chain calls
+   */
+  setAppMetricaDeviceId(deviceId: string): UserPropertiesBuilder {
+    this.properties[UserPropertyKey.AppMetricaDeviceId] = deviceId;
+    return this;
+  }
+
+  /**
+   * Set AppMetrica user profile id.
+   * @param userProfileId user profile id
+   * @return builder instance for chain calls
+   */
+  setAppMetricaUserProfileId(userProfileId: string): UserPropertiesBuilder {
+    this.properties[UserPropertyKey.AppMetricaUserProfileId] = userProfileId;
+    return this;
+  }
+
+  /**
+   * Set PushWoosh hardware id.
+   * @param hwId hardware id
+   * @return builder instance for chain calls
+   */
+  setPushWooshHwId(hwId: string): UserPropertiesBuilder {
+    this.properties[UserPropertyKey.PushWooshHwId] = hwId;
+    return this;
+  }
+
+  /**
+   * Set PushWoosh user id.
+   * @param userId user id
+   * @return builder instance for chain calls
+   */
+  setPushWooshUserId(userId: string): UserPropertiesBuilder {
+    this.properties[UserPropertyKey.PushWooshUserId] = userId;
+    return this;
+  }
+
+  /**
    * Set a user property with a custom key different from defined ones.
    *
    * Can be called multiple times for different keys.
