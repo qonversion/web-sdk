@@ -9,6 +9,10 @@ jobs:
   tests:
     runs-on: macos-latest
 
+    concurrency:
+      group: web_integration_tests
+      cancel-in-progress: true
+
     steps:
       - uses: actions/checkout@v2
       - name: Set Aegis url
