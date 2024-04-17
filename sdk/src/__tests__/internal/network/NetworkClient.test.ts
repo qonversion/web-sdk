@@ -38,6 +38,9 @@ describe('execute test', () => {
   const savedFetch = global.fetch;
 
   beforeAll(() => {
+    Object.defineProperty(global, 'fetch', {
+      writable: true,
+    });
     // @ts-ignore
     global.fetch = mockFetch;
   });
