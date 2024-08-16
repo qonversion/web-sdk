@@ -10,7 +10,7 @@ global.localStorage = {
 };
 
 const stripeProductId = 'prod_ObGxAn4MF9PQvi';
-const stripeSubscriptionId = 'sub_1P6UWYHj4b8RrJvcJLtgcUjw';
+const stripeSubscriptionId = 'sub_1PiFabHj4b8RrJvcI0aT9Aa9';
 
 describe('purchases tests', function () {
   const dependenciesAssembly = getDependencyAssembly();
