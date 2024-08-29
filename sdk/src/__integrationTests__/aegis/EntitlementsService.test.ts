@@ -32,7 +32,7 @@ describe('entitlements tests', function () {
       // given
       const userId = 'testEntitlementUserId' + Date.now();
       await userService.createUser(userId);
-      const entitlementId = 'Test Permission';
+      const entitlementId = 'test_permission';
       const expires = getCurrentTs() + 10000;
       const entitlementResponse = await executeGrantEntitlementsRequest(AEGIS_URL, PRIVATE_TOKEN_FOR_TESTS, userId, entitlementId, expires);
       const entitlement = await entitlementResponse.json();
