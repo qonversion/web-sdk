@@ -20,7 +20,7 @@ describe('Direct API tests', function () {
       const userId = 'testGrantEntitlementUid' + Date.now();
       await userService.createUser(userId);
 
-      const entitlementId = 'Test Permission';
+      const entitlementId = 'test_permission';
       const expires = getCurrentTs() + 10000;
 
       const expRes: Entitlement = {
@@ -50,7 +50,7 @@ describe('Direct API tests', function () {
       const userId = 'testGrantEntitlementUid' + Date.now();
       await userService.createUser(userId);
 
-      const entitlementId = 'Test Permission';
+      const entitlementId = 'test_permission';
       const expiresOld = getCurrentTs() + 1000;
       await executeGrantEntitlementsRequest(AEGIS_URL, PRIVATE_TOKEN_FOR_TESTS, userId, entitlementId, expiresOld);
 
@@ -82,7 +82,7 @@ describe('Direct API tests', function () {
       const userId = 'testGrantEntitlementUid' + Date.now();
       await userService.createUser(userId);
 
-      const entitlementId = 'Test Permission';
+      const entitlementId = 'test_permission';
       const expires = getCurrentTs() - 10000;
 
       const expError = {
@@ -105,7 +105,7 @@ describe('Direct API tests', function () {
       const userId = 'testGrantEntitlementUid' + Date.now();
       await userService.createUser(userId);
 
-      const entitlementId = 'Test Permission';
+      const entitlementId = 'test_permission';
       const expires = getCurrentTs() + 10000;
 
       const expError = {
@@ -159,7 +159,7 @@ describe('Direct API tests', function () {
       const userId = 'testGrantEntitlementUid' + Date.now();
       await userService.createUser(userId);
 
-      const entitlementId = 'Test Permission';
+      const entitlementId = 'test_permission';
       const expires = getCurrentTs() + 10000;
       await executeGrantEntitlementsRequest(AEGIS_URL, PRIVATE_TOKEN_FOR_TESTS, userId, entitlementId, expires);
 
@@ -175,7 +175,7 @@ describe('Direct API tests', function () {
       const userId = 'testGrantEntitlementUid' + Date.now();
       await userService.createUser(userId);
 
-      const entitlementId = 'Test Permission';
+      const entitlementId = 'test_permission';
       const expError = {
         code: 'invalid_entitlement_data',
         message: 'Invalid entitlement uid, no such entitlement found',
@@ -218,7 +218,7 @@ describe('Direct API tests', function () {
       const userId = 'testGrantEntitlementUid' + Date.now();
       await userService.createUser(userId);
 
-      const entitlementId = 'Test Permission';
+      const entitlementId = 'test_permission';
 
       const expError = {
         code: 'control_unauthorized',
