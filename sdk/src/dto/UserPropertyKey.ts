@@ -19,5 +19,6 @@ export enum UserPropertyKey {
     AppMetricaUserProfileId = "_q_appmetrica_user_profile_id",
     PushWooshHwId = "_q_pushwoosh_hwid",
     PushWooshUserId = "_q_pushwoosh_user_id",
+    TenjinAnalyticsInstallationId = "_q_tenjin_aiid",
     Custom = "",
 }
