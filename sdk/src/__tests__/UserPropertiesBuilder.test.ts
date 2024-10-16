@@ -175,6 +175,18 @@ describe('UserPropertiesBuilder tests', () => {
     expect(builder['properties']).toStrictEqual(expProperties);
   });
 
+  test('set Tenjin analytics installation id', () => {
+    // given
+    const id = "test Tenjin analytics installation id";
+    const expProperties = {'_q_tenjin_aiid': id};
+
+    // when
+    builder.setTenjinAnalyticsInstallationId(id);
+
+    // then
+    expect(builder['properties']).toStrictEqual(expProperties);
+  });
+
   test('set custom user property', () => {
     // given
     const key = "test key";

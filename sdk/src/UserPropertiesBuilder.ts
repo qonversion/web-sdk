@@ -154,6 +154,16 @@ export class UserPropertiesBuilder {
   }
 
   /**
+   * Set Tenjin analytics installation id.
+   * @param id Tenjin analytics installation id
+   * @return builder instance for chain calls
+   */
+  setTenjinAnalyticsInstallationId(id: string): UserPropertiesBuilder {
+    this.properties[UserPropertyKey.TenjinAnalyticsInstallationId] = id;
+    return this;
+  }
+
+  /**
    * Set a user property with a custom key different from defined ones.
    *
    * Can be called multiple times for different keys.
