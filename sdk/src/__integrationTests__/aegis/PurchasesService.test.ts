@@ -10,7 +10,7 @@ global.localStorage = {
 };
 
 const stripeProductId = 'prod_ObGxAn4MF9PQvi';
-const stripeSubscriptionId = 'sub_1ONCxeHj4b8RrJvcJ2FEP08A';
+const stripeSubscriptionId = 'sub_1QQ3JwHj4b8RrJvcQF5OC3rW';
 
 describe('purchases tests', function () {
   const dependenciesAssembly = getDependencyAssembly({apiUrl: AEGIS_URL});
