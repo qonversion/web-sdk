@@ -9,8 +9,8 @@ global.localStorage = {
   getItem: jest.fn(),
 };
 
-const stripeProductId = 'prod_ObGxAn4MF9PQvi';
-const stripeSubscriptionId = 'sub_1R90sjHj4b8RrJvcWIfDKkH6';
+const stripeProductId = 'prod_SAx4jZ4fFPpe1o';
+const stripeSubscriptionId = 'sub_1RGbF1H6Lxf7VJ2jPXAbpiEy';
 
 describe('purchases tests', function () {
   const dependenciesAssembly = getDependencyAssembly();
