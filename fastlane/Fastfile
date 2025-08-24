@@ -25,9 +25,25 @@ end
 
 def update_aegis_url_in_tests(url)
 	path = Dir['../**/__integrationTests__/constants.ts'].first
-    regex = /\<paste aegis link here\>/
 
-    update_file(path, regex, url)
+    regex = /AEGIS_URL = .*/
+    value = "AEGIS_URL = \"#{url}\""
+
+    update_file(path, regex, value)
+end
+
+def update_stripe_config_in_tests(product_id, subscription_id)
+	path = Dir['../**/__integrationTests__/constants.ts'].first
+    
+    # Update STRIPE_PRODUCT_ID
+    product_regex = /STRIPE_PRODUCT_ID=.*/
+    product_value = "STRIPE_PRODUCT_ID=#{product_id}"
+    update_file(path, product_regex, product_value)
+    
+    # Update STRIPE_SUBSCRIPTION_ID
+    subscription_regex = /STRIPE_SUBSCRIPTION_ID=.*/
+    subscription_value = "STRIPE_SUBSCRIPTION_ID=#{subscription_id}"
+    update_file(path, subscription_regex, subscription_value)
 end
 
 def update_file(path, regex, result_value)
@@ -47,5 +63,12 @@ platform :mac do
     path = options[:url]
 
 	update_aegis_url_in_tests(path)
+  end
+
+  lane :updateStripeSecrets do |options|
+    product_id = options[:product_id]
+    subscription_id = options[:subscription_id]
+
+	update_stripe_config_in_tests(product_id, subscription_id)
   end
 end
