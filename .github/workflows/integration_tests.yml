@@ -21,7 +21,7 @@ jobs:
 
       - name: Set Stripe secrets
         run: |
-          fastlane updateStripeSecrets product_id:${{ secrets.STRIPE_PRODUCT_ID }} subscription_id:${{ secrets.STRIPE_SUBSCRIPTION_ID }}
+          fastlane updateStripeSecrets product_id:${{ vars.STRIPE_PRODUCT_ID }} subscription_id:${{ vars.STRIPE_SUBSCRIPTION_ID }}
 
       - name: Use Node.js
         uses: actions/setup-node@v4
