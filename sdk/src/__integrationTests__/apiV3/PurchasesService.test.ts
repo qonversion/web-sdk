@@ -1,6 +1,7 @@
 import {PurchaseCoreData, StripeStoreData, UserPurchase} from '../../dto/Purchase';
 import {expectQonversionErrorAsync, getCurrentTs, getDependencyAssembly} from '../utils';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
+import {STRIPE_PRODUCT_ID, STRIPE_SUBSCRIPTION_ID} from '../constants';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -8,9 +9,6 @@ import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
 global.localStorage = {
   getItem: jest.fn(),
 };
-
-const stripeProductId = 'prod_SAx4jZ4fFPpe1o';
-const stripeSubscriptionId = 'sub_1RGbF1H6Lxf7VJ2jPXAbpiEy';
 
 describe('purchases tests', function () {
   const dependenciesAssembly = getDependencyAssembly();
@@ -31,8 +29,8 @@ describe('purchases tests', function () {
         purchased,
       };
       const stripeStoreData: StripeStoreData = {
-        productId: stripeProductId,
-        subscriptionId: stripeSubscriptionId
+        productId: STRIPE_PRODUCT_ID,
+        subscriptionId: STRIPE_SUBSCRIPTION_ID
       };
 
       const data = {
@@ -64,8 +62,8 @@ describe('purchases tests', function () {
         price: '5',
       };
       const stripeStoreData: StripeStoreData = {
-        productId: stripeProductId,
-        subscriptionId: stripeSubscriptionId
+        productId: STRIPE_PRODUCT_ID,
+        subscriptionId: STRIPE_SUBSCRIPTION_ID
       };
 
       const data = {
@@ -96,8 +94,8 @@ describe('purchases tests', function () {
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: stripeProductId,
-        subscriptionId: stripeSubscriptionId
+        productId: STRIPE_PRODUCT_ID,
+        subscriptionId: STRIPE_SUBSCRIPTION_ID
       };
 
       const data = {
@@ -125,7 +123,7 @@ describe('purchases tests', function () {
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: stripeProductId,
+        productId: STRIPE_PRODUCT_ID,
         subscriptionId: 'incorrect subscription id'
       };
 
@@ -154,8 +152,8 @@ describe('purchases tests', function () {
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: stripeProductId,
-        subscriptionId: stripeSubscriptionId
+        productId: STRIPE_PRODUCT_ID,
+        subscriptionId: STRIPE_SUBSCRIPTION_ID
       };
 
       const data = {
@@ -183,8 +181,8 @@ describe('purchases tests', function () {
         purchased: getCurrentTs(),
       };
       const stripeStoreData: StripeStoreData = {
-        productId: stripeProductId,
-        subscriptionId: stripeSubscriptionId
+        productId: STRIPE_PRODUCT_ID,
+        subscriptionId: STRIPE_SUBSCRIPTION_ID
       };
 
       const data = {
