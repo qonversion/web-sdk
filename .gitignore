@@ -19,3 +19,6 @@ buck-out/
 
 # vscode
 .vscode
+
+# Environment variables
+.env
