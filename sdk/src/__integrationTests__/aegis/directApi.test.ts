@@ -1,6 +1,18 @@
-import {AEGIS_URL, PRIVATE_TOKEN_FOR_TESTS, PROJECT_KEY_FOR_TESTS, TS_EPSILON} from '../constants';
+import {
+  AEGIS_URL,
+  PRIVATE_TOKEN_FOR_TESTS,
+  PROJECT_KEY_FOR_TESTS,
+  TS_EPSILON, 
+  PROJECT_KEY_FOR_SCREENS, 
+  VALID_CONTEXT_KEY, 
+  ID_FOR_SCREEN_BY_CONTEXT_KEY, 
+  NON_EXISTENT_CONTEXT_KEY, 
+  VALID_SCREEN_ID, 
+  CONTEXT_KEY_FOR_SCREEN_BY_ID, 
+  NON_EXISTENT_SCREEN_ID 
+} from '../constants';
 import {getCurrentTs, getDependencyAssembly} from '../utils';
-import {executeGrantEntitlementsRequest, executeRevokeEntitlementsRequest} from '../apiV3Utils';
+import {executeGrantEntitlementsRequest, executeRevokeEntitlementsRequest, executeGetScreenByContextKeyRequest, executeGetScreenByIdRequest, executePreloadScreensRequest} from '../apiV3Utils';
 import {Entitlement, EntitlementSource} from '../../dto/Entitlement';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -233,6 +245,98 @@ describe('Direct API tests', function () {
       // then
       expect(response.status).toBe(400);
       expect(responseBody.error).toEqual(expError);
+    });
+  });
+
+  describe('No-Codes screens', function () {
+    describe('GET /v3/contexts/{contextKey}/screens', function () {
+      it('get screen by valid context key', async () => {
+        // when
+        const response = await executeGetScreenByContextKeyRequest(AEGIS_URL, PROJECT_KEY_FOR_SCREENS, VALID_CONTEXT_KEY);
+        const responseBody = await response.json();
+
+
+        // then
+        expect(response.status).toBe(200);
+        expect(Array.isArray(responseBody)).toBe(true);
+        expect(responseBody.length).toBeGreaterThan(0);
+        expect(responseBody[0]).toHaveProperty('id');
+        expect(responseBody[0]).toHaveProperty('context_key');
+        expect(responseBody[0].context_key).toBe(VALID_CONTEXT_KEY);
+        expect(responseBody[0].id).toBe(ID_FOR_SCREEN_BY_CONTEXT_KEY);
+      });
+
+      it('get screen by non-existent context key', async () => {
+        // when
+        const response = await executeGetScreenByContextKeyRequest(AEGIS_URL, PROJECT_KEY_FOR_SCREENS, NON_EXISTENT_CONTEXT_KEY);
+        const responseBody = await response.json();
+
+
+        // then
+        expect(response.status).toBe(200);
+        expect(Array.isArray(responseBody)).toBe(true);
+        expect(responseBody.length).toBe(0);
+      });
+
+      it('get screen by empty context key', async () => {
+        // when
+        const response = await executeGetScreenByContextKeyRequest(AEGIS_URL, PROJECT_KEY_FOR_SCREENS, '');
+        const responseBody = await response.json();
+
+
+        // then
+        expect(response.status).toBe(200);
+        expect(Array.isArray(responseBody)).toBe(true);
+        expect(responseBody.length).toBe(0);
+      });
+    });
+
+    describe('GET /v3/screens/{screenId}', function () {
+      it('get screen by valid screen ID', async () => {
+        // when
+        const response = await executeGetScreenByIdRequest(AEGIS_URL, PROJECT_KEY_FOR_SCREENS, VALID_SCREEN_ID);
+        const responseBody = await response.json();
+
+
+        // then
+        expect(response.status).toBe(200);
+        expect(responseBody).toHaveProperty('id');
+        expect(responseBody.id).toBe(VALID_SCREEN_ID);
+        expect(responseBody.context_key).toBe(CONTEXT_KEY_FOR_SCREEN_BY_ID);
+      });
+
+      it('get screen by non-existent screen ID', async () => {
+        // when
+        const response = await executeGetScreenByIdRequest(AEGIS_URL, PROJECT_KEY_FOR_SCREENS, NON_EXISTENT_SCREEN_ID);
+        const responseBody = await response.json();
+
+
+        // then
+        expect(response.status).toBe(404);
+        expect(responseBody).toHaveProperty('error');
+      });
+    });
+
+    describe('GET /v3/screens?preload=true', function () {
+      it('preload screens successfully', async () => {
+        // when
+        const response = await executePreloadScreensRequest(AEGIS_URL, PROJECT_KEY_FOR_SCREENS);
+        const responseBody = await response.json();
+
+
+        // then
+        expect(response.status).toBe(200);
+        expect(Array.isArray(responseBody)).toBe(true);
+        expect(responseBody.length).toBe(2);
+        expect(responseBody[0]).toHaveProperty('id');
+        expect(responseBody[0]).toHaveProperty('context_key');
+        expect(responseBody[0].context_key).toBe(VALID_CONTEXT_KEY);
+        expect(responseBody[0].id).toBe(ID_FOR_SCREEN_BY_CONTEXT_KEY);
+        expect(responseBody[1]).toHaveProperty('id');
+        expect(responseBody[1]).toHaveProperty('context_key');
+        expect(responseBody[1].context_key).toBe(CONTEXT_KEY_FOR_SCREEN_BY_ID);
+        expect(responseBody[1].id).toBe(VALID_SCREEN_ID);
+      });
     });
   });
 });
