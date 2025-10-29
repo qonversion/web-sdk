@@ -262,10 +262,10 @@ describe('Direct API tests', function () {
         expect(responseBody.length).toBeGreaterThan(0);
         expect(responseBody[0]).toHaveProperty('id');
         expect(responseBody[0]).toHaveProperty('context_key');
-        expect(responseBody[0]).toHaveProperty('html');
+        expect(responseBody[0]).toHaveProperty('body');
         expect(responseBody[0].context_key).toBe(VALID_CONTEXT_KEY);
         expect(responseBody[0].id).toBe(ID_FOR_SCREEN_BY_CONTEXT_KEY);
-        expect(responseBody[0].html).toBeDefined();
+        expect(responseBody[0].body).toBeDefined();
       });
 
       it('get screen by non-existent context key', async () => {
@@ -304,10 +304,10 @@ describe('Direct API tests', function () {
         expect(response.status).toBe(200);
         expect(responseBody).toHaveProperty('id');
         expect(responseBody).toHaveProperty('context_key');
-        expect(responseBody).toHaveProperty('html');
+        expect(responseBody).toHaveProperty('body');
         expect(responseBody.id).toBe(VALID_SCREEN_ID);
         expect(responseBody.context_key).toBe(CONTEXT_KEY_FOR_SCREEN_BY_ID);
-        expect(responseBody.html).toBeDefined();
+        expect(responseBody.body).toBeDefined();
       });
 
       it('get screen by non-existent screen ID', async () => {
@@ -335,16 +335,16 @@ describe('Direct API tests', function () {
         expect(responseBody.length).toBe(2);
         expect(responseBody[0]).toHaveProperty('id');
         expect(responseBody[0]).toHaveProperty('context_key');
-        expect(responseBody[0]).toHaveProperty('html');
+        expect(responseBody[0]).toHaveProperty('body');
         expect(responseBody[0].context_key).toBe(VALID_CONTEXT_KEY);
         expect(responseBody[0].id).toBe(ID_FOR_SCREEN_BY_CONTEXT_KEY);
-        expect(responseBody[0].html).toBeDefined();
+        expect(responseBody[0].body).toBeDefined();
         expect(responseBody[1]).toHaveProperty('id');
         expect(responseBody[1]).toHaveProperty('context_key');
-        expect(responseBody[1]).toHaveProperty('html');
+        expect(responseBody[1]).toHaveProperty('body');
         expect(responseBody[1].context_key).toBe(CONTEXT_KEY_FOR_SCREEN_BY_ID);
         expect(responseBody[1].id).toBe(VALID_SCREEN_ID);
-        expect(responseBody[1].html).toBeDefined();
+        expect(responseBody[1].body).toBeDefined();
       });
     });
   });
