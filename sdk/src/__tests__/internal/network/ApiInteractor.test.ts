@@ -470,6 +470,27 @@ describe('getErrorResponse tests', () => {
     });
   });
 
+  test('get error from long plain text payload', () => {
+    // given
+    const payload = 'x'.repeat(130);
+    const networkResponse: RawNetworkResponse = {
+      code: 503,
+      payload,
+    };
+
+    // when
+    const result = ApiInteractorImpl.getErrorResponse(networkResponse)
+
+    // then
+    expect(result).toStrictEqual({
+      apiCode: undefined,
+      code: 503,
+      message: `Unexpected API error response: ${'x'.repeat(120)}...`,
+      type: undefined,
+      isSuccess: false,
+    });
+  });
+
   test('get error from execution error', () => {
     // given
     const executionError = new Error('execution error');
@@ -500,7 +521,7 @@ describe('getErrorResponse tests', () => {
     });
   });
 
-  test('get error from execution error', () => {
+  test('throw when neither response nor execution error is provided', () => {
     // given
 
     // when and then

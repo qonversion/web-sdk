@@ -17,6 +17,7 @@ import {delay, isInternalServerErrorResponse, isSuccessfulResponse} from './util
 import {ERROR_CODES_BLOCKING_FURTHER_EXECUTIONS} from './constants';
 
 export class ApiInteractorImpl implements ApiInteractor {
+  private static readonly MAX_ERROR_PAYLOAD_EXCERPT_LENGTH = 120;
   private readonly networkClient: NetworkClient;
   private readonly delayCalculator: RetryDelayCalculator;
   private readonly configHolder: NetworkConfigHolder;
@@ -116,9 +117,17 @@ export class ApiInteractorImpl implements ApiInteractor {
 
     return {
       message: typeof payload === 'string'
-        ? `Unexpected API error response: ${payload}`
+        ? `Unexpected API error response: ${ApiInteractorImpl.getPayloadExcerpt(payload)}`
         : 'Unexpected API error response',
     };
+  }
+
+  private static getPayloadExcerpt(payload: string): string {
+    if (payload.length <= ApiInteractorImpl.MAX_ERROR_PAYLOAD_EXCERPT_LENGTH) {
+      return payload;
+    }
+
+    return `${payload.slice(0, ApiInteractorImpl.MAX_ERROR_PAYLOAD_EXCERPT_LENGTH)}...`;
   }
 
   private static isApiErrorPayload(payload: unknown): payload is {error: ApiError} {
