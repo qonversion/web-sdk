@@ -76,8 +76,8 @@ describe('getUser tests', function () {
 
     // then
     expect(res).toStrictEqual(expRes);
-    expect(requestConfigurator.configureUserRequest).toBeCalledWith(testUserId);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureUserRequest).toHaveBeenCalledWith(testUserId);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 
   test('user request failed', async () => {
@@ -91,8 +91,8 @@ describe('getUser tests', function () {
 
     // when and then
     await expect(() => userService.getUser(testUserId)).rejects.toThrow(expError);
-    expect(requestConfigurator.configureUserRequest).toBeCalledWith(testUserId);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureUserRequest).toHaveBeenCalledWith(testUserId);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 
   test('user does not exist', async () => {
@@ -113,8 +113,8 @@ describe('getUser tests', function () {
 
     // when and then
     await expect(() => userService.getUser(testUserId)).rejects.toThrow(expError);
-    expect(requestConfigurator.configureUserRequest).toBeCalledWith(testUserId);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureUserRequest).toHaveBeenCalledWith(testUserId);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 });
 
@@ -133,8 +133,8 @@ describe('createUser tests', function () {
 
     // then
     expect(res).toStrictEqual(expRes);
-    expect(requestConfigurator.configureCreateUserRequest).toBeCalledWith(testUserId, testEnvironment);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureCreateUserRequest).toHaveBeenCalledWith(testUserId, testEnvironment);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 
   test('user request failed', async () => {
@@ -148,7 +148,7 @@ describe('createUser tests', function () {
 
     // when and then
     await expect(() => userService.createUser(testUserId)).rejects.toThrow(expError);
-    expect(requestConfigurator.configureCreateUserRequest).toBeCalledWith(testUserId, testEnvironment);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureCreateUserRequest).toHaveBeenCalledWith(testUserId, testEnvironment);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 });

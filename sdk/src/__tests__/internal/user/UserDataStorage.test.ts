@@ -25,8 +25,8 @@ describe('UserDataStorage tests', () => {
     // constructor call in beforeEach
 
     // then
-    expect(localStorage.getString).toBeCalledWith(StorageConstants.OriginalUserId);
-    expect(localStorage.getString).toBeCalledWith(StorageConstants.IdentityUserId);
+    expect(localStorage.getString).toHaveBeenCalledWith(StorageConstants.OriginalUserId);
+    expect(localStorage.getString).toHaveBeenCalledWith(StorageConstants.IdentityUserId);
     expect(userDataStorage['originalId']).toBe(testOriginalId);
     expect(userDataStorage['identityId']).toBe(testIdentityId);
   });
@@ -86,7 +86,7 @@ describe('UserDataStorage tests', () => {
 
     // then
     expect(userDataStorage['identityId']).toBeUndefined();
-    expect(localStorage.remove).toBeCalledWith(StorageConstants.IdentityUserId);
+    expect(localStorage.remove).toHaveBeenCalledWith(StorageConstants.IdentityUserId);
   });
 
   test('set identity id', () => {
@@ -99,7 +99,7 @@ describe('UserDataStorage tests', () => {
 
     // then
     expect(userDataStorage['identityId']).toBe(testIdentityId);
-    expect(localStorage.putString).toBeCalledWith(StorageConstants.IdentityUserId, testIdentityId);
+    expect(localStorage.putString).toHaveBeenCalledWith(StorageConstants.IdentityUserId, testIdentityId);
   });
 
   test('set original id', () => {
@@ -112,6 +112,6 @@ describe('UserDataStorage tests', () => {
 
     // then
     expect(userDataStorage['originalId']).toBe(testOriginalId);
-    expect(localStorage.putString).toBeCalledWith(StorageConstants.OriginalUserId, testOriginalId);
+    expect(localStorage.putString).toHaveBeenCalledWith(StorageConstants.OriginalUserId, testOriginalId);
   });
 });

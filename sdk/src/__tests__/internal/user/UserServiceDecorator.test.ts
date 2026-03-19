@@ -2,6 +2,12 @@ import {UserService, UserServiceDecorator} from '../../../internal/user';
 import {QonversionError, QonversionErrorCode, User} from '../../../index';
 
 const testUserId = 'test user id';
+const testUser: User = {
+  created: 0,
+  environment: 'sandbox',
+  id: testUserId,
+  identityId: 'some identity'
+};
 let userService: UserService;
 let userServiceDecorator: UserServiceDecorator;
 
@@ -12,9 +18,9 @@ beforeEach(() => {
 });
 
 describe('createUser tests', () => {
-  test('create user', () => {
+  test('create user', async () => {
     // given
-    const promise = new Promise(() => {});
+    const promise = Promise.resolve(testUser);
     // @ts-ignore
     userService.createUser = jest.fn(() => promise);
 
@@ -22,15 +28,15 @@ describe('createUser tests', () => {
     const res = userServiceDecorator.createUser(testUserId);
 
     // then
-    expect(res).toStrictEqual(promise);
-    expect(userService.createUser).toBeCalledWith(testUserId);
+    await expect(res).resolves.toStrictEqual(testUser);
+    expect(userService.createUser).toHaveBeenCalledWith(testUserId);
   });
 });
 
 describe('getUser tests', () => {
-  test('another request is in progress', () => {
+  test('another request is in progress', async () => {
     // given
-    const promise = new Promise(() => {});
+    const promise = Promise.resolve(testUser);
     // @ts-ignore
     userServiceDecorator['userLoadingPromise'] = promise;
 
@@ -38,12 +44,12 @@ describe('getUser tests', () => {
     const res = userServiceDecorator.getUser(testUserId);
 
     // then
-    expect(res).toStrictEqual(promise);
+    await expect(res).resolves.toStrictEqual(testUser);
   });
 
-  test('no request is in progress', () => {
+  test('no request is in progress', async () => {
     // given
-    const promise = new Promise(() => {});
+    const promise = Promise.resolve(testUser);
     // @ts-ignore
     userServiceDecorator['loadOrCreateUser'] = jest.fn(() => promise);
 
@@ -51,45 +57,38 @@ describe('getUser tests', () => {
     const res = userServiceDecorator.getUser(testUserId);
 
     // then
-    expect(res).toStrictEqual(promise);
-    expect(userServiceDecorator['loadOrCreateUser']).toBeCalledWith(testUserId);
-    expect(userServiceDecorator['userLoadingPromise']).toStrictEqual(promise);
+    await expect(res).resolves.toStrictEqual(testUser);
+    expect(userServiceDecorator['loadOrCreateUser']).toHaveBeenCalledWith(testUserId);
+    expect(userServiceDecorator['userLoadingPromise']).toBe(promise);
   });
 });
 
 describe('loadOrCreateUser tests', () => {
-  const user: User = {
-    created: 0,
-    environment: 'sandbox',
-    id: testUserId,
-    identityId: 'some identity'
-  };
-
   test('user already exists', async () => {
     // given
-    userService.getUser = jest.fn(async () => user);
+    userService.getUser = jest.fn(async () => testUser);
 
     // when
     const res = await userServiceDecorator['loadOrCreateUser'](testUserId);
 
     // then
-    expect(res).toStrictEqual(user);
-    expect(userService.getUser).toBeCalledWith(testUserId);
+    expect(res).toStrictEqual(testUser);
+    expect(userService.getUser).toHaveBeenCalledWith(testUserId);
   });
 
   test('user does not exist', async () => {
     // given
     const notFoundError = new QonversionError(QonversionErrorCode.UserNotFound);
     userService.getUser = jest.fn(async () => {throw notFoundError});
-    userService.createUser = jest.fn(async () => user);
+    userService.createUser = jest.fn(async () => testUser);
 
     // when
     const res = await userServiceDecorator['loadOrCreateUser'](testUserId);
 
     // then
-    expect(res).toStrictEqual(user);
-    expect(userService.getUser).toBeCalledWith(testUserId);
-    expect(userService.createUser).toBeCalledWith(testUserId);
+    expect(res).toStrictEqual(testUser);
+    expect(userService.getUser).toHaveBeenCalledWith(testUserId);
+    expect(userService.createUser).toHaveBeenCalledWith(testUserId);
   });
 
   test('getUser throws unknown error', async () => {
@@ -99,7 +98,7 @@ describe('loadOrCreateUser tests', () => {
 
     // when and then
     await expect(userServiceDecorator['loadOrCreateUser'](testUserId)).rejects.toThrow(unknownError);
-    expect(userService.getUser).toBeCalledWith(testUserId);
+    expect(userService.getUser).toHaveBeenCalledWith(testUserId);
   });
 
   test('createUser throws unknown error', async () => {
@@ -111,7 +110,7 @@ describe('loadOrCreateUser tests', () => {
 
     // when and then
     await expect(userServiceDecorator['loadOrCreateUser'](testUserId)).rejects.toThrow(unknownError);
-    expect(userService.getUser).toBeCalledWith(testUserId);
-    expect(userService.createUser).toBeCalledWith(testUserId);
+    expect(userService.getUser).toHaveBeenCalledWith(testUserId);
+    expect(userService.createUser).toHaveBeenCalledWith(testUserId);
   });
 });
