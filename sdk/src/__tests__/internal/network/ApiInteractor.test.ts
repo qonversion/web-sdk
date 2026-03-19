@@ -103,9 +103,9 @@ describe('execute tests', () => {
 
     // then
     expect(response).toStrictEqual(expResponse);
-    expect(networkClient.execute).toBeCalledWith(request);
-    expect(apiInteractor.prepareRetryConfig).not.toBeCalled();
-    expect(ApiInteractorImpl.getErrorResponse).not.toBeCalled();
+    expect(networkClient.execute).toHaveBeenCalledWith(request);
+    expect(apiInteractor.prepareRetryConfig).not.toHaveBeenCalled();
+    expect(ApiInteractorImpl.getErrorResponse).not.toHaveBeenCalled();
   });
 
   test('execute request with deny option on', () => {
@@ -150,8 +150,8 @@ describe('execute tests', () => {
       await apiInteractor.execute(request, new RetryPolicyExponential(retryCount));
     }).rejects.toThrow(expectedError);
 
-    expect(networkClient.execute).toBeCalledTimes(retryCount + 1);
-    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
+    expect(networkClient.execute).toHaveBeenCalledTimes(retryCount + 1);
+    expect(ApiInteractorImpl.getErrorResponse).toHaveBeenCalledTimes(1);
   });
 
   test('network client parse error with client response code is not retried', async () => {
@@ -176,8 +176,8 @@ describe('execute tests', () => {
       message: 'Failed to parse JSON response',
       isSuccess: false,
     });
-    expect(networkClient.execute).toBeCalledTimes(1);
-    expect(apiInteractor.prepareRetryConfig).not.toBeCalled();
+    expect(networkClient.execute).toHaveBeenCalledTimes(1);
+    expect(apiInteractor.prepareRetryConfig).not.toHaveBeenCalled();
   });
 
   test('network client parse error with server response code is retried', async () => {
@@ -206,7 +206,7 @@ describe('execute tests', () => {
       message: 'Failed to parse JSON response',
       isSuccess: false,
     });
-    expect(networkClient.execute).toBeCalledTimes(retryCount + 1);
+    expect(networkClient.execute).toHaveBeenCalledTimes(retryCount + 1);
   });
 
   test('retryable error response without retry config', async () => {
@@ -218,8 +218,8 @@ describe('execute tests', () => {
     const response = await apiInteractor.execute(request);
 
     expect(response).toStrictEqual(errorResponse);
-    expect(networkClient.execute).toBeCalledTimes(1);
-    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
+    expect(networkClient.execute).toHaveBeenCalledTimes(1);
+    expect(ApiInteractorImpl.getErrorResponse).toHaveBeenCalledTimes(1);
   });
 
   test('error response with limited retries', async () => {
@@ -236,8 +236,8 @@ describe('execute tests', () => {
     const response = await apiInteractor.execute(request, new RetryPolicyExponential(retryCount));
 
     expect(response).toStrictEqual(errorResponse);
-    expect(networkClient.execute).toBeCalledTimes(retryCount + 1);
-    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
+    expect(networkClient.execute).toHaveBeenCalledTimes(retryCount + 1);
+    expect(ApiInteractorImpl.getErrorResponse).toHaveBeenCalledTimes(1);
   });
 
   test('error response which shouldn\'t be retried', async () => {
@@ -252,10 +252,10 @@ describe('execute tests', () => {
 
     // then
     expect(result).toStrictEqual(errorResponse);
-    expect(networkClient.execute).toBeCalledTimes(1);
-    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
-    expect(apiInteractor.prepareRetryConfig).not.toBeCalled();
-    expect(configHolderSpy).not.toBeCalled();
+    expect(networkClient.execute).toHaveBeenCalledTimes(1);
+    expect(ApiInteractorImpl.getErrorResponse).toHaveBeenCalledTimes(1);
+    expect(apiInteractor.prepareRetryConfig).not.toHaveBeenCalled();
+    expect(configHolderSpy).not.toHaveBeenCalled();
   });
 
   test('error response with code, blocking further executions', async () => {
@@ -270,10 +270,10 @@ describe('execute tests', () => {
 
     // then
     expect(result).toStrictEqual(errorResponse);
-    expect(networkClient.execute).toBeCalledTimes(1);
-    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
-    expect(configHolderSpy).toBeCalledWith(false);
-    expect(apiInteractor.prepareRetryConfig).not.toBeCalled();
+    expect(networkClient.execute).toHaveBeenCalledTimes(1);
+    expect(ApiInteractorImpl.getErrorResponse).toHaveBeenCalledTimes(1);
+    expect(configHolderSpy).toHaveBeenCalledWith(false);
+    expect(apiInteractor.prepareRetryConfig).not.toHaveBeenCalled();
   });
 });
 
@@ -291,7 +291,7 @@ describe('prepareRetryConfig tests', () => {
 
     // then
     expect(retryConfig.shouldRetry).toBeFalsy();
-    expect(delayCalculator.countDelay).not.toBeCalled();
+    expect(delayCalculator.countDelay).not.toHaveBeenCalled();
   });
 
   test('no retry after several attempts for retry policy none', () => {
@@ -303,7 +303,7 @@ describe('prepareRetryConfig tests', () => {
 
     // then
     expect(retryConfig.shouldRetry).toBeFalsy();
-    expect(delayCalculator.countDelay).not.toBeCalled();
+    expect(delayCalculator.countDelay).not.toHaveBeenCalled();
   });
 
   test('retry after first attempt for infinite exponential retry policy', () => {
@@ -316,7 +316,7 @@ describe('prepareRetryConfig tests', () => {
     // then
     expect(retryConfig.shouldRetry).toBeTruthy();
     expect(retryConfig.attemptIndex).toBe(1);
-    expect(delayCalculator.countDelay).toBeCalledTimes(1);
+    expect(delayCalculator.countDelay).toHaveBeenCalledTimes(1);
   });
 
   test('retry after several attempts for infinite exponential retry policy', () => {
@@ -330,7 +330,7 @@ describe('prepareRetryConfig tests', () => {
     // then
     expect(retryConfig.shouldRetry).toBeTruthy();
     expect(retryConfig.attemptIndex).toBe(attemptIndex + 1);
-    expect(delayCalculator.countDelay).toBeCalledTimes(1);
+    expect(delayCalculator.countDelay).toHaveBeenCalledTimes(1);
   });
 
   test('no retry for infinite exponential retry policy with negative min delay', () => {
@@ -342,7 +342,7 @@ describe('prepareRetryConfig tests', () => {
 
     // then
     expect(retryConfig.shouldRetry).toBeFalsy();
-    expect(delayCalculator.countDelay).not.toBeCalled();
+    expect(delayCalculator.countDelay).not.toHaveBeenCalled();
   });
 
   test('retry after first attempt for exponential retry policy', () => {
@@ -355,7 +355,7 @@ describe('prepareRetryConfig tests', () => {
     // then
     expect(retryConfig.shouldRetry).toBeTruthy();
     expect(retryConfig.attemptIndex).toBe(1);
-    expect(delayCalculator.countDelay).toBeCalledTimes(1);
+    expect(delayCalculator.countDelay).toHaveBeenCalledTimes(1);
   });
 
   test('penultimate retry for exponential retry policy', () => {
@@ -369,7 +369,7 @@ describe('prepareRetryConfig tests', () => {
     // then
     expect(retryConfig.shouldRetry).toBeTruthy();
     expect(retryConfig.attemptIndex).toBe(attemptIndex + 1);
-    expect(delayCalculator.countDelay).toBeCalledTimes(1);
+    expect(delayCalculator.countDelay).toHaveBeenCalledTimes(1);
   });
 
   test('last retry for exponential retry policy', () => {
@@ -382,7 +382,7 @@ describe('prepareRetryConfig tests', () => {
 
     // then
     expect(retryConfig.shouldRetry).toBeFalsy();
-    expect(delayCalculator.countDelay).not.toBeCalled();
+    expect(delayCalculator.countDelay).not.toHaveBeenCalled();
   });
 
   test('no retry for exponential retry policy with negative min delay', () => {
@@ -394,7 +394,7 @@ describe('prepareRetryConfig tests', () => {
 
     // then
     expect(retryConfig.shouldRetry).toBeFalsy();
-    expect(delayCalculator.countDelay).not.toBeCalled();
+    expect(delayCalculator.countDelay).not.toHaveBeenCalled();
   });
 });
 

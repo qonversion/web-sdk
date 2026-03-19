@@ -56,8 +56,8 @@ describe('obtainIdentity tests', function () {
 
     // then
     expect(res).toStrictEqual(testQonversionUserId);
-    expect(requestConfigurator.configureIdentityRequest).toBeCalledWith(testIdentityUserId);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureIdentityRequest).toHaveBeenCalledWith(testIdentityUserId);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 
   test('identity request failed', async () => {
@@ -71,8 +71,8 @@ describe('obtainIdentity tests', function () {
 
     // when and then
     await expect(() => identityService.obtainIdentity(testIdentityUserId)).rejects.toThrow(expError);
-    expect(requestConfigurator.configureIdentityRequest).toBeCalledWith(testIdentityUserId);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureIdentityRequest).toHaveBeenCalledWith(testIdentityUserId);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 
   test('identity does not exist', async () => {
@@ -93,8 +93,8 @@ describe('obtainIdentity tests', function () {
 
     // when and then
     await expect(() => identityService.obtainIdentity(testIdentityUserId)).rejects.toThrow(expError);
-    expect(requestConfigurator.configureIdentityRequest).toBeCalledWith(testIdentityUserId);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureIdentityRequest).toHaveBeenCalledWith(testIdentityUserId);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 });
 
@@ -113,8 +113,8 @@ describe('createIdentity tests', function () {
 
     // then
     expect(res).toStrictEqual(testQonversionUserId);
-    expect(requestConfigurator.configureCreateIdentityRequest).toBeCalledWith(testQonversionUserId, testIdentityUserId);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureCreateIdentityRequest).toHaveBeenCalledWith(testQonversionUserId, testIdentityUserId);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 
   test('user request failed', async () => {
@@ -128,7 +128,7 @@ describe('createIdentity tests', function () {
 
     // when and then
     await expect(() => identityService.createIdentity(testQonversionUserId, testIdentityUserId)).rejects.toThrow(expError);
-    expect(requestConfigurator.configureCreateIdentityRequest).toBeCalledWith(testQonversionUserId, testIdentityUserId);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureCreateIdentityRequest).toHaveBeenCalledWith(testQonversionUserId, testIdentityUserId);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 });

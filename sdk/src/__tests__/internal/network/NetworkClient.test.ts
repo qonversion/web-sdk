@@ -77,7 +77,7 @@ describe('execute test', () => {
 
     // then
     expect(result).toStrictEqual(expResult);
-    expect(fetch).toBeCalledWith(testUrl, expRequest);
+    expect(fetch).toHaveBeenCalledWith(testUrl, expRequest);
   });
 
   test('execute without body', async () => {
@@ -98,7 +98,7 @@ describe('execute test', () => {
 
     // then
     expect(result).toStrictEqual(expResult);
-    expect(fetch).toBeCalledWith(testUrl, expRequest);
+    expect(fetch).toHaveBeenCalledWith(testUrl, expRequest);
   });
 
   test('execute with empty response body', async () => {

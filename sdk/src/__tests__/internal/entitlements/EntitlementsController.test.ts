@@ -49,10 +49,10 @@ describe('getEntitlements tests', () => {
 
     // then
     expect(res).toStrictEqual(testEntitlements);
-    expect(userDataStorage.requireOriginalUserId).toBeCalled();
-    expect(entitlementsService.getEntitlements).toBeCalledWith(testUserId);
-    expect(logger.verbose).toBeCalledWith('Requesting entitlements', {userId: testUserId});
-    expect(logger.info).toBeCalledWith('Successfully received entitlements', testEntitlements);
+    expect(userDataStorage.requireOriginalUserId).toHaveBeenCalled();
+    expect(entitlementsService.getEntitlements).toHaveBeenCalledWith(testUserId);
+    expect(logger.verbose).toHaveBeenCalledWith('Requesting entitlements', {userId: testUserId});
+    expect(logger.info).toHaveBeenCalledWith('Successfully received entitlements', testEntitlements);
   });
 
   test('unknown error while getting entitlements', async () => {
@@ -63,9 +63,9 @@ describe('getEntitlements tests', () => {
 
     // when and then
     await expect(entitlementsController.getEntitlements()).rejects.toThrow(unknownError);
-    expect(entitlementsService.getEntitlements).toBeCalledWith(testUserId);
-    expect(logger.verbose).toBeCalledWith('Requesting entitlements', {userId: testUserId});
-    expect(logger.error).toBeCalledWith('Failed to request entitlements', unknownError);
+    expect(entitlementsService.getEntitlements).toHaveBeenCalledWith(testUserId);
+    expect(logger.verbose).toHaveBeenCalledWith('Requesting entitlements', {userId: testUserId});
+    expect(logger.error).toHaveBeenCalledWith('Failed to request entitlements', unknownError);
   });
 
   test('user not found and created successfully', async () => {
@@ -81,11 +81,11 @@ describe('getEntitlements tests', () => {
 
     // then
     expect(res).toStrictEqual([]);
-    expect(entitlementsService.getEntitlements).toBeCalledWith(testUserId);
-    expect(logger.verbose).toBeCalledWith('Requesting entitlements', {userId: testUserId});
-    expect(logger.verbose).toBeCalledWith('User is not registered. Creating new one');
-    expect(userController.createUser).toBeCalled();
-    expect(logger.error).not.toBeCalled();
+    expect(entitlementsService.getEntitlements).toHaveBeenCalledWith(testUserId);
+    expect(logger.verbose).toHaveBeenCalledWith('Requesting entitlements', {userId: testUserId});
+    expect(logger.verbose).toHaveBeenCalledWith('User is not registered. Creating new one');
+    expect(userController.createUser).toHaveBeenCalled();
+    expect(logger.error).not.toHaveBeenCalled();
   });
 
   test('user not found and creation fails', async () => {
@@ -101,10 +101,10 @@ describe('getEntitlements tests', () => {
 
     // then
     expect(res).toStrictEqual([]);
-    expect(entitlementsService.getEntitlements).toBeCalledWith(testUserId);
-    expect(logger.verbose).toBeCalledWith('Requesting entitlements', {userId: testUserId});
-    expect(logger.verbose).toBeCalledWith('User is not registered. Creating new one');
-    expect(logger.error).toBeCalledWith('Failed to create new user while requesting entitlements', userCreationError);
-    expect(userController.createUser).toBeCalled();
+    expect(entitlementsService.getEntitlements).toHaveBeenCalledWith(testUserId);
+    expect(logger.verbose).toHaveBeenCalledWith('Requesting entitlements', {userId: testUserId});
+    expect(logger.verbose).toHaveBeenCalledWith('User is not registered. Creating new one');
+    expect(logger.error).toHaveBeenCalledWith('Failed to create new user while requesting entitlements', userCreationError);
+    expect(userController.createUser).toHaveBeenCalled();
   });
 });

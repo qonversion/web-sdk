@@ -53,10 +53,10 @@ describe('sendStripePurchase tests', () => {
 
     // then
     expect(res).toStrictEqual(testUserPurchase);
-    expect(userDataStorage.requireOriginalUserId).toBeCalled();
-    expect(purchasesService.sendStripePurchase).toBeCalledWith(testUserId, testStripePurchaseData);
-    expect(logger.info).toBeCalledWith('Successfully sent the Stripe purchase', testUserPurchase);
-    expect(logger.verbose).toBeCalledWith('Sending Stripe purchase', {userId: testUserId, data: testStripePurchaseData});
+    expect(userDataStorage.requireOriginalUserId).toHaveBeenCalled();
+    expect(purchasesService.sendStripePurchase).toHaveBeenCalledWith(testUserId, testStripePurchaseData);
+    expect(logger.info).toHaveBeenCalledWith('Successfully sent the Stripe purchase', testUserPurchase);
+    expect(logger.verbose).toHaveBeenCalledWith('Sending Stripe purchase', {userId: testUserId, data: testStripePurchaseData});
   });
 
   test('unknown error while sending purchase', async () => {
@@ -67,8 +67,8 @@ describe('sendStripePurchase tests', () => {
 
     // when and then
     await expect(purchasesController.sendStripePurchase(testStripePurchaseData)).rejects.toThrow(unknownError);
-    expect(purchasesService.sendStripePurchase).toBeCalledWith(testUserId, testStripePurchaseData);
-    expect(logger.error).toBeCalledWith('Failed to send the Stripe purchase', unknownError);
-    expect(logger.verbose).toBeCalledWith('Sending Stripe purchase', {userId: testUserId, data: testStripePurchaseData});
+    expect(purchasesService.sendStripePurchase).toHaveBeenCalledWith(testUserId, testStripePurchaseData);
+    expect(logger.error).toHaveBeenCalledWith('Failed to send the Stripe purchase', unknownError);
+    expect(logger.verbose).toHaveBeenCalledWith('Sending Stripe purchase', {userId: testUserId, data: testStripePurchaseData});
   });
 });
