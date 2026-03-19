@@ -154,6 +154,54 @@ describe('execute tests', () => {
     expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
   });
 
+  test('network client parse error with client response code is not retried', async () => {
+    // given
+    const expectedError = new QonversionError(
+      QonversionErrorCode.BackendError,
+      'Response code 400, message: Failed to parse JSON response',
+      undefined,
+      400,
+    );
+    networkClient.execute = jest.fn(() => {
+      throw expectedError;
+    });
+    ApiInteractorImpl.getErrorResponse = jest.fn((response, error) => {throw error});
+
+    // when and then
+    await expect(async () => {
+      await apiInteractor.execute(request, new RetryPolicyExponential(3));
+    }).rejects.toThrow(expectedError);
+
+    expect(networkClient.execute).toBeCalledTimes(1);
+    expect(apiInteractor.prepareRetryConfig).not.toBeCalled();
+  });
+
+  test('network client parse error with server response code is retried', async () => {
+    // given
+    const retryCount = 2;
+    const expectedError = new QonversionError(
+      QonversionErrorCode.BackendError,
+      'Response code 500, message: Failed to parse JSON response',
+      undefined,
+      500,
+    );
+    networkClient.execute = jest.fn(() => {throw expectedError});
+    ApiInteractorImpl.getErrorResponse = jest.fn((response, error) => {throw error});
+    apiInteractor.prepareRetryConfig = jest.fn((retryPolicy, attemptIndex) => ({
+      attemptIndex: attemptIndex + 1,
+      delay: 1,
+      shouldRetry: attemptIndex < retryCount,
+    }));
+
+    // when and then
+    await expect(async () => {
+      await apiInteractor.execute(request, new RetryPolicyExponential(retryCount));
+    }).rejects.toThrow(expectedError);
+
+    expect(networkClient.execute).toBeCalledTimes(retryCount + 1);
+    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
+  });
+
   test('retryable error response without retry config', async () => {
     // given
     testResponseCode = 555;

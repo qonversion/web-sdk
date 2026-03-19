@@ -173,14 +173,38 @@ describe('execute test', () => {
     );
 
     // when and then
-    await expect(networkClient.execute(request)).rejects.toBeInstanceOf(QonversionError);
+    const execution = networkClient.execute(request);
+    await expect(execution).rejects.toBeInstanceOf(QonversionError);
+    await expect(execution).rejects.toMatchObject({
+      code: QonversionErrorCode.BackendError,
+      responseCode: 500,
+    });
+  });
 
-    try {
-      await networkClient.execute(request);
-    } catch (error) {
-      expect(error).toMatchObject({
-        code: QonversionErrorCode.BackendError,
-      });
-    }
+  test('execute with whitespace-only json body', async () => {
+    // given
+    const request: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.GET,
+      url: testUrl
+    };
+    mockFetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        status: 204,
+        headers: {
+          get: (header: string) => header === 'content-type' ? 'application/json' : null,
+        },
+        text: () => Promise.resolve('\n  '),
+      })
+    );
+
+    // when
+    const result = await networkClient.execute(request);
+
+    // then
+    expect(result).toStrictEqual({
+      code: 204,
+      payload: undefined,
+    });
   });
 });

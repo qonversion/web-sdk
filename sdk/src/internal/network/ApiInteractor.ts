@@ -69,7 +69,9 @@ export class ApiInteractorImpl implements ApiInteractor {
       return ApiInteractorImpl.getErrorResponse(response, executionError);
     }
 
-    const shouldTryToRetry = (!!response && isInternalServerErrorResponse(response.code)) || !!executionError;
+    const shouldTryToRetry =
+      (!!response && isInternalServerErrorResponse(response.code)) ||
+      (!!executionError && this.shouldRetryExecutionError(executionError));
     if (shouldTryToRetry) {
        const retryConfig = this.prepareRetryConfig(retryPolicy, attemptIndex);
        if (retryConfig.shouldRetry) {
@@ -118,6 +120,14 @@ export class ApiInteractorImpl implements ApiInteractor {
 
     const error = (payload as {error: unknown}).error;
     return !!error && typeof error === 'object' && 'message' in error && typeof (error as {message: unknown}).message === 'string';
+  }
+
+  private shouldRetryExecutionError(error: QonversionError): boolean {
+    if (error.responseCode !== undefined) {
+      return isInternalServerErrorResponse(error.responseCode);
+    }
+
+    return true;
   }
 
   prepareRetryConfig(retryPolicy: RetryPolicy, attemptIndex: number): NetworkRetryConfig {

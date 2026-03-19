@@ -24,7 +24,8 @@ export class NetworkClientImpl implements NetworkClient {
 
   private async parseResponseBody(response: Response, code: number): Promise<unknown> {
     const responseText = await response.text();
-    if (!responseText) {
+    const trimmedResponseText = responseText.trim();
+    if (!trimmedResponseText) {
       return undefined;
     }
 
@@ -34,12 +35,13 @@ export class NetworkClientImpl implements NetworkClient {
     }
 
     try {
-      return JSON.parse(responseText);
+      return JSON.parse(trimmedResponseText);
     } catch (cause) {
       throw new QonversionError(
         QonversionErrorCode.BackendError,
         `Response code ${code}, message: Failed to parse JSON response`,
         cause instanceof Error ? cause : undefined,
+        code,
       );
     }
   }
