@@ -98,8 +98,8 @@ describe('getEntitlements tests', function () {
 
     // then
     expect(res).toStrictEqual(expRes);
-    expect(requestConfigurator.configureEntitlementsRequest).toBeCalledWith(testUserId);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureEntitlementsRequest).toHaveBeenCalledWith(testUserId);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 
   test('entitlements request failed', async () => {
@@ -113,8 +113,8 @@ describe('getEntitlements tests', function () {
 
     // when and then
     await expect(() => entitlementsService.getEntitlements(testUserId)).rejects.toThrow(expError);
-    expect(requestConfigurator.configureEntitlementsRequest).toBeCalledWith(testUserId);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureEntitlementsRequest).toHaveBeenCalledWith(testUserId);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 
   test('user does not exist', async () => {
@@ -135,7 +135,7 @@ describe('getEntitlements tests', function () {
 
     // when and then
     await expect(() => entitlementsService.getEntitlements(testUserId)).rejects.toThrow(expError);
-    expect(requestConfigurator.configureEntitlementsRequest).toBeCalledWith(testUserId);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureEntitlementsRequest).toHaveBeenCalledWith(testUserId);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 });

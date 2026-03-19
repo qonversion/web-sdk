@@ -4,6 +4,8 @@
     "module": "commonjs",
     "target": "es2017",
     "strict": true,
+    "types": ["node"],
+    "skipLibCheck": true,
     "rootDir": "./sdk/src",
     "outDir": "./sdk/build"
   },
@@ -11,6 +13,7 @@
     "sdk/src/**/*"
   ],
   "exclude": [
-    "sdk/src/__tests__/*"
+    "sdk/src/__tests__/*",
+    "sdk/src/__integrationTests__/*"
   ]
 }

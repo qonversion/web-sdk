@@ -26,6 +26,6 @@ test('initialize and get shared instance', () => {
   Qonversion.initialize(mockQonversionConfig)
 
   // then
-  expect(QonversionInternal).toBeCalled();
+  expect(QonversionInternal).toHaveBeenCalled();
   expect(Qonversion['backingInstance']).not.toBeUndefined();
 });
