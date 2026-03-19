@@ -375,6 +375,46 @@ describe('getErrorResponse tests', () => {
     expect(result).toStrictEqual(expResult);
   });
 
+  test('get error from malformed api error object', () => {
+    // given
+    const networkResponse: RawNetworkResponse = {
+      code: 502,
+      payload: {},
+    };
+
+    // when
+    const result = ApiInteractorImpl.getErrorResponse(networkResponse)
+
+    // then
+    expect(result).toStrictEqual({
+      apiCode: undefined,
+      code: 502,
+      message: 'Unexpected API error response',
+      type: undefined,
+      isSuccess: false,
+    });
+  });
+
+  test('get error from plain text payload', () => {
+    // given
+    const networkResponse: RawNetworkResponse = {
+      code: 503,
+      payload: 'service unavailable',
+    };
+
+    // when
+    const result = ApiInteractorImpl.getErrorResponse(networkResponse)
+
+    // then
+    expect(result).toStrictEqual({
+      apiCode: undefined,
+      code: 503,
+      message: 'Unexpected API error response: service unavailable',
+      type: undefined,
+      isSuccess: false,
+    });
+  });
+
   test('get error from execution error', () => {
     // given
     const executionError = new Error('execution error');

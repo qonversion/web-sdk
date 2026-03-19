@@ -83,7 +83,7 @@ export class ApiInteractorImpl implements ApiInteractor {
 
   static getErrorResponse(response?: RawNetworkResponse, executionError?: Error): ApiResponseError {
     if (response) {
-      const apiError: ApiError = response.payload.error;
+      const apiError = ApiInteractorImpl.extractApiError(response.payload);
       return {
         code: response.code,
         message: apiError.message,
@@ -97,6 +97,27 @@ export class ApiInteractorImpl implements ApiInteractor {
       // Unacceptable state.
       throw new Error('Unreachable code. Either response or executionError should be defined');
     }
+  }
+
+  private static extractApiError(payload: unknown): ApiError {
+    if (ApiInteractorImpl.isApiErrorPayload(payload)) {
+      return payload.error;
+    }
+
+    return {
+      message: typeof payload === 'string'
+        ? `Unexpected API error response: ${payload}`
+        : 'Unexpected API error response',
+    };
+  }
+
+  private static isApiErrorPayload(payload: unknown): payload is {error: ApiError} {
+    if (!payload || typeof payload !== 'object' || !('error' in payload)) {
+      return false;
+    }
+
+    const error = (payload as {error: unknown}).error;
+    return !!error && typeof error === 'object' && 'message' in error && typeof (error as {message: unknown}).message === 'string';
   }
 
   prepareRetryConfig(retryPolicy: RetryPolicy, attemptIndex: number): NetworkRetryConfig {

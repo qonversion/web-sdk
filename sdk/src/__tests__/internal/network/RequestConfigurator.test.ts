@@ -19,6 +19,7 @@ const headerBuilder: HeaderBuilder = {
 };
 const testBaseUrl = 'test base url';
 const testUserId = 'test user id'
+const encodedTestUserId = encodeURIComponent(testUserId);
 const testProjectKey = 'test project key';
 
 let primaryConfig: PrimaryConfig = {
@@ -49,7 +50,7 @@ describe('RequestConfigurator tests', () => {
     const expResult: NetworkRequest = {
       headers: testHeaders,
       type: RequestType.GET,
-      url: testBaseUrl + '/' + ApiEndpoint.Users + '/' + testUserId,
+      url: testBaseUrl + '/' + ApiEndpoint.Users + '/' + encodedTestUserId,
       body: undefined,
     };
 
@@ -66,7 +67,7 @@ describe('RequestConfigurator tests', () => {
     const expResult: NetworkRequest = {
       headers: testHeaders,
       type: RequestType.POST,
-      url: `${testBaseUrl}/${ApiEndpoint.Users}/${testUserId}`,
+      url: `${testBaseUrl}/${ApiEndpoint.Users}/${encodedTestUserId}`,
       body: {environment},
     };
 
@@ -83,7 +84,7 @@ describe('RequestConfigurator tests', () => {
     const expResult: NetworkRequest = {
       headers: testHeaders,
       type: RequestType.POST,
-      url: testBaseUrl + '/' + ApiEndpoint.Users + '/' + testUserId + '/' + ApiEndpoint.Properties,
+      url: testBaseUrl + '/' + ApiEndpoint.Users + '/' + encodedTestUserId + '/' + ApiEndpoint.Properties,
       body: properties,
     };
 
@@ -99,7 +100,7 @@ describe('RequestConfigurator tests', () => {
     const expResult: NetworkRequest = {
       headers: testHeaders,
       type: RequestType.GET,
-      url: testBaseUrl + '/' + ApiEndpoint.Users + '/' + testUserId + '/' + ApiEndpoint.Properties,
+      url: testBaseUrl + '/' + ApiEndpoint.Users + '/' + encodedTestUserId + '/' + ApiEndpoint.Properties,
       body: undefined,
     };
 
@@ -113,10 +114,11 @@ describe('RequestConfigurator tests', () => {
   test('identity request', () => {
     // given
     const testIdentityId = 'test identity id';
+    const encodedIdentityId = encodeURIComponent(testIdentityId);
     const expResult: NetworkRequest = {
       headers: testHeaders,
       type: RequestType.GET,
-      url: `${testBaseUrl}/${ApiEndpoint.Identity}/${testIdentityId}`,
+      url: `${testBaseUrl}/${ApiEndpoint.Identity}/${encodedIdentityId}`,
       body: undefined,
     };
 
@@ -130,10 +132,11 @@ describe('RequestConfigurator tests', () => {
   test('create identity request', () => {
     // given
     const testIdentityId = 'test identity id';
+    const encodedIdentityId = encodeURIComponent(testIdentityId);
     const expResult: NetworkRequest = {
       headers: testHeaders,
       type: RequestType.POST,
-      url: `${testBaseUrl}/${ApiEndpoint.Identity}/${testIdentityId}`,
+      url: `${testBaseUrl}/${ApiEndpoint.Identity}/${encodedIdentityId}`,
       body: {
         user_id: testUserId,
       }
@@ -151,7 +154,7 @@ describe('RequestConfigurator tests', () => {
     const expResult: NetworkRequest = {
       headers: testHeaders,
       type: RequestType.GET,
-      url: `${testBaseUrl}/${ApiEndpoint.Users}/${testUserId}/entitlements`,
+      url: `${testBaseUrl}/${ApiEndpoint.Users}/${encodedTestUserId}/entitlements`,
       body: undefined,
     };
 
@@ -174,7 +177,7 @@ describe('RequestConfigurator tests', () => {
     const expResult: NetworkRequest = {
       headers: testHeaders,
       type: RequestType.POST,
-      url: `${testBaseUrl}/${ApiEndpoint.Users}/${testUserId}/purchases`,
+      url: `${testBaseUrl}/${ApiEndpoint.Users}/${encodedTestUserId}/purchases`,
       body: {
         price: data.price,
         currency: data.currency,
@@ -191,5 +194,33 @@ describe('RequestConfigurator tests', () => {
 
     // then
     expect(request).toStrictEqual(expResult);
+  });
+
+  test('encodes user id path segments', () => {
+    // given
+    const unsafeUserId = 'user/with?unsafe#chars %';
+
+    // when
+    const userRequest = requestConfigurator.configureUserRequest(unsafeUserId);
+    const entitlementsRequest = requestConfigurator.configureEntitlementsRequest(unsafeUserId);
+    const propertiesRequest = requestConfigurator.configureUserPropertiesGetRequest(unsafeUserId);
+
+    // then
+    expect(userRequest.url).toBe(`${testBaseUrl}/${ApiEndpoint.Users}/${encodeURIComponent(unsafeUserId)}`);
+    expect(entitlementsRequest.url).toBe(`${testBaseUrl}/${ApiEndpoint.Users}/${encodeURIComponent(unsafeUserId)}/entitlements`);
+    expect(propertiesRequest.url).toBe(`${testBaseUrl}/${ApiEndpoint.Users}/${encodeURIComponent(unsafeUserId)}/${ApiEndpoint.Properties}`);
+  });
+
+  test('encodes identity id path segments', () => {
+    // given
+    const unsafeIdentityId = 'identity/with?unsafe#chars %';
+
+    // when
+    const identityRequest = requestConfigurator.configureIdentityRequest(unsafeIdentityId);
+    const createIdentityRequest = requestConfigurator.configureCreateIdentityRequest(testUserId, unsafeIdentityId);
+
+    // then
+    expect(identityRequest.url).toBe(`${testBaseUrl}/${ApiEndpoint.Identity}/${encodeURIComponent(unsafeIdentityId)}`);
+    expect(createIdentityRequest.url).toBe(`${testBaseUrl}/${ApiEndpoint.Identity}/${encodeURIComponent(unsafeIdentityId)}`);
   });
 });
