@@ -6,6 +6,7 @@ import {
   RequestHeaders,
   RequestType
 } from '../../../internal/network';
+import {QonversionError, QonversionErrorCode} from '../../../index';
 
 const networkClient = new NetworkClientImpl();
 
@@ -31,7 +32,10 @@ describe('execute test', () => {
   const mockFetch = jest.fn(() =>
     Promise.resolve({
       status: testCode,
-      json: () => Promise.resolve(testPayload),
+      headers: {
+        get: (header: string) => header === 'content-type' ? 'application/json' : null,
+      },
+      text: () => Promise.resolve(JSON.stringify(testPayload)),
     })
   );
 
@@ -95,5 +99,113 @@ describe('execute test', () => {
     // then
     expect(result).toStrictEqual(expResult);
     expect(fetch).toBeCalledWith(testUrl, expRequest);
+  });
+
+  test('execute with empty response body', async () => {
+    // given
+    const request: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.GET,
+      url: testUrl
+    };
+    mockFetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        status: 204,
+        headers: {
+          get: () => null,
+        },
+        text: () => Promise.resolve(''),
+      })
+    );
+
+    // when
+    const result = await networkClient.execute(request);
+
+    // then
+    expect(result).toStrictEqual({
+      code: 204,
+      payload: undefined,
+    });
+  });
+
+  test('execute with plain text response body', async () => {
+    // given
+    const request: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.GET,
+      url: testUrl
+    };
+    mockFetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        status: 503,
+        headers: {
+          get: (header: string) => header === 'content-type' ? 'text/plain' : null,
+        },
+        text: () => Promise.resolve('service unavailable'),
+      })
+    );
+
+    // when
+    const result = await networkClient.execute(request);
+
+    // then
+    expect(result).toStrictEqual({
+      code: 503,
+      payload: 'service unavailable',
+    });
+  });
+
+  test('execute with malformed json body', async () => {
+    // given
+    const request: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.GET,
+      url: testUrl
+    };
+    mockFetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        status: 500,
+        headers: {
+          get: (header: string) => header === 'content-type' ? 'application/json' : null,
+        },
+        text: () => Promise.resolve('{'),
+      })
+    );
+
+    // when and then
+    const execution = networkClient.execute(request);
+    await expect(execution).rejects.toBeInstanceOf(QonversionError);
+    await expect(execution).rejects.toMatchObject({
+      code: QonversionErrorCode.BackendError,
+      details: 'Failed to parse JSON response',
+      responseCode: 500,
+    });
+  });
+
+  test('execute with whitespace-only json body', async () => {
+    // given
+    const request: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.GET,
+      url: testUrl
+    };
+    mockFetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        status: 204,
+        headers: {
+          get: (header: string) => header === 'content-type' ? 'application/json' : null,
+        },
+        text: () => Promise.resolve('\n  '),
+      })
+    );
+
+    // when
+    const result = await networkClient.execute(request);
+
+    // then
+    expect(result).toStrictEqual({
+      code: 204,
+      payload: undefined,
+    });
   });
 });

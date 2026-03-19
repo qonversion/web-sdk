@@ -154,6 +154,61 @@ describe('execute tests', () => {
     expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
   });
 
+  test('network client parse error with client response code is not retried', async () => {
+    // given
+    const expectedError = new QonversionError(
+      QonversionErrorCode.BackendError,
+      'Failed to parse JSON response',
+      undefined,
+      400,
+    );
+    networkClient.execute = jest.fn(() => {
+      throw expectedError;
+    });
+    ApiInteractorImpl.getErrorResponse = savedGetErrorResponse;
+
+    // when
+    const response = await apiInteractor.execute(request, new RetryPolicyExponential(3));
+
+    // then
+    expect(response).toStrictEqual({
+      code: 400,
+      message: 'Failed to parse JSON response',
+      isSuccess: false,
+    });
+    expect(networkClient.execute).toBeCalledTimes(1);
+    expect(apiInteractor.prepareRetryConfig).not.toBeCalled();
+  });
+
+  test('network client parse error with server response code is retried', async () => {
+    // given
+    const retryCount = 2;
+    const expectedError = new QonversionError(
+      QonversionErrorCode.BackendError,
+      'Failed to parse JSON response',
+      undefined,
+      500,
+    );
+    networkClient.execute = jest.fn(() => {throw expectedError});
+    ApiInteractorImpl.getErrorResponse = savedGetErrorResponse;
+    apiInteractor.prepareRetryConfig = jest.fn((retryPolicy, attemptIndex) => ({
+      attemptIndex: attemptIndex + 1,
+      delay: 1,
+      shouldRetry: attemptIndex < retryCount,
+    }));
+
+    // when
+    const response = await apiInteractor.execute(request, new RetryPolicyExponential(retryCount));
+
+    // then
+    expect(response).toStrictEqual({
+      code: 500,
+      message: 'Failed to parse JSON response',
+      isSuccess: false,
+    });
+    expect(networkClient.execute).toBeCalledTimes(retryCount + 1);
+  });
+
   test('retryable error response without retry config', async () => {
     // given
     testResponseCode = 555;
@@ -375,6 +430,67 @@ describe('getErrorResponse tests', () => {
     expect(result).toStrictEqual(expResult);
   });
 
+  test('get error from malformed api error object', () => {
+    // given
+    const networkResponse: RawNetworkResponse = {
+      code: 502,
+      payload: {},
+    };
+
+    // when
+    const result = ApiInteractorImpl.getErrorResponse(networkResponse)
+
+    // then
+    expect(result).toStrictEqual({
+      apiCode: undefined,
+      code: 502,
+      message: 'Unexpected API error response',
+      type: undefined,
+      isSuccess: false,
+    });
+  });
+
+  test('get error from plain text payload', () => {
+    // given
+    const networkResponse: RawNetworkResponse = {
+      code: 503,
+      payload: 'service unavailable',
+    };
+
+    // when
+    const result = ApiInteractorImpl.getErrorResponse(networkResponse)
+
+    // then
+    expect(result).toStrictEqual({
+      apiCode: undefined,
+      code: 503,
+      message: 'Unexpected API error response: service unavailable',
+      type: undefined,
+      isSuccess: false,
+    });
+  });
+
+  test('get error from long plain text payload', () => {
+    // given
+    const payload = 'x'.repeat(130);
+    const networkResponse: RawNetworkResponse = {
+      code: 503,
+      payload,
+    };
+
+    // when
+    const result = ApiInteractorImpl.getErrorResponse(networkResponse)
+
+    // then
+    expect(result).toStrictEqual({
+      apiCode: undefined,
+      code: 503,
+      message: `Unexpected API error response: ${'x'.repeat(120)}...`,
+      type: undefined,
+      isSuccess: false,
+    });
+  });
+
   test('get error from execution error', () => {
     // given
     const executionError = new Error('execution error');
@@ -385,7 +501,27 @@ describe('getErrorResponse tests', () => {
     }).toThrow(executionError);
   });
 
-  test('get error from execution error', () => {
+  test('get error from execution error with response code', () => {
+    // given
+    const executionError = new QonversionError(
+      QonversionErrorCode.BackendError,
+      'Failed to parse JSON response',
+      undefined,
+      400,
+    );
+
+    // when
+    const result = ApiInteractorImpl.getErrorResponse(undefined, executionError);
+
+    // then
+    expect(result).toStrictEqual({
+      code: 400,
+      message: 'Failed to parse JSON response',
+      isSuccess: false,
+    });
+  });
+
+  test('throw when neither response nor execution error is provided', () => {
     // given
 
     // when and then
