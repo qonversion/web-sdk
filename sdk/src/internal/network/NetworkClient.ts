@@ -39,7 +39,7 @@ export class NetworkClientImpl implements NetworkClient {
     } catch (cause) {
       throw new QonversionError(
         QonversionErrorCode.BackendError,
-        `Response code ${code}, message: Failed to parse JSON response`,
+        'Failed to parse JSON response',
         cause instanceof Error ? cause : undefined,
         code,
       );

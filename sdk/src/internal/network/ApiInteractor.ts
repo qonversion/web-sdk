@@ -94,6 +94,14 @@ export class ApiInteractorImpl implements ApiInteractor {
         isSuccess: false,
       };
     } else if (executionError) {
+      if (executionError instanceof QonversionError && executionError.responseCode !== undefined) {
+        return {
+          code: executionError.responseCode,
+          message: executionError.details ?? executionError.message,
+          isSuccess: false,
+        };
+      }
+
       throw executionError;
     } else {
       // Unacceptable state.

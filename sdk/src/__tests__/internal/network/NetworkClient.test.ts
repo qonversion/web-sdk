@@ -177,6 +177,7 @@ describe('execute test', () => {
     await expect(execution).rejects.toBeInstanceOf(QonversionError);
     await expect(execution).rejects.toMatchObject({
       code: QonversionErrorCode.BackendError,
+      details: 'Failed to parse JSON response',
       responseCode: 500,
     });
   });

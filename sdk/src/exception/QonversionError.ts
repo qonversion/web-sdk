@@ -7,6 +7,7 @@ import {QonversionErrorCode} from './QonversionErrorCode';
  */
 export class QonversionError extends Error {
   readonly code: QonversionErrorCode;
+  readonly details?: string;
   readonly cause?: Error;
   readonly responseCode?: number;
 
@@ -22,6 +23,7 @@ export class QonversionError extends Error {
     super(message);
 
     this.code = code;
+    this.details = details;
     this.cause = cause;
     this.responseCode = responseCode;
   }

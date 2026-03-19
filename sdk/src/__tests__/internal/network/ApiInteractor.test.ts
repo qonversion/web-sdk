@@ -158,20 +158,24 @@ describe('execute tests', () => {
     // given
     const expectedError = new QonversionError(
       QonversionErrorCode.BackendError,
-      'Response code 400, message: Failed to parse JSON response',
+      'Failed to parse JSON response',
       undefined,
       400,
     );
     networkClient.execute = jest.fn(() => {
       throw expectedError;
     });
-    ApiInteractorImpl.getErrorResponse = jest.fn((response, error) => {throw error});
+    ApiInteractorImpl.getErrorResponse = savedGetErrorResponse;
 
-    // when and then
-    await expect(async () => {
-      await apiInteractor.execute(request, new RetryPolicyExponential(3));
-    }).rejects.toThrow(expectedError);
+    // when
+    const response = await apiInteractor.execute(request, new RetryPolicyExponential(3));
 
+    // then
+    expect(response).toStrictEqual({
+      code: 400,
+      message: 'Failed to parse JSON response',
+      isSuccess: false,
+    });
     expect(networkClient.execute).toBeCalledTimes(1);
     expect(apiInteractor.prepareRetryConfig).not.toBeCalled();
   });
@@ -181,25 +185,28 @@ describe('execute tests', () => {
     const retryCount = 2;
     const expectedError = new QonversionError(
       QonversionErrorCode.BackendError,
-      'Response code 500, message: Failed to parse JSON response',
+      'Failed to parse JSON response',
       undefined,
       500,
     );
     networkClient.execute = jest.fn(() => {throw expectedError});
-    ApiInteractorImpl.getErrorResponse = jest.fn((response, error) => {throw error});
+    ApiInteractorImpl.getErrorResponse = savedGetErrorResponse;
     apiInteractor.prepareRetryConfig = jest.fn((retryPolicy, attemptIndex) => ({
       attemptIndex: attemptIndex + 1,
       delay: 1,
       shouldRetry: attemptIndex < retryCount,
     }));
 
-    // when and then
-    await expect(async () => {
-      await apiInteractor.execute(request, new RetryPolicyExponential(retryCount));
-    }).rejects.toThrow(expectedError);
+    // when
+    const response = await apiInteractor.execute(request, new RetryPolicyExponential(retryCount));
 
+    // then
+    expect(response).toStrictEqual({
+      code: 500,
+      message: 'Failed to parse JSON response',
+      isSuccess: false,
+    });
     expect(networkClient.execute).toBeCalledTimes(retryCount + 1);
-    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
   });
 
   test('retryable error response without retry config', async () => {
@@ -471,6 +478,26 @@ describe('getErrorResponse tests', () => {
     expect(() => {
       ApiInteractorImpl.getErrorResponse(undefined, executionError);
     }).toThrow(executionError);
+  });
+
+  test('get error from execution error with response code', () => {
+    // given
+    const executionError = new QonversionError(
+      QonversionErrorCode.BackendError,
+      'Failed to parse JSON response',
+      undefined,
+      400,
+    );
+
+    // when
+    const result = ApiInteractorImpl.getErrorResponse(undefined, executionError);
+
+    // then
+    expect(result).toStrictEqual({
+      code: 400,
+      message: 'Failed to parse JSON response',
+      isSuccess: false,
+    });
   });
 
   test('get error from execution error', () => {
