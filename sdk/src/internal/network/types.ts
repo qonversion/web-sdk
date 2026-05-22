@@ -1,5 +1,5 @@
 import {RetryPolicy} from './RetryPolicy';
-import {PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
+import {PaddleStoreData, PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
 import {Environment} from '../../dto/Environment';
 import {UserPropertyData} from '../userProperties';
 
@@ -95,6 +95,8 @@ export type RequestConfigurator = {
   configureEntitlementsRequest: (userId: string) => NetworkRequest;
 
   configureStripePurchaseRequest: (userId: string, data: PurchaseCoreData & StripeStoreData) => NetworkRequest;
+
+  configurePaddlePurchaseRequest: (userId: string, data: PurchaseCoreData & PaddleStoreData) => NetworkRequest;
 };
 
 export type HeaderBuilder = {

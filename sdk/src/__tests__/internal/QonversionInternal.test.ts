@@ -5,6 +5,7 @@ import Qonversion, {
   Entitlement,
   Environment,
   LogLevel,
+  PaddleStoreData,
   PurchaseCoreData,
   StripeStoreData,
   UserPropertyKey,
@@ -285,5 +286,43 @@ describe('PurchasesController usage tests', () => {
       expect(res).toStrictEqual(promiseReturned);
       expect(purchasesController.sendStripePurchase).toBeCalledWith(requestData);
       expect(logger.verbose).toBeCalledWith('sendStripePurchase() call');
+    });
+
+  test('sendPaddlePurchase',
+    () => {
+      // given
+      const responseData: UserPurchase = {
+        currency: 'USD',
+        price: '9.99',
+        purchased: 1716300000,
+        paddleStoreData: {
+          transactionId: 'txn_01hv4rrk',
+          customerId: 'ctm_01hv4rrk',
+          productId: 'pro_01hv4rrk',
+          subscriptionId: 'sub_01hv4rrk',
+          type: 'subscription',
+        },
+        userId: 'Qon_test_user_id'
+      };
+      const requestData: PurchaseCoreData & PaddleStoreData = {
+        currency: 'USD',
+        price: '9.99',
+        purchased: 1716300000,
+        transactionId: 'txn_01hv4rrk',
+        customerId: 'ctm_01hv4rrk',
+        productId: 'pro_01hv4rrk',
+        subscriptionId: 'sub_01hv4rrk',
+        type: 'subscription',
+      };
+      const promiseReturned = new Promise<UserPurchase>(() => responseData);
+      purchasesController.sendPaddlePurchase = jest.fn(async () => promiseReturned);
+
+      // when
+      const res = qonversionInternal.sendPaddlePurchase(requestData);
+
+      // then
+      expect(res).toStrictEqual(promiseReturned);
+      expect(purchasesController.sendPaddlePurchase).toBeCalledWith(requestData);
+      expect(logger.verbose).toBeCalledWith('sendPaddlePurchase() call');
     });
 });

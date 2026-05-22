@@ -9,7 +9,7 @@ import {
 } from './types';
 import {PrimaryConfigProvider} from '../types';
 import {UserDataProvider} from '../user';
-import {PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
+import {PaddleStoreData, PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
 import {Environment} from '../../dto/Environment';
 import {UserPropertyData} from '../userProperties';
 
@@ -82,6 +82,30 @@ export class RequestConfiguratorImpl implements RequestConfigurator {
         subscription_id: data.subscriptionId,
         product_id: data.productId,
       },
+      purchased: data.purchased,
+    };
+
+    return this.configureRequest(url, RequestType.POST, body);
+  }
+
+  configurePaddlePurchaseRequest(userId: string, data: PurchaseCoreData & PaddleStoreData): NetworkRequest {
+    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${userId}/purchases`;
+    const paddleStoreData: RequestBody = {
+      transaction_id: data.transactionId,
+      customer_id: data.customerId,
+      product_id: data.productId,
+      type: data.type,
+    };
+    // Paddle one-time purchases (`type: 'inapp'`) have no subscription id; omit
+    // the field entirely instead of sending an empty string so the api-gateway
+    // PaddleStoreData parser doesn't reject it.
+    if (data.subscriptionId !== undefined) {
+      paddleStoreData.subscription_id = data.subscriptionId;
+    }
+    const body = {
+      price: data.price,
+      currency: data.currency,
+      paddle_store_data: paddleStoreData,
       purchased: data.purchased,
     };
 

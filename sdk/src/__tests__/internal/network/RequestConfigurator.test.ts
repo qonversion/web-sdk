@@ -9,7 +9,7 @@ import {
 import {PrimaryConfig} from '../../../types';
 import {PrimaryConfigProvider} from '../../../internal';
 import {UserDataProvider} from '../../../internal/user';
-import {PurchaseCoreData, StripeStoreData, Environment} from '../../../index';
+import {PaddleStoreData, PurchaseCoreData, StripeStoreData, Environment} from '../../../index';
 
 const testHeaders: RequestHeaders = {a: 'a'};
 const headerBuilder: HeaderBuilder = {
@@ -188,6 +188,78 @@ describe('RequestConfigurator tests', () => {
 
     // when
     const request = requestConfigurator.configureStripePurchaseRequest(testUserId, data);
+
+    // then
+    expect(request).toStrictEqual(expResult);
+  });
+
+  test('paddle subscription purchase request', () => {
+    // given
+    const data: PurchaseCoreData & PaddleStoreData = {
+      currency: 'USD',
+      price: '9.99',
+      purchased: 1716300000,
+      transactionId: 'txn_01hv4rrk',
+      customerId: 'ctm_01hv4rrk',
+      productId: 'pro_01hv4rrk',
+      subscriptionId: 'sub_01hv4rrk',
+      type: 'subscription',
+    };
+    const expResult: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.POST,
+      url: `${testBaseUrl}/${ApiEndpoint.Users}/${testUserId}/purchases`,
+      body: {
+        price: data.price,
+        currency: data.currency,
+        paddle_store_data: {
+          transaction_id: data.transactionId,
+          customer_id: data.customerId,
+          product_id: data.productId,
+          type: data.type,
+          subscription_id: data.subscriptionId,
+        },
+        purchased: data.purchased,
+      },
+    };
+
+    // when
+    const request = requestConfigurator.configurePaddlePurchaseRequest(testUserId, data);
+
+    // then
+    expect(request).toStrictEqual(expResult);
+  });
+
+  test('paddle inapp purchase request omits subscription_id', () => {
+    // given
+    const data: PurchaseCoreData & PaddleStoreData = {
+      currency: 'USD',
+      price: '4.99',
+      purchased: 1716300000,
+      transactionId: 'txn_01hv4rrk',
+      customerId: 'ctm_01hv4rrk',
+      productId: 'pro_01hv4rrk',
+      type: 'inapp',
+    };
+    const expResult: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.POST,
+      url: `${testBaseUrl}/${ApiEndpoint.Users}/${testUserId}/purchases`,
+      body: {
+        price: data.price,
+        currency: data.currency,
+        paddle_store_data: {
+          transaction_id: data.transactionId,
+          customer_id: data.customerId,
+          product_id: data.productId,
+          type: data.type,
+        },
+        purchased: data.purchased,
+      },
+    };
+
+    // when
+    const request = requestConfigurator.configurePaddlePurchaseRequest(testUserId, data);
 
     // then
     expect(request).toStrictEqual(expResult);

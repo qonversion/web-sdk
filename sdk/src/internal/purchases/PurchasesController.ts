@@ -1,7 +1,7 @@
 import {PurchasesController, PurchasesService} from './types';
 import {UserDataStorage} from '../user';
 import {Logger} from '../logger';
-import {PurchaseCoreData, StripeStoreData, UserPurchase} from '../../dto/Purchase';
+import {PaddleStoreData, PurchaseCoreData, StripeStoreData, UserPurchase} from '../../dto/Purchase';
 
 export class PurchasesControllerImpl implements PurchasesController {
   private readonly purchasesService: PurchasesService;
@@ -23,6 +23,19 @@ export class PurchasesControllerImpl implements PurchasesController {
       return userPurchase;
     } catch (error) {
       this.logger.error('Failed to send the Stripe purchase', error);
+      throw error;
+    }
+  }
+
+  async sendPaddlePurchase(data: PurchaseCoreData & PaddleStoreData): Promise<UserPurchase> {
+    try {
+      const userId = this.userDataStorage.requireOriginalUserId();
+      this.logger.verbose('Sending Paddle purchase', {userId, data});
+      const userPurchase = await this.purchasesService.sendPaddlePurchase(userId, data);
+      this.logger.info('Successfully sent the Paddle purchase', userPurchase);
+      return userPurchase;
+    } catch (error) {
+      this.logger.error('Failed to send the Paddle purchase', error);
       throw error;
     }
   }

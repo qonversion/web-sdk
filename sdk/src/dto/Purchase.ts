@@ -9,8 +9,20 @@ export type StripeStoreData = {
   productId: string;
 };
 
+export type PaddlePurchaseType = 'subscription' | 'inapp';
+
+export type PaddleStoreData = {
+  transactionId: string;
+  customerId: string;
+  productId: string;
+  type: PaddlePurchaseType;
+  // Required when type is "subscription"; omitted for "inapp" purchases.
+  subscriptionId?: string;
+};
+
 export type UserPurchase = PurchaseCoreData & {
   purchased: number;
-  stripeStoreData: StripeStoreData;
   userId: string;
+  stripeStoreData?: StripeStoreData;
+  paddleStoreData?: PaddleStoreData;
 };
