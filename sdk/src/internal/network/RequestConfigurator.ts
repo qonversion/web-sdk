@@ -94,10 +94,7 @@ export class RequestConfiguratorImpl implements RequestConfigurator {
       transaction_id: data.transactionId,
       customer_id: data.customerId,
       product_id: data.productId,
-      // Wire format uses "non_recurring" for one-time purchases (consistent
-      // with the server-side UserPurchaseProductType enum used by all other
-      // stores). SDK callers express it as the more Paddle-native "inapp".
-      type: data.type === 'inapp' ? 'non_recurring' : 'subscription',
+      type: paddleSdkTypeToWire(data.type),
     };
     // Paddle one-time purchases have no subscription id; omit the field
     // entirely instead of sending an empty string.
@@ -130,6 +127,24 @@ export class RequestConfiguratorImpl implements RequestConfigurator {
       headers,
       type,
       body,
+    }
+  }
+}
+
+// Wire format uses "non_recurring" for one-time purchases (consistent with
+// the server-side UserPurchaseProductType enum shared by every store). The
+// SDK exposes the more Paddle-native "inapp". An explicit switch + exhaustive
+// `never` default means any new PaddlePurchaseType variant fails the type
+// checker here instead of silently aliasing to "subscription" at runtime.
+function paddleSdkTypeToWire(t: PaddleStoreData['type']): 'subscription' | 'non_recurring' {
+  switch (t) {
+    case 'subscription':
+      return 'subscription';
+    case 'inapp':
+      return 'non_recurring';
+    default: {
+      const _exhaustive: never = t;
+      throw new Error(`unhandled PaddlePurchaseType: ${String(_exhaustive)}`);
     }
   }
 }

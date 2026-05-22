@@ -1,5 +1,6 @@
-import {PurchasesService, UserPurchaseApi} from './types';
+import {PaddleStoreDataApi, PurchasesService, UserPurchaseApi} from './types';
 import {
+  PaddlePurchaseType,
   PaddleStoreData,
   PurchaseCoreData,
   StripeStoreData,
@@ -28,11 +29,14 @@ export class PurchaseServiceImpl implements PurchasesService {
   async sendPaddlePurchase(userId: string, data: PurchaseCoreData & PaddleStoreData): Promise<UserPaddlePurchase> {
     const request = this.requestConfigurator.configurePaddlePurchaseRequest(userId, data);
     const purchase = await this.executePurchaseRequest<UserPaddlePurchase>(request);
-    // Wire format uses "non_recurring" for one-time purchases (matches the
-    // shared UserPurchaseProductType enum on the server); the SDK exposes it
-    // as the Paddle-native "inapp". Normalize on the read path.
-    if (purchase.paddleStoreData && (purchase.paddleStoreData.type as string) === 'non_recurring') {
-      purchase.paddleStoreData.type = 'inapp';
+    if (purchase.paddleStoreData) {
+      // The response from the api comes back with the wire-shape type literal
+      // ("non_recurring" / "subscription"); normalize to the SDK shape
+      // ("inapp" / "subscription") at the boundary so callers never see the
+      // wire literal.
+      purchase.paddleStoreData.type = paddleWireTypeToSdk(
+        (purchase.paddleStoreData as unknown as PaddleStoreDataApi).type,
+      );
     }
     return purchase;
   }
@@ -46,5 +50,21 @@ export class PurchaseServiceImpl implements PurchasesService {
 
     const errorMessage = `Response code ${response.code}, message: ${response.message}`;
     throw new QonversionError(QonversionErrorCode.BackendError, errorMessage);
+  }
+}
+
+// Inverse of paddleSdkTypeToWire in RequestConfigurator. Exhaustive switch +
+// `never` default makes adding a new wire variant a type-check failure
+// instead of an undefined runtime cast.
+function paddleWireTypeToSdk(wire: PaddleStoreDataApi['type']): PaddlePurchaseType {
+  switch (wire) {
+    case 'subscription':
+      return 'subscription';
+    case 'non_recurring':
+      return 'inapp';
+    default: {
+      const _exhaustive: never = wire;
+      throw new Error(`unhandled wire paddle type: ${String(_exhaustive)}`);
+    }
   }
 }
