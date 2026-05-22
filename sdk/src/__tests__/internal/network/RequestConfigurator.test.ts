@@ -216,7 +216,7 @@ describe('RequestConfigurator tests', () => {
           transaction_id: data.transactionId,
           customer_id: data.customerId,
           product_id: data.productId,
-          type: data.type,
+          type: 'subscription',
           subscription_id: data.subscriptionId,
         },
         purchased: data.purchased,
@@ -230,7 +230,7 @@ describe('RequestConfigurator tests', () => {
     expect(request).toStrictEqual(expResult);
   });
 
-  test('paddle inapp purchase request omits subscription_id', () => {
+  test("paddle inapp purchase request omits subscription_id and maps 'inapp' to wire 'non_recurring'", () => {
     // given
     const data: PurchaseCoreData & PaddleStoreData = {
       currency: 'USD',
@@ -252,7 +252,8 @@ describe('RequestConfigurator tests', () => {
           transaction_id: data.transactionId,
           customer_id: data.customerId,
           product_id: data.productId,
-          type: data.type,
+          // Wire enum: server expects "non_recurring", not "inapp".
+          type: 'non_recurring',
         },
         purchased: data.purchased,
       },

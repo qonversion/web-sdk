@@ -1,6 +1,12 @@
 import {UserDataStorage} from '../../../internal/user';
 import {Logger} from '../../../internal/logger';
-import {PaddleStoreData, PurchaseCoreData, StripeStoreData, UserPurchase} from '../../../index';
+import {
+  PaddleStoreData,
+  PurchaseCoreData,
+  StripeStoreData,
+  UserPaddlePurchase,
+  UserStripePurchase,
+} from '../../../index';
 import {PurchasesController, PurchasesService, PurchasesControllerImpl} from '../../../internal/purchases';
 
 let purchasesService: PurchasesService;
@@ -9,7 +15,7 @@ let logger: Logger;
 let purchasesController: PurchasesController;
 
 const testUserId = 'test user id';
-const testUserPurchase: UserPurchase = {
+const testUserPurchase: UserStripePurchase = {
   currency: 'USD',
   price: '10',
   purchased: 3243523432,
@@ -74,7 +80,7 @@ describe('sendStripePurchase tests', () => {
 });
 
 describe('sendPaddlePurchase tests', () => {
-  const testPaddleUserPurchase: UserPurchase = {
+  const testPaddleUserPurchase: UserPaddlePurchase = {
     currency: 'USD',
     price: '9.99',
     purchased: 1716300000,

@@ -2,31 +2,37 @@ import {LogLevel} from './dto/LogLevel';
 import {Environment} from './dto/Environment';
 import {UserPropertyKey} from './dto/UserPropertyKey';
 import {Entitlement} from './dto/Entitlement';
-import {PaddleStoreData, PurchaseCoreData, StripeStoreData, UserPurchase} from './dto/Purchase';
+import {
+  PaddleStoreData,
+  PurchaseCoreData,
+  StripeStoreData,
+  UserPaddlePurchase,
+  UserStripePurchase,
+} from './dto/Purchase';
 import {UserProperties} from './dto/UserProperties';
 
 export type QonversionInstance = {
   /**
    * Call this function to send completed Stripe purchase to our API. The purchase will be linked to the current user,
-   * and he will gain corresponding entitlements, described in the Qonversion Product Center.
+   * and the user will gain corresponding entitlements, described in the Qonversion Product Center.
    *
    * @param data information about completed purchase.
    * @returns a purchase info, saved on the API.
    */
-  sendStripePurchase: (data: PurchaseCoreData & StripeStoreData) => Promise<UserPurchase>;
+  sendStripePurchase: (data: PurchaseCoreData & StripeStoreData) => Promise<UserStripePurchase>;
 
   /**
-   * Call this function to send completed Paddle purchase to our API. The purchase will be linked to the current user,
-   * and he will gain corresponding entitlements, described in the Qonversion Product Center.
+   * Call this function to send a completed Paddle purchase to our API. The purchase will be linked to the
+   * current user, and the user will gain corresponding entitlements, described in the Qonversion Product Center.
    *
-   * Call this from the Paddle.js `successCallback` after `Paddle.Checkout.open(...)` resolves
-   * with a transaction id. The backend will fetch the transaction (or subscription) from Paddle
-   * synchronously, persist it, and grant entitlements before the promise resolves.
+   * Call this once the checkout completes with a transaction id (e.g. from
+   * `Paddle.Checkout.open(...)`'s success callback). The backend will fetch the transaction (or
+   * subscription) from Paddle synchronously, persist it, and grant entitlements before the promise resolves.
    *
    * @param data information about completed purchase.
    * @returns a purchase info, saved on the API.
    */
-  sendPaddlePurchase: (data: PurchaseCoreData & PaddleStoreData) => Promise<UserPurchase>;
+  sendPaddlePurchase: (data: PurchaseCoreData & PaddleStoreData) => Promise<UserPaddlePurchase>;
 
   /**
    * Call this function to receive all entitlements of the current user. If you initiated user changing

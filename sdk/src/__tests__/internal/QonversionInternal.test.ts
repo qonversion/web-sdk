@@ -8,8 +8,9 @@ import Qonversion, {
   PaddleStoreData,
   PurchaseCoreData,
   StripeStoreData,
+  UserPaddlePurchase,
   UserPropertyKey,
-  UserPurchase,
+  UserStripePurchase,
 } from '../../index';
 import {UserPropertiesController} from '../../internal/userProperties';
 import {UserController} from '../../internal/user';
@@ -259,7 +260,7 @@ describe('PurchasesController usage tests', () => {
   test('sendStripePurchase',
     () => {
       // given
-      const responseData: UserPurchase = {
+      const responseData: UserStripePurchase = {
         currency: 'USD',
         price: '10',
         purchased: 934590234,
@@ -276,7 +277,7 @@ describe('PurchasesController usage tests', () => {
         productId: 'test product id',
         subscriptionId: 'test subscription id',
       };
-      const promiseReturned = new Promise<UserPurchase>(() => responseData);
+      const promiseReturned = new Promise<UserStripePurchase>(() => responseData);
       purchasesController.sendStripePurchase = jest.fn(async () => promiseReturned);
 
       // when
@@ -291,7 +292,7 @@ describe('PurchasesController usage tests', () => {
   test('sendPaddlePurchase',
     () => {
       // given
-      const responseData: UserPurchase = {
+      const responseData: UserPaddlePurchase = {
         currency: 'USD',
         price: '9.99',
         purchased: 1716300000,
@@ -314,7 +315,7 @@ describe('PurchasesController usage tests', () => {
         subscriptionId: 'sub_01hv4rrk',
         type: 'subscription',
       };
-      const promiseReturned = new Promise<UserPurchase>(() => responseData);
+      const promiseReturned = new Promise<UserPaddlePurchase>(() => responseData);
       purchasesController.sendPaddlePurchase = jest.fn(async () => promiseReturned);
 
       // when

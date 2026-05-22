@@ -1,7 +1,13 @@
 import {PurchasesController, PurchasesService} from './types';
 import {UserDataStorage} from '../user';
 import {Logger} from '../logger';
-import {PaddleStoreData, PurchaseCoreData, StripeStoreData, UserPurchase} from '../../dto/Purchase';
+import {
+  PaddleStoreData,
+  PurchaseCoreData,
+  StripeStoreData,
+  UserPaddlePurchase,
+  UserStripePurchase,
+} from '../../dto/Purchase';
 
 export class PurchasesControllerImpl implements PurchasesController {
   private readonly purchasesService: PurchasesService;
@@ -14,7 +20,7 @@ export class PurchasesControllerImpl implements PurchasesController {
     this.logger = logger;
   }
 
-  async sendStripePurchase(data: PurchaseCoreData & StripeStoreData): Promise<UserPurchase> {
+  async sendStripePurchase(data: PurchaseCoreData & StripeStoreData): Promise<UserStripePurchase> {
     try {
       const userId = this.userDataStorage.requireOriginalUserId();
       this.logger.verbose('Sending Stripe purchase', {userId, data});
@@ -27,7 +33,7 @@ export class PurchasesControllerImpl implements PurchasesController {
     }
   }
 
-  async sendPaddlePurchase(data: PurchaseCoreData & PaddleStoreData): Promise<UserPurchase> {
+  async sendPaddlePurchase(data: PurchaseCoreData & PaddleStoreData): Promise<UserPaddlePurchase> {
     try {
       const userId = this.userDataStorage.requireOriginalUserId();
       this.logger.verbose('Sending Paddle purchase', {userId, data});

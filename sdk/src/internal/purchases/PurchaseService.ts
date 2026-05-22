@@ -1,6 +1,12 @@
 import {PurchasesService, UserPurchaseApi} from './types';
-import {PaddleStoreData, PurchaseCoreData, StripeStoreData, UserPurchase} from '../../dto/Purchase';
-import {ApiInteractor, RequestConfigurator} from '../network';
+import {
+  PaddleStoreData,
+  PurchaseCoreData,
+  StripeStoreData,
+  UserPaddlePurchase,
+  UserStripePurchase,
+} from '../../dto/Purchase';
+import {ApiInteractor, NetworkRequest, RequestConfigurator} from '../network';
 import {camelCaseKeys} from '../utils/objectUtils';
 import {QonversionError} from '../../exception/QonversionError';
 import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
@@ -14,17 +20,24 @@ export class PurchaseServiceImpl implements PurchasesService {
     this.apiInteractor = apiInteractor;
   }
 
-  async sendStripePurchase(userId: string, data: PurchaseCoreData & StripeStoreData): Promise<UserPurchase> {
+  async sendStripePurchase(userId: string, data: PurchaseCoreData & StripeStoreData): Promise<UserStripePurchase> {
     const request = this.requestConfigurator.configureStripePurchaseRequest(userId, data);
-    return this.executePurchaseRequest(request);
+    return this.executePurchaseRequest<UserStripePurchase>(request);
   }
 
-  async sendPaddlePurchase(userId: string, data: PurchaseCoreData & PaddleStoreData): Promise<UserPurchase> {
+  async sendPaddlePurchase(userId: string, data: PurchaseCoreData & PaddleStoreData): Promise<UserPaddlePurchase> {
     const request = this.requestConfigurator.configurePaddlePurchaseRequest(userId, data);
-    return this.executePurchaseRequest(request);
+    const purchase = await this.executePurchaseRequest<UserPaddlePurchase>(request);
+    // Wire format uses "non_recurring" for one-time purchases (matches the
+    // shared UserPurchaseProductType enum on the server); the SDK exposes it
+    // as the Paddle-native "inapp". Normalize on the read path.
+    if (purchase.paddleStoreData && (purchase.paddleStoreData.type as string) === 'non_recurring') {
+      purchase.paddleStoreData.type = 'inapp';
+    }
+    return purchase;
   }
 
-  private async executePurchaseRequest(request: ReturnType<RequestConfigurator['configureStripePurchaseRequest']>): Promise<UserPurchase> {
+  private async executePurchaseRequest<T>(request: NetworkRequest): Promise<T> {
     const response = await this.apiInteractor.execute<UserPurchaseApi>(request);
 
     if (response.isSuccess) {

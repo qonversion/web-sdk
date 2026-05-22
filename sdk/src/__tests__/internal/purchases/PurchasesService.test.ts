@@ -11,7 +11,8 @@ import {
   QonversionError,
   QonversionErrorCode,
   StripeStoreData,
-  UserPurchase
+  UserPaddlePurchase,
+  UserStripePurchase,
 } from '../../../index';
 import {PurchaseServiceImpl, PurchasesService, UserPurchaseApi} from '../../../internal/purchases';
 
@@ -45,7 +46,7 @@ const testErrorResponse: ApiResponseError = {
   type: '',
   isSuccess: false,
 };
-const expRes: UserPurchase = {
+const expRes: UserStripePurchase = {
   currency: 'USD',
   price: '10',
   purchased: 3243523432,
@@ -112,7 +113,7 @@ describe('sendPaddlePurchase tests', function () {
   // @ts-ignore
   const testRequest: NetworkRequest = {a: 'bb'};
 
-  const apiPaddlePurchase: UserPurchaseApi = {
+  const apiPaddleSubsPurchase: UserPurchaseApi = {
     currency: 'USD',
     price: '9.99',
     purchased: 1716300000,
@@ -127,10 +128,10 @@ describe('sendPaddlePurchase tests', function () {
   };
   const testPaddleSuccessResponse: ApiResponseSuccess<UserPurchaseApi> = {
     code: 200,
-    data: apiPaddlePurchase,
+    data: apiPaddleSubsPurchase,
     isSuccess: true,
   };
-  const expPaddleRes: UserPurchase = {
+  const expPaddleRes: UserPaddlePurchase = {
     currency: 'USD',
     price: '9.99',
     purchased: 1716300000,
@@ -154,7 +155,7 @@ describe('sendPaddlePurchase tests', function () {
     type: 'subscription',
   };
 
-  test('purchase successfully sent', async () => {
+  test('subscription purchase successfully sent', async () => {
     // given
     requestConfigurator.configurePaddlePurchaseRequest = jest.fn(() => testRequest);
     // @ts-ignore
@@ -167,6 +168,45 @@ describe('sendPaddlePurchase tests', function () {
     expect(res).toStrictEqual(expPaddleRes);
     expect(requestConfigurator.configurePaddlePurchaseRequest).toBeCalledWith(testUserId, testPaddlePurchaseRequest);
     expect(apiInteractor.execute).toBeCalledWith(testRequest);
+  });
+
+  test("inapp response is normalized from wire 'non_recurring' to 'inapp'", async () => {
+    // given — gateway returns the wire enum value "non_recurring".
+    const apiInappPurchase: UserPurchaseApi = {
+      currency: 'USD',
+      price: '4.99',
+      purchased: 1716300000,
+      userId: testUserId,
+      paddle_store_data: {
+        transaction_id: 'txn_01hv4rrk',
+        customer_id: 'ctm_01hv4rrk',
+        product_id: 'pro_01hv4rrk',
+        type: 'non_recurring',
+      },
+    };
+    const inappResponse: ApiResponseSuccess<UserPurchaseApi> = {
+      code: 200,
+      data: apiInappPurchase,
+      isSuccess: true,
+    };
+    const inappRequest: PurchaseCoreData & PaddleStoreData = {
+      currency: 'USD',
+      price: '4.99',
+      purchased: 1716300000,
+      transactionId: 'txn_01hv4rrk',
+      customerId: 'ctm_01hv4rrk',
+      productId: 'pro_01hv4rrk',
+      type: 'inapp',
+    };
+    requestConfigurator.configurePaddlePurchaseRequest = jest.fn(() => testRequest);
+    // @ts-ignore
+    apiInteractor.execute = jest.fn(async () => inappResponse);
+
+    // when
+    const res = await purchasesService.sendPaddlePurchase(testUserId, inappRequest);
+
+    // then — SDK surfaces the Paddle-native "inapp", not the wire "non_recurring".
+    expect(res.paddleStoreData.type).toStrictEqual('inapp');
   });
 
   test('send purchase request failed', async () => {

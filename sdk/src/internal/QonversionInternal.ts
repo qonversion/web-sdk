@@ -10,7 +10,13 @@ import {UserController} from './user';
 import {EntitlementsController} from './entitlements';
 import {Entitlement} from '../dto/Entitlement';
 import {PurchasesController} from './purchases';
-import {PaddleStoreData, PurchaseCoreData, StripeStoreData, UserPurchase} from '../dto/Purchase';
+import {
+  PaddleStoreData,
+  PurchaseCoreData,
+  StripeStoreData,
+  UserPaddlePurchase,
+  UserStripePurchase,
+} from '../dto/Purchase';
 import {Logger} from './logger';
 import {UserProperties} from '../dto/UserProperties';
 
@@ -34,12 +40,12 @@ export class QonversionInternal implements QonversionInstance {
     this.logger.verbose("The QonversionInstance is created");
   }
 
-  sendStripePurchase(data: PurchaseCoreData & StripeStoreData): Promise<UserPurchase> {
+  sendStripePurchase(data: PurchaseCoreData & StripeStoreData): Promise<UserStripePurchase> {
     this.logger.verbose("sendStripePurchase() call");
     return this.purchasesController.sendStripePurchase(data);
   }
 
-  sendPaddlePurchase(data: PurchaseCoreData & PaddleStoreData): Promise<UserPurchase> {
+  sendPaddlePurchase(data: PurchaseCoreData & PaddleStoreData): Promise<UserPaddlePurchase> {
     this.logger.verbose("sendPaddlePurchase() call");
     return this.purchasesController.sendPaddlePurchase(data);
   }
