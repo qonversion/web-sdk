@@ -30,7 +30,6 @@ export type StripeStoreDataApi = {
 
 export type PaddleStoreDataApi = {
   transaction_id: string;
-  customer_id: string;
   product_id: string;
   // Wire enum: the server's shared UserPurchaseProductType uses "non_recurring"
   // for one-time purchases. The SDK surfaces it as "inapp"; conversion is

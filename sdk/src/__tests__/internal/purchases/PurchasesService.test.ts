@@ -120,7 +120,6 @@ describe('sendPaddlePurchase tests', function () {
     userId: testUserId,
     paddle_store_data: {
       transaction_id: 'txn_01hv4rrk',
-      customer_id: 'ctm_01hv4rrk',
       product_id: 'pro_01hv4rrk',
       subscription_id: 'sub_01hv4rrk',
       type: 'subscription',
@@ -138,7 +137,6 @@ describe('sendPaddlePurchase tests', function () {
     userId: testUserId,
     paddleStoreData: {
       transactionId: 'txn_01hv4rrk',
-      customerId: 'ctm_01hv4rrk',
       productId: 'pro_01hv4rrk',
       subscriptionId: 'sub_01hv4rrk',
       type: 'subscription',
@@ -149,7 +147,6 @@ describe('sendPaddlePurchase tests', function () {
     price: '9.99',
     purchased: 1716300000,
     transactionId: 'txn_01hv4rrk',
-    customerId: 'ctm_01hv4rrk',
     productId: 'pro_01hv4rrk',
     subscriptionId: 'sub_01hv4rrk',
     type: 'subscription',
@@ -179,7 +176,6 @@ describe('sendPaddlePurchase tests', function () {
       userId: testUserId,
       paddle_store_data: {
         transaction_id: 'txn_01hv4rrk',
-        customer_id: 'ctm_01hv4rrk',
         product_id: 'pro_01hv4rrk',
         type: 'non_recurring',
       },
@@ -194,7 +190,6 @@ describe('sendPaddlePurchase tests', function () {
       price: '4.99',
       purchased: 1716300000,
       transactionId: 'txn_01hv4rrk',
-      customerId: 'ctm_01hv4rrk',
       productId: 'pro_01hv4rrk',
       type: 'inapp',
     };

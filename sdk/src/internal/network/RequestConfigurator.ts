@@ -92,7 +92,6 @@ export class RequestConfiguratorImpl implements RequestConfigurator {
     const url = `${this.baseUrl}/${ApiEndpoint.Users}/${userId}/purchases`;
     const paddleStoreData: RequestBody = {
       transaction_id: data.transactionId,
-      customer_id: data.customerId,
       product_id: data.productId,
       type: paddleSdkTypeToWire(data.type),
     };

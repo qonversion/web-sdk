@@ -13,7 +13,6 @@ export type PaddlePurchaseType = 'subscription' | 'inapp';
 
 export type PaddleStoreData = {
   transactionId: string;
-  customerId: string;
   productId: string;
   type: PaddlePurchaseType;
   // Required when type is "subscription"; omitted for "inapp" purchases.

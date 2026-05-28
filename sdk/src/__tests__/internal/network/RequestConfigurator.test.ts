@@ -200,7 +200,6 @@ describe('RequestConfigurator tests', () => {
       price: '9.99',
       purchased: 1716300000,
       transactionId: 'txn_01hv4rrk',
-      customerId: 'ctm_01hv4rrk',
       productId: 'pro_01hv4rrk',
       subscriptionId: 'sub_01hv4rrk',
       type: 'subscription',
@@ -214,7 +213,6 @@ describe('RequestConfigurator tests', () => {
         currency: data.currency,
         paddle_store_data: {
           transaction_id: data.transactionId,
-          customer_id: data.customerId,
           product_id: data.productId,
           type: 'subscription',
           subscription_id: data.subscriptionId,
@@ -237,7 +235,6 @@ describe('RequestConfigurator tests', () => {
       price: '4.99',
       purchased: 1716300000,
       transactionId: 'txn_01hv4rrk',
-      customerId: 'ctm_01hv4rrk',
       productId: 'pro_01hv4rrk',
       type: 'inapp',
     };
@@ -250,7 +247,6 @@ describe('RequestConfigurator tests', () => {
         currency: data.currency,
         paddle_store_data: {
           transaction_id: data.transactionId,
-          customer_id: data.customerId,
           product_id: data.productId,
           // Wire enum: server expects "non_recurring", not "inapp".
           type: 'non_recurring',

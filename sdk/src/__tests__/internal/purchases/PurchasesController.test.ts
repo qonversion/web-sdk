@@ -86,7 +86,6 @@ describe('sendPaddlePurchase tests', () => {
     purchased: 1716300000,
     paddleStoreData: {
       transactionId: 'txn_01hv4rrk',
-      customerId: 'ctm_01hv4rrk',
       productId: 'pro_01hv4rrk',
       subscriptionId: 'sub_01hv4rrk',
       type: 'subscription',
@@ -98,7 +97,6 @@ describe('sendPaddlePurchase tests', () => {
     price: '9.99',
     purchased: 1716300000,
     transactionId: 'txn_01hv4rrk',
-    customerId: 'ctm_01hv4rrk',
     productId: 'pro_01hv4rrk',
     subscriptionId: 'sub_01hv4rrk',
     type: 'subscription',
