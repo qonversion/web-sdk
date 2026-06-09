@@ -5,10 +5,12 @@ import Qonversion, {
   Entitlement,
   Environment,
   LogLevel,
+  PaddleStoreData,
   PurchaseCoreData,
   StripeStoreData,
+  UserPaddlePurchase,
   UserPropertyKey,
-  UserPurchase,
+  UserStripePurchase,
 } from '../../index';
 import {UserPropertiesController} from '../../internal/userProperties';
 import {UserController} from '../../internal/user';
@@ -258,7 +260,7 @@ describe('PurchasesController usage tests', () => {
   test('sendStripePurchase',
     () => {
       // given
-      const responseData: UserPurchase = {
+      const responseData: UserStripePurchase = {
         currency: 'USD',
         price: '10',
         purchased: 934590234,
@@ -275,7 +277,7 @@ describe('PurchasesController usage tests', () => {
         productId: 'test product id',
         subscriptionId: 'test subscription id',
       };
-      const promiseReturned = new Promise<UserPurchase>(() => responseData);
+      const promiseReturned = new Promise<UserStripePurchase>(() => responseData);
       purchasesController.sendStripePurchase = jest.fn(async () => promiseReturned);
 
       // when
@@ -285,5 +287,41 @@ describe('PurchasesController usage tests', () => {
       expect(res).toStrictEqual(promiseReturned);
       expect(purchasesController.sendStripePurchase).toBeCalledWith(requestData);
       expect(logger.verbose).toBeCalledWith('sendStripePurchase() call');
+    });
+
+  test('sendPaddlePurchase',
+    () => {
+      // given
+      const responseData: UserPaddlePurchase = {
+        currency: 'USD',
+        price: '9.99',
+        purchased: 1716300000,
+        paddleStoreData: {
+          transactionId: 'txn_01hv4rrk',
+          productId: 'pro_01hv4rrk',
+          subscriptionId: 'sub_01hv4rrk',
+          type: 'subscription',
+        },
+        userId: 'Qon_test_user_id'
+      };
+      const requestData: PurchaseCoreData & PaddleStoreData = {
+        currency: 'USD',
+        price: '9.99',
+        purchased: 1716300000,
+        transactionId: 'txn_01hv4rrk',
+        productId: 'pro_01hv4rrk',
+        subscriptionId: 'sub_01hv4rrk',
+        type: 'subscription',
+      };
+      const promiseReturned = new Promise<UserPaddlePurchase>(() => responseData);
+      purchasesController.sendPaddlePurchase = jest.fn(async () => promiseReturned);
+
+      // when
+      const res = qonversionInternal.sendPaddlePurchase(requestData);
+
+      // then
+      expect(res).toStrictEqual(promiseReturned);
+      expect(purchasesController.sendPaddlePurchase).toBeCalledWith(requestData);
+      expect(logger.verbose).toBeCalledWith('sendPaddlePurchase() call');
     });
 });
