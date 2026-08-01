@@ -69,6 +69,18 @@ export class UserPropertiesControllerImpl implements UserPropertiesController, U
   }
 
   onUserChanged(): void {
+    // Flush pending properties before resetting the state, so that properties
+    // set shortly before identify/logout are not lost silently. The flush goes
+    // to the current (already switched) user id — for identify this is exactly
+    // the user the properties describe. `sendUserProperties` snapshots the
+    // pending properties synchronously, so clearing the storages right after
+    // scheduling does not race with it.
+    const pendingProperties = this.pendingUserPropertiesStorage.getProperties();
+    if (Object.keys(pendingProperties).length > 0) {
+      this.delayedWorker.doImmediately(async () => {
+        await this.sendUserProperties();
+      });
+    }
     this.pendingUserPropertiesStorage.clear();
     this.sentUserPropertiesStorage.clear();
   }

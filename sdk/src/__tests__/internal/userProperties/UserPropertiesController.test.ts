@@ -312,15 +312,88 @@ describe('sendUserProperties tests', () => {
 });
 
 describe('onUserChanged tests', () => {
-  test('user changed handling', () => {
+  test('user changed handling with empty pending properties', () => {
     // given
+    pendingUserPropertiesStorage.getProperties = jest.fn(() => ({}));
     pendingUserPropertiesStorage.clear = jest.fn();
     sentUserPropertiesStorage.clear = jest.fn();
+    delayedWorker.doImmediately = jest.fn();
 
     // when
     userPropertiesController.onUserChanged();
 
     // then
+    expect(delayedWorker.doImmediately).not.toBeCalled();
+    expect(pendingUserPropertiesStorage.clear).toBeCalled();
+    expect(sentUserPropertiesStorage.clear).toBeCalled();
+  });
+
+  test('user changed handling flushes pending properties before clearing', async () => {
+    // given
+    const testUserId = 'Qon_test_user_id';
+    const properties = {a: 'aa'};
+    pendingUserPropertiesStorage.getProperties = jest.fn(() => properties);
+    pendingUserPropertiesStorage.clear = jest.fn();
+    pendingUserPropertiesStorage.delete = jest.fn();
+    sentUserPropertiesStorage.clear = jest.fn();
+    sentUserPropertiesStorage.add = jest.fn();
+    userDataStorage.requireOriginalUserId = jest.fn(() => testUserId);
+    logger.error = jest.fn();
+
+    const userPropertiesSendResponse: UserPropertiesSendResponse = {
+      propertyErrors: [],
+      savedProperties: [
+        {key: 'a', value: 'aa'},
+      ],
+    };
+
+    let sentUserId: string | undefined;
+    userPropertiesService.sendProperties = jest.fn(async (userId: string) => {
+      sentUserId = userId;
+      return userPropertiesSendResponse;
+    });
+
+    // execute the scheduled flush immediately, as the real DelayedWorker does
+    delayedWorker.doImmediately = jest.fn(async (action: () => Promise<void>) => {
+      await action();
+    });
+
+    // when
+    userPropertiesController.onUserChanged();
+    // let the scheduled flush complete
+    await (delayedWorker.doImmediately as jest.Mock).mock.results[0].value;
+
+    // then
+    expect(delayedWorker.doImmediately).toBeCalledTimes(1);
+    expect(userPropertiesService.sendProperties).toBeCalledWith(testUserId, properties);
+    expect(sentUserId).toBe(testUserId);
+    expect(pendingUserPropertiesStorage.clear).toBeCalled();
+    expect(sentUserPropertiesStorage.clear).toBeCalled();
+    expect(logger.error).not.toBeCalled();
+  });
+
+  test('failed flush on user changed does not prevent clearing', async () => {
+    // given
+    const properties = {a: 'aa'};
+    pendingUserPropertiesStorage.getProperties = jest.fn(() => properties);
+    pendingUserPropertiesStorage.clear = jest.fn();
+    sentUserPropertiesStorage.clear = jest.fn();
+    userDataStorage.requireOriginalUserId = jest.fn(() => 'Qon_test_user_id');
+    logger.error = jest.fn();
+
+    const expError = new QonversionError(QonversionErrorCode.BackendError);
+    userPropertiesService.sendProperties = jest.fn(async () => {throw expError});
+    delayedWorker.doImmediately = jest.fn(async (action: () => Promise<void>) => {
+      await action();
+    });
+
+    // when
+    userPropertiesController.onUserChanged();
+    await (delayedWorker.doImmediately as jest.Mock).mock.results[0].value;
+
+    // then
+    expect(userPropertiesService.sendProperties).toBeCalled();
+    expect(logger.error).toBeCalledWith('Failed to send user properties to api', expError);
     expect(pendingUserPropertiesStorage.clear).toBeCalled();
     expect(sentUserPropertiesStorage.clear).toBeCalled();
   });
