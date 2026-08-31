@@ -17,6 +17,7 @@ import {delay, isInternalServerErrorResponse, isSuccessfulResponse} from './util
 import {ERROR_CODES_BLOCKING_FURTHER_EXECUTIONS} from './constants';
 
 export class ApiInteractorImpl implements ApiInteractor {
+  private static readonly MAX_ERROR_PAYLOAD_EXCERPT_LENGTH = 120;
   private readonly networkClient: NetworkClient;
   private readonly delayCalculator: RetryDelayCalculator;
   private readonly configHolder: NetworkConfigHolder;
@@ -69,7 +70,9 @@ export class ApiInteractorImpl implements ApiInteractor {
       return ApiInteractorImpl.getErrorResponse(response, executionError);
     }
 
-    const shouldTryToRetry = (!!response && isInternalServerErrorResponse(response.code)) || !!executionError;
+    const shouldTryToRetry =
+      (!!response && isInternalServerErrorResponse(response.code)) ||
+      (!!executionError && this.shouldRetryExecutionError(executionError));
     if (shouldTryToRetry) {
        const retryConfig = this.prepareRetryConfig(retryPolicy, attemptIndex);
        if (retryConfig.shouldRetry) {
@@ -83,7 +86,7 @@ export class ApiInteractorImpl implements ApiInteractor {
 
   static getErrorResponse(response?: RawNetworkResponse, executionError?: Error): ApiResponseError {
     if (response) {
-      const apiError: ApiError = response.payload.error;
+      const apiError = ApiInteractorImpl.extractApiError(response.payload);
       return {
         code: response.code,
         message: apiError.message,
@@ -92,11 +95,56 @@ export class ApiInteractorImpl implements ApiInteractor {
         isSuccess: false,
       };
     } else if (executionError) {
+      if (executionError instanceof QonversionError && executionError.responseCode !== undefined) {
+        return {
+          code: executionError.responseCode,
+          message: executionError.details ?? executionError.message,
+          isSuccess: false,
+        };
+      }
+
       throw executionError;
     } else {
       // Unacceptable state.
       throw new Error('Unreachable code. Either response or executionError should be defined');
     }
+  }
+
+  private static extractApiError(payload: unknown): ApiError {
+    if (ApiInteractorImpl.isApiErrorPayload(payload)) {
+      return payload.error;
+    }
+
+    return {
+      message: typeof payload === 'string'
+        ? `Unexpected API error response: ${ApiInteractorImpl.getPayloadExcerpt(payload)}`
+        : 'Unexpected API error response',
+    };
+  }
+
+  private static getPayloadExcerpt(payload: string): string {
+    if (payload.length <= ApiInteractorImpl.MAX_ERROR_PAYLOAD_EXCERPT_LENGTH) {
+      return payload;
+    }
+
+    return `${payload.slice(0, ApiInteractorImpl.MAX_ERROR_PAYLOAD_EXCERPT_LENGTH)}...`;
+  }
+
+  private static isApiErrorPayload(payload: unknown): payload is {error: ApiError} {
+    if (!payload || typeof payload !== 'object' || !('error' in payload)) {
+      return false;
+    }
+
+    const error = (payload as {error: unknown}).error;
+    return !!error && typeof error === 'object' && 'message' in error && typeof (error as {message: unknown}).message === 'string';
+  }
+
+  private shouldRetryExecutionError(error: QonversionError): boolean {
+    if (error.responseCode !== undefined) {
+      return isInternalServerErrorResponse(error.responseCode);
+    }
+
+    return true;
   }
 
   prepareRetryConfig(retryPolicy: RetryPolicy, attemptIndex: number): NetworkRetryConfig {

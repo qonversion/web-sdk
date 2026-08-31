@@ -37,7 +37,7 @@ describe('local storage tests', () => {
     myLocalStorage.putString(testKey, testValue);
 
     // then
-    expect(localStorage.setItem).toBeCalledWith(testKey, testValue);
+    expect(localStorage.setItem).toHaveBeenCalledWith(testKey, testValue);
   });
 
   test('put number', () => {
@@ -49,7 +49,7 @@ describe('local storage tests', () => {
     myLocalStorage.putNumber(testKey, testValue);
 
     // then
-    expect(localStorage.setItem).toBeCalledWith(testKey, strValue);
+    expect(localStorage.setItem).toHaveBeenCalledWith(testKey, strValue);
   });
 
   test('put object', () => {
@@ -62,8 +62,8 @@ describe('local storage tests', () => {
     myLocalStorage.putObject(testKey, testValue);
 
     // then
-    expect(JSON.stringify).toBeCalledWith(testValue);
-    expect(localStorage.setItem).toBeCalledWith(testKey, strValue);
+    expect(JSON.stringify).toHaveBeenCalledWith(testValue);
+    expect(localStorage.setItem).toHaveBeenCalledWith(testKey, strValue);
   });
 
   test('put object faces error', () => {
@@ -75,8 +75,8 @@ describe('local storage tests', () => {
     myLocalStorage.putObject(testKey, testValue);
 
     // then
-    expect(JSON.stringify).toBeCalledWith(testValue);
-    expect(localStorage.setItem).not.toBeCalled();
+    expect(JSON.stringify).toHaveBeenCalledWith(testValue);
+    expect(localStorage.setItem).not.toHaveBeenCalled();
   });
 
   test('get string', () => {
@@ -87,7 +87,7 @@ describe('local storage tests', () => {
 
     // then
     expect(res).toBe(testValue);
-    expect(localStorage.getItem).toBeCalledWith(testKey);
+    expect(localStorage.getItem).toHaveBeenCalledWith(testKey);
   });
 
   test('get int', () => {
@@ -100,7 +100,7 @@ describe('local storage tests', () => {
 
     // then
     expect(res).toBe(expRes);
-    expect(localStorage.getItem).toBeCalledWith(testKey);
+    expect(localStorage.getItem).toHaveBeenCalledWith(testKey);
   });
 
   test('get int from incorrect string', () => {
@@ -111,7 +111,7 @@ describe('local storage tests', () => {
 
     // then
     expect(res).toBe(NaN);
-    expect(localStorage.getItem).toBeCalledWith(testKey);
+    expect(localStorage.getItem).toHaveBeenCalledWith(testKey);
   });
 
   test('get int from undefined string', () => {
@@ -123,7 +123,7 @@ describe('local storage tests', () => {
 
     // then
     expect(res).toBeUndefined();
-    expect(localStorage.getItem).toBeCalledWith(testKey);
+    expect(localStorage.getItem).toHaveBeenCalledWith(testKey);
   });
 
   test('get float', () => {
@@ -136,7 +136,7 @@ describe('local storage tests', () => {
 
     // then
     expect(res).toBe(expRes);
-    expect(localStorage.getItem).toBeCalledWith(testKey);
+    expect(localStorage.getItem).toHaveBeenCalledWith(testKey);
   });
 
   test('get float from incorrect string', () => {
@@ -147,7 +147,7 @@ describe('local storage tests', () => {
 
     // then
     expect(res).toBe(NaN);
-    expect(localStorage.getItem).toBeCalledWith(testKey);
+    expect(localStorage.getItem).toHaveBeenCalledWith(testKey);
   });
 
   test('get float from undefined string', () => {
@@ -159,7 +159,7 @@ describe('local storage tests', () => {
 
     // then
     expect(res).toBeUndefined();
-    expect(localStorage.getItem).toBeCalledWith(testKey);
+    expect(localStorage.getItem).toHaveBeenCalledWith(testKey);
   });
 
   test('get object', () => {
@@ -172,8 +172,8 @@ describe('local storage tests', () => {
 
     // then
     expect(res).toBe(expRes);
-    expect(localStorage.getItem).toBeCalledWith(testKey);
-    expect(JSON.parse).toBeCalledWith(testValue);
+    expect(localStorage.getItem).toHaveBeenCalledWith(testKey);
+    expect(JSON.parse).toHaveBeenCalledWith(testValue);
   });
 
   test('get object from incorrect string', () => {
@@ -185,8 +185,8 @@ describe('local storage tests', () => {
 
     // then
     expect(res).toBeUndefined();
-    expect(localStorage.getItem).toBeCalledWith(testKey);
-    expect(JSON.parse).toBeCalledWith(testValue);
+    expect(localStorage.getItem).toHaveBeenCalledWith(testKey);
+    expect(JSON.parse).toHaveBeenCalledWith(testValue);
   });
 
   test('get object from undefined string', () => {
@@ -198,8 +198,8 @@ describe('local storage tests', () => {
 
     // then
     expect(res).toBeUndefined();
-    expect(localStorage.getItem).toBeCalledWith(testKey);
-    expect(JSON.parse).not.toBeCalled();
+    expect(localStorage.getItem).toHaveBeenCalledWith(testKey);
+    expect(JSON.parse).not.toHaveBeenCalled();
   });
 
   test('remove value', () => {
@@ -209,6 +209,6 @@ describe('local storage tests', () => {
     myLocalStorage.remove(testKey);
 
     // then
-    expect(localStorage.removeItem).toBeCalledWith(testKey);
+    expect(localStorage.removeItem).toHaveBeenCalledWith(testKey);
   });
 });

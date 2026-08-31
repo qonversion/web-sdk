@@ -25,7 +25,7 @@ describe('UserPropertiesStorage tests', () => {
 
     // then
     expect(userPropertiesStorage['properties']).toStrictEqual(initialProperties);
-    expect(mockLocalStorage.getObject).toBeCalledWith(testStorageKey);
+    expect(mockLocalStorage.getObject).toHaveBeenCalledWith(testStorageKey);
   });
 
   test('get properties', () => {
@@ -47,7 +47,7 @@ describe('UserPropertiesStorage tests', () => {
     userPropertiesStorage['saveProperties']();
 
     // then
-    expect(mockLocalStorage.putObject).toBeCalledWith(testStorageKey, initialProperties);
+    expect(mockLocalStorage.putObject).toHaveBeenCalledWith(testStorageKey, initialProperties);
   });
 
   test('add one', () => {
@@ -64,7 +64,7 @@ describe('UserPropertiesStorage tests', () => {
 
     // then
     expect(userPropertiesStorage['properties']).toStrictEqual(expProperties);
-    expect(savePropertiesSpy).toBeCalled();
+    expect(savePropertiesSpy).toHaveBeenCalled();
   });
 
   test('add several', () => {
@@ -83,7 +83,7 @@ describe('UserPropertiesStorage tests', () => {
 
     // then
     expect(userPropertiesStorage['properties']).toStrictEqual(expProperties);
-    expect(savePropertiesSpy).toBeCalled();
+    expect(savePropertiesSpy).toHaveBeenCalled();
   });
 
   test('delete one', () => {
@@ -101,7 +101,7 @@ describe('UserPropertiesStorage tests', () => {
 
     // then
     expect(userPropertiesStorage['properties']).toStrictEqual(expProperties);
-    expect(savePropertiesSpy).toBeCalled();
+    expect(savePropertiesSpy).toHaveBeenCalled();
   });
 
   test('delete one with changed value', () => {
@@ -120,7 +120,7 @@ describe('UserPropertiesStorage tests', () => {
 
     // then
     expect(userPropertiesStorage['properties']).toStrictEqual(expProperties);
-    expect(savePropertiesSpy).not.toBeCalled();
+    expect(savePropertiesSpy).not.toHaveBeenCalled();
   });
 
   test('delete several', () => {
@@ -142,7 +142,7 @@ describe('UserPropertiesStorage tests', () => {
 
     // then
     expect(userPropertiesStorage['properties']).toStrictEqual(expProperties);
-    expect(savePropertiesSpy).toBeCalled();
+    expect(savePropertiesSpy).toHaveBeenCalled();
   });
 
   test('delete several with some changed values', () => {
@@ -166,7 +166,7 @@ describe('UserPropertiesStorage tests', () => {
 
     // then
     expect(userPropertiesStorage['properties']).toStrictEqual(expProperties);
-    expect(savePropertiesSpy).toBeCalled();
+    expect(savePropertiesSpy).toHaveBeenCalled();
   });
 
   test('delete empty records', () => {
@@ -188,7 +188,7 @@ describe('UserPropertiesStorage tests', () => {
 
     // then
     expect(userPropertiesStorage['properties']).toStrictEqual(expProperties);
-    expect(savePropertiesSpy).toBeCalled();
+    expect(savePropertiesSpy).toHaveBeenCalled();
   });
 
   test('clear', () => {
@@ -204,6 +204,6 @@ describe('UserPropertiesStorage tests', () => {
 
     // then
     expect(userPropertiesStorage['properties']).toStrictEqual({});
-    expect(savePropertiesSpy).toBeCalled();
+    expect(savePropertiesSpy).toHaveBeenCalled();
   });
 });
