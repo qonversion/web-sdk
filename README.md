@@ -78,6 +78,16 @@ Send user-level subscription data to your favorite platforms.
 
 Convinced? Let's go!
 
+## Installation
+
+The SDK is published to npm as `@qonversion/web-sdk`:
+
+```bash
+npm install @qonversion/web-sdk
+```
+
+See the [Web SDK setup guide](https://documentation.qonversion.io/docs/web-sdk) for the full installation steps.
+
 ## Documentation
 
 Check the [full documentation](https://documentation.qonversion.io/docs/quickstart) to learn about implementation details and available features.
