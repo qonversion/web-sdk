@@ -34,5 +34,6 @@ export enum EntitlementSource {
   AppStore = 'appstore',
   PlayStore = 'playstore',
   Stripe = 'stripe',
-  Manual = 'manual'
+  Manual = 'manual',
+  Paddle = 'paddle',
 }
