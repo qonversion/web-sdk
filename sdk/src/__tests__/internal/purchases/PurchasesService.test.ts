@@ -89,8 +89,8 @@ describe('sendStripePurchase tests', function () {
 
     // then
     expect(res).toStrictEqual(expRes);
-    expect(requestConfigurator.configureStripePurchaseRequest).toBeCalledWith(testUserId, testStripePurchaseRequest);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureStripePurchaseRequest).toHaveBeenCalledWith(testUserId, testStripePurchaseRequest);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 
   test('send purchase request failed', async () => {
@@ -104,8 +104,8 @@ describe('sendStripePurchase tests', function () {
 
     // when and then
     await expect(() => purchasesService.sendStripePurchase(testUserId, testStripePurchaseRequest)).rejects.toThrow(expError);
-    expect(requestConfigurator.configureStripePurchaseRequest).toBeCalledWith(testUserId, testStripePurchaseRequest);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureStripePurchaseRequest).toHaveBeenCalledWith(testUserId, testStripePurchaseRequest);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 });
 
@@ -163,8 +163,8 @@ describe('sendPaddlePurchase tests', function () {
 
     // then
     expect(res).toStrictEqual(expPaddleRes);
-    expect(requestConfigurator.configurePaddlePurchaseRequest).toBeCalledWith(testUserId, testPaddlePurchaseRequest);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configurePaddlePurchaseRequest).toHaveBeenCalledWith(testUserId, testPaddlePurchaseRequest);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 
   test("inapp response is normalized from wire 'non_recurring' to 'inapp'", async () => {
@@ -215,7 +215,7 @@ describe('sendPaddlePurchase tests', function () {
 
     // when and then
     await expect(() => purchasesService.sendPaddlePurchase(testUserId, testPaddlePurchaseRequest)).rejects.toThrow(expError);
-    expect(requestConfigurator.configurePaddlePurchaseRequest).toBeCalledWith(testUserId, testPaddlePurchaseRequest);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configurePaddlePurchaseRequest).toHaveBeenCalledWith(testUserId, testPaddlePurchaseRequest);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 });

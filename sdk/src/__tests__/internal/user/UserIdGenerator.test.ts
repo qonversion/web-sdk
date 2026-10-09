@@ -32,6 +32,6 @@ describe('UserIdGenerator tests', function () {
 
     // then
     expect(res).toBe(expRes);
-    expect(uuidGenerator).toBeCalled();
+    expect(uuidGenerator).toHaveBeenCalled();
   });
 });

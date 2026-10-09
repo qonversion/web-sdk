@@ -23,16 +23,16 @@ describe('DelayedWorker tests', () => {
     delayedWorker.doDelayed(testDelay, testAction);
 
     // then
-    expect(delayedWorker.isInProgress).toBeCalled();
+    expect(delayedWorker.isInProgress).toHaveBeenCalled();
     // @ts-ignore
     expect(delayedWorker['timeoutId']).not.toBeUndefined();
-    expect(testAction).not.toBeCalled();
+    expect(testAction).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(testDelay / 2);
-    expect(testAction).not.toBeCalled();
+    expect(testAction).not.toHaveBeenCalled();
 
     jest.advanceTimersByTime(testDelay / 2 + 1);
-    await expect(testAction).toBeCalled();
+    await expect(testAction).toHaveBeenCalled();
     // @ts-ignore
     expect(delayedWorker['timeoutId']).toBeUndefined();
   });
@@ -45,12 +45,12 @@ describe('DelayedWorker tests', () => {
     delayedWorker.doDelayed(testDelay, testAction);
 
     // then
-    expect(delayedWorker.isInProgress).toBeCalled();
-    expect(testAction).not.toBeCalled();
+    expect(delayedWorker.isInProgress).toHaveBeenCalled();
+    expect(testAction).not.toHaveBeenCalled();
 
     jest.runAllTimers();
 
-    expect(testAction).not.toBeCalled();
+    expect(testAction).not.toHaveBeenCalled();
   });
 
   test('do delayed job ignoring existing one', () => {
@@ -63,13 +63,13 @@ describe('DelayedWorker tests', () => {
     delayedWorker.doDelayed(testDelay, testAction, true);
 
     // then
-    expect(cancelSpy).toBeCalled();
+    expect(cancelSpy).toHaveBeenCalled();
     // @ts-ignore
     expect(delayedWorker['timeoutId']).not.toBeUndefined();
-    expect(testAction).not.toBeCalled();
+    expect(testAction).not.toHaveBeenCalled();
 
     jest.runAllTimers();
-    expect(testAction).toBeCalled();
+    expect(testAction).toHaveBeenCalled();
   });
 
   test('do immediately', () => {
@@ -80,9 +80,9 @@ describe('DelayedWorker tests', () => {
     delayedWorker.doImmediately(testAction);
 
     // then
-    expect(delayedWorker.cancel).toBeCalled();
-    expect(setTimeout).not.toBeCalled();
-    expect(testAction).toBeCalled();
+    expect(delayedWorker.cancel).toHaveBeenCalled();
+    expect(setTimeout).not.toHaveBeenCalled();
+    expect(testAction).toHaveBeenCalled();
   });
 
   test('cancelling started timeout', () => {
@@ -95,7 +95,7 @@ describe('DelayedWorker tests', () => {
     delayedWorker.cancel();
 
     // then
-    expect(clearTimeout).toBeCalledWith(timeoutId);
+    expect(clearTimeout).toHaveBeenCalledWith(timeoutId);
     // @ts-ignore
     expect(delayedWorker['timeoutId']).toBeUndefined();
   });
@@ -107,7 +107,7 @@ describe('DelayedWorker tests', () => {
     delayedWorker.cancel();
 
     // then
-    expect(clearTimeout).not.toBeCalled();
+    expect(clearTimeout).not.toHaveBeenCalled();
     // @ts-ignore
     expect(delayedWorker['timeoutId']).toBeUndefined();
   });

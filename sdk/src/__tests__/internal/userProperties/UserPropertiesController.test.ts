@@ -56,7 +56,7 @@ describe('constructor tests', () => {
     // when
 
     // then
-    expect(userChangedNotifier.subscribeOnUserChanges).toBeCalledWith(userPropertiesController);
+    expect(userChangedNotifier.subscribeOnUserChanges).toHaveBeenCalledWith(userPropertiesController);
   });
 });
 
@@ -76,7 +76,7 @@ describe('set property/properties tests', () => {
     userPropertiesController.setProperty(key, value);
 
     // then
-    expect(userPropertiesController.setProperties).toBeCalledWith({[key]: value});
+    expect(userPropertiesController.setProperties).toHaveBeenCalledWith({[key]: value});
   });
 
   test('multiple valid properties', () => {
@@ -92,11 +92,11 @@ describe('set property/properties tests', () => {
     userPropertiesController.setProperties(properties);
 
     // then
-    expect(userPropertiesController['shouldSendProperty']).toBeCalledWith('a', 'aa');
-    expect(userPropertiesController['shouldSendProperty']).toBeCalledWith('b', 'bb');
-    expect(pendingUserPropertiesStorage.add).toBeCalledWith(properties);
-    expect(userPropertiesController['sendUserPropertiesIfNeeded']).toBeCalledTimes(1);
-    expect(logger.verbose).toBeCalledWith('Setting user properties', properties);
+    expect(userPropertiesController['shouldSendProperty']).toHaveBeenCalledWith('a', 'aa');
+    expect(userPropertiesController['shouldSendProperty']).toHaveBeenCalledWith('b', 'bb');
+    expect(pendingUserPropertiesStorage.add).toHaveBeenCalledWith(properties);
+    expect(userPropertiesController['sendUserPropertiesIfNeeded']).toHaveBeenCalledTimes(1);
+    expect(logger.verbose).toHaveBeenCalledWith('Setting user properties', properties);
   });
 
   test('multiple invalid properties', () => {
@@ -112,11 +112,11 @@ describe('set property/properties tests', () => {
     userPropertiesController.setProperties(properties);
 
     // then
-    expect(userPropertiesController['shouldSendProperty']).toBeCalledWith('a', 'aa');
-    expect(userPropertiesController['shouldSendProperty']).toBeCalledWith('b', 'bb');
-    expect(pendingUserPropertiesStorage.add).toBeCalledWith({});
-    expect(userPropertiesController['sendUserPropertiesIfNeeded']).toBeCalledTimes(1);
-    expect(logger.verbose).toBeCalledWith('Setting user properties', properties);
+    expect(userPropertiesController['shouldSendProperty']).toHaveBeenCalledWith('a', 'aa');
+    expect(userPropertiesController['shouldSendProperty']).toHaveBeenCalledWith('b', 'bb');
+    expect(pendingUserPropertiesStorage.add).toHaveBeenCalledWith({});
+    expect(userPropertiesController['sendUserPropertiesIfNeeded']).toHaveBeenCalledTimes(1);
+    expect(logger.verbose).toHaveBeenCalledWith('Setting user properties', properties);
   });
 
   test('multiple properties with several valid', () => {
@@ -132,11 +132,11 @@ describe('set property/properties tests', () => {
     userPropertiesController.setProperties(properties);
 
     // then
-    expect(userPropertiesController['shouldSendProperty']).toBeCalledWith('a', 'aa');
-    expect(userPropertiesController['shouldSendProperty']).toBeCalledWith('b', 'bb');
-    expect(pendingUserPropertiesStorage.add).toBeCalledWith({a: 'aa'});
-    expect(userPropertiesController['sendUserPropertiesIfNeeded']).toBeCalledTimes(1);
-    expect(logger.verbose).toBeCalledWith('Setting user properties', properties);
+    expect(userPropertiesController['shouldSendProperty']).toHaveBeenCalledWith('a', 'aa');
+    expect(userPropertiesController['shouldSendProperty']).toHaveBeenCalledWith('b', 'bb');
+    expect(pendingUserPropertiesStorage.add).toHaveBeenCalledWith({a: 'aa'});
+    expect(userPropertiesController['sendUserPropertiesIfNeeded']).toHaveBeenCalledTimes(1);
+    expect(logger.verbose).toHaveBeenCalledWith('Setting user properties', properties);
   });
 });
 
@@ -156,9 +156,9 @@ describe('sendUserPropertiesIfNeeded tests', () => {
     userPropertiesController['sendUserPropertiesIfNeeded']();
 
     // then
-    expect(pendingUserPropertiesStorage.getProperties).toBeCalled();
-    expect(delayedWorker.doDelayed).toBeCalledWith(testSendingDelayMs, expect.any(Function), false);
-    expect(userPropertiesController['sendUserProperties']).toBeCalled();
+    expect(pendingUserPropertiesStorage.getProperties).toHaveBeenCalled();
+    expect(delayedWorker.doDelayed).toHaveBeenCalledWith(testSendingDelayMs, expect.any(Function), false);
+    expect(userPropertiesController['sendUserProperties']).toHaveBeenCalled();
   });
 
   test('empty properties', async () => {
@@ -170,9 +170,9 @@ describe('sendUserPropertiesIfNeeded tests', () => {
     userPropertiesController['sendUserPropertiesIfNeeded']();
 
     // then
-    expect(pendingUserPropertiesStorage.getProperties).toBeCalled();
-    expect(delayedWorker.doDelayed).not.toBeCalled();
-    expect(userPropertiesController['sendUserProperties']).not.toBeCalled();
+    expect(pendingUserPropertiesStorage.getProperties).toHaveBeenCalled();
+    expect(delayedWorker.doDelayed).not.toHaveBeenCalled();
+    expect(userPropertiesController['sendUserProperties']).not.toHaveBeenCalled();
   });
 
   test('ignoring existing job', async () => {
@@ -184,9 +184,9 @@ describe('sendUserPropertiesIfNeeded tests', () => {
     userPropertiesController['sendUserPropertiesIfNeeded'](true);
 
     // then
-    expect(pendingUserPropertiesStorage.getProperties).toBeCalled();
-    expect(delayedWorker.doDelayed).toBeCalledWith(testSendingDelayMs, expect.any(Function), true);
-    expect(userPropertiesController['sendUserProperties']).toBeCalled();
+    expect(pendingUserPropertiesStorage.getProperties).toHaveBeenCalled();
+    expect(delayedWorker.doDelayed).toHaveBeenCalledWith(testSendingDelayMs, expect.any(Function), true);
+    expect(userPropertiesController['sendUserProperties']).toHaveBeenCalled();
   });
 });
 
@@ -220,17 +220,17 @@ describe('sendUserProperties tests', () => {
     await userPropertiesController['sendUserProperties']();
 
     // then
-    expect(pendingUserPropertiesStorage.getProperties).toBeCalled();
-    expect(userDataStorage.requireOriginalUserId).toBeCalled();
-    expect(userPropertiesService.sendProperties).toBeCalledWith(testUserId, properties);
-    expect(pendingUserPropertiesStorage.delete).toBeCalledWith(properties);
-    expect(sentUserPropertiesStorage.add).toBeCalledWith(properties);
-    expect(userPropertiesController['sendUserPropertiesIfNeeded']).toBeCalledWith(true);
+    expect(pendingUserPropertiesStorage.getProperties).toHaveBeenCalled();
+    expect(userDataStorage.requireOriginalUserId).toHaveBeenCalled();
+    expect(userPropertiesService.sendProperties).toHaveBeenCalledWith(testUserId, properties);
+    expect(pendingUserPropertiesStorage.delete).toHaveBeenCalledWith(properties);
+    expect(sentUserPropertiesStorage.add).toHaveBeenCalledWith(properties);
+    expect(userPropertiesController['sendUserPropertiesIfNeeded']).toHaveBeenCalledWith(true);
 
-    expect(logger.verbose).toBeCalledWith('Sending user properties', properties);
-    expect(logger.verbose).toBeCalledWith('User properties were sent', userPropertiesSendResponse);
-    expect(logger.warn).not.toBeCalled();
-    expect(logger.error).not.toBeCalled();
+    expect(logger.verbose).toHaveBeenCalledWith('Sending user properties', properties);
+    expect(logger.verbose).toHaveBeenCalledWith('User properties were sent', userPropertiesSendResponse);
+    expect(logger.warn).not.toHaveBeenCalled();
+    expect(logger.error).not.toHaveBeenCalled();
   });
 
   test('send completing after a user change does not write into the storages', async () => {
@@ -253,9 +253,9 @@ describe('sendUserProperties tests', () => {
     await sendPromise;
 
     // then - the stale response is dropped: no storage writes, no re-trigger
-    expect(pendingUserPropertiesStorage.delete).not.toBeCalled();
-    expect(sentUserPropertiesStorage.add).not.toBeCalled();
-    expect(userPropertiesController['sendUserPropertiesIfNeeded']).not.toBeCalled();
+    expect(pendingUserPropertiesStorage.delete).not.toHaveBeenCalled();
+    expect(sentUserPropertiesStorage.add).not.toHaveBeenCalled();
+    expect(userPropertiesController['sendUserPropertiesIfNeeded']).not.toHaveBeenCalled();
   });
 
   test('send empty properties', async () => {
@@ -272,15 +272,15 @@ describe('sendUserProperties tests', () => {
     await userPropertiesController['sendUserProperties']();
 
     // then
-    expect(pendingUserPropertiesStorage.getProperties).toBeCalled();
-    expect(userDataStorage.requireOriginalUserId).not.toBeCalled();
-    expect(userPropertiesService.sendProperties).not.toBeCalled();
-    expect(pendingUserPropertiesStorage.delete).not.toBeCalled();
-    expect(sentUserPropertiesStorage.add).not.toBeCalled();
+    expect(pendingUserPropertiesStorage.getProperties).toHaveBeenCalled();
+    expect(userDataStorage.requireOriginalUserId).not.toHaveBeenCalled();
+    expect(userPropertiesService.sendProperties).not.toHaveBeenCalled();
+    expect(pendingUserPropertiesStorage.delete).not.toHaveBeenCalled();
+    expect(sentUserPropertiesStorage.add).not.toHaveBeenCalled();
 
-    expect(logger.verbose).not.toBeCalled();
-    expect(logger.warn).not.toBeCalled();
-    expect(logger.error).not.toBeCalled();
+    expect(logger.verbose).not.toHaveBeenCalled();
+    expect(logger.warn).not.toHaveBeenCalled();
+    expect(logger.error).not.toHaveBeenCalled();
   });
 
   test('Failed to send properties', async () => {
@@ -294,14 +294,14 @@ describe('sendUserProperties tests', () => {
     await userPropertiesController['sendUserProperties']();
 
     // then
-    expect(pendingUserPropertiesStorage.getProperties).toBeCalled();
-    expect(userDataStorage.requireOriginalUserId).toBeCalled();
-    expect(userPropertiesService.sendProperties).toBeCalledWith(testUserId, properties);
-    expect(logger.error).toBeCalledWith('Failed to send user properties to api', expError);
-    expect(pendingUserPropertiesStorage.delete).not.toBeCalled();
-    expect(sentUserPropertiesStorage.add).not.toBeCalled();
+    expect(pendingUserPropertiesStorage.getProperties).toHaveBeenCalled();
+    expect(userDataStorage.requireOriginalUserId).toHaveBeenCalled();
+    expect(userPropertiesService.sendProperties).toHaveBeenCalledWith(testUserId, properties);
+    expect(logger.error).toHaveBeenCalledWith('Failed to send user properties to api', expError);
+    expect(pendingUserPropertiesStorage.delete).not.toHaveBeenCalled();
+    expect(sentUserPropertiesStorage.add).not.toHaveBeenCalled();
 
-    expect(logger.verbose).toBeCalledWith('Sending user properties', properties);
+    expect(logger.verbose).toHaveBeenCalledWith('Sending user properties', properties);
   });
 
   test('not all properties were processed', async () => {
@@ -324,15 +324,15 @@ describe('sendUserProperties tests', () => {
     await userPropertiesController['sendUserProperties']();
 
     // then
-    expect(pendingUserPropertiesStorage.getProperties).toBeCalled();
-    expect(userDataStorage.requireOriginalUserId).toBeCalled();
-    expect(userPropertiesService.sendProperties).toBeCalledWith(testUserId, properties);
-    expect(pendingUserPropertiesStorage.delete).toBeCalledWith(properties);
-    expect(sentUserPropertiesStorage.add).toBeCalledWith(processedProperties);
-    expect(userPropertiesController['sendUserPropertiesIfNeeded']).toBeCalledWith(true);
+    expect(pendingUserPropertiesStorage.getProperties).toHaveBeenCalled();
+    expect(userDataStorage.requireOriginalUserId).toHaveBeenCalled();
+    expect(userPropertiesService.sendProperties).toHaveBeenCalledWith(testUserId, properties);
+    expect(pendingUserPropertiesStorage.delete).toHaveBeenCalledWith(properties);
+    expect(sentUserPropertiesStorage.add).toHaveBeenCalledWith(processedProperties);
+    expect(userPropertiesController['sendUserPropertiesIfNeeded']).toHaveBeenCalledWith(true);
 
-    expect(logger.verbose).toBeCalledWith('Sending user properties', properties);
-    expect(logger.verbose).toBeCalledWith('User properties were sent', userPropertiesSendResponse);
+    expect(logger.verbose).toHaveBeenCalledWith('Sending user properties', properties);
+    expect(logger.verbose).toHaveBeenCalledWith('User properties were sent', userPropertiesSendResponse);
   });
 });
 
@@ -352,10 +352,10 @@ describe('onUserChanged tests', () => {
     userPropertiesController.onUserChanged('new_user_id', 'old_user_id');
 
     // then
-    expect(delayedWorker.cancel).toBeCalled();
-    expect(pendingUserPropertiesStorage.clear).toBeCalled();
-    expect(sentUserPropertiesStorage.clear).toBeCalled();
-    expect(userPropertiesService.sendProperties).not.toBeCalled();
+    expect(delayedWorker.cancel).toHaveBeenCalled();
+    expect(pendingUserPropertiesStorage.clear).toHaveBeenCalled();
+    expect(sentUserPropertiesStorage.clear).toHaveBeenCalled();
+    expect(userPropertiesService.sendProperties).not.toHaveBeenCalled();
   });
 
   test('pending properties are flushed for the previous user', () => {
@@ -374,10 +374,10 @@ describe('onUserChanged tests', () => {
     userPropertiesController.onUserChanged('new_user_id', 'old_user_id');
 
     // then
-    expect(delayedWorker.cancel).toBeCalled();
-    expect(pendingUserPropertiesStorage.clear).toBeCalled();
-    expect(sentUserPropertiesStorage.clear).toBeCalled();
-    expect(userPropertiesService.sendProperties).toBeCalledWith('old_user_id', {test_key: 'test value'});
+    expect(delayedWorker.cancel).toHaveBeenCalled();
+    expect(pendingUserPropertiesStorage.clear).toHaveBeenCalled();
+    expect(sentUserPropertiesStorage.clear).toHaveBeenCalled();
+    expect(userPropertiesService.sendProperties).toHaveBeenCalledWith('old_user_id', {test_key: 'test value'});
   });
 
   test('failed flush for the previous user is logged', async () => {
@@ -393,8 +393,8 @@ describe('onUserChanged tests', () => {
     await new Promise(process.nextTick); // flush microtasks for the fire-and-forget catch
 
     // then
-    expect(userPropertiesService.sendProperties).toBeCalledWith('old_user_id', {test_key: 'test value'});
-    expect(logger.error).toBeCalledWith('Failed to send pending user properties for the previous user', expError);
+    expect(userPropertiesService.sendProperties).toHaveBeenCalledWith('old_user_id', {test_key: 'test value'});
+    expect(logger.error).toHaveBeenCalledWith('Failed to send pending user properties for the previous user', expError);
   });
 
   test('flush result is not written into the storages', async () => {
@@ -413,8 +413,8 @@ describe('onUserChanged tests', () => {
 
     // then - the flush belongs to the previous user; its response must not
     // pollute the new user's pending/sent state
-    expect(pendingUserPropertiesStorage.delete).not.toBeCalled();
-    expect(sentUserPropertiesStorage.add).not.toBeCalled();
+    expect(pendingUserPropertiesStorage.delete).not.toHaveBeenCalled();
+    expect(sentUserPropertiesStorage.add).not.toHaveBeenCalled();
   });
 
   test('pending properties are not flushed when the old user id is unknown', () => {
@@ -426,10 +426,10 @@ describe('onUserChanged tests', () => {
     userPropertiesController.onUserChanged('new_user_id');
 
     // then
-    expect(delayedWorker.cancel).toBeCalled();
-    expect(pendingUserPropertiesStorage.clear).toBeCalled();
-    expect(sentUserPropertiesStorage.clear).toBeCalled();
-    expect(userPropertiesService.sendProperties).not.toBeCalled();
+    expect(delayedWorker.cancel).toHaveBeenCalled();
+    expect(pendingUserPropertiesStorage.clear).toHaveBeenCalled();
+    expect(sentUserPropertiesStorage.clear).toHaveBeenCalled();
+    expect(userPropertiesService.sendProperties).not.toHaveBeenCalled();
   });
 });
 
@@ -487,8 +487,8 @@ describe('Validator tests', () => {
 
     // then
     expect(res).toBeTruthy();
-    expect(logger.info).not.toBeCalled();
-    expect(logger.error).not.toBeCalled();
+    expect(logger.info).not.toHaveBeenCalled();
+    expect(logger.error).not.toHaveBeenCalled();
   });
 
   test('Already sent user property', () => {
@@ -504,8 +504,8 @@ describe('Validator tests', () => {
 
     // then
     expect(res).toBeFalsy();
-    expect(logger.info).toBeCalledWith(expInfoMessage);
-    expect(logger.error).not.toBeCalled();
+    expect(logger.info).toHaveBeenCalledWith(expInfoMessage);
+    expect(logger.error).not.toHaveBeenCalled();
   });
 
   test('Already sent invalid user property', () => {
@@ -521,8 +521,8 @@ describe('Validator tests', () => {
 
     // then
     expect(res).toBeFalsy();
-    expect(logger.error).toBeCalledWith(expErrorMessage);
-    expect(logger.info).not.toBeCalled();
+    expect(logger.error).toHaveBeenCalledWith(expErrorMessage);
+    expect(logger.info).not.toHaveBeenCalled();
   });
 
   test('already sent property with the same key and another value', () => {
@@ -536,8 +536,8 @@ describe('Validator tests', () => {
 
     // then
     expect(res).toBeTruthy();
-    expect(logger.info).not.toBeCalled();
-    expect(logger.error).not.toBeCalled();
+    expect(logger.info).not.toHaveBeenCalled();
+    expect(logger.error).not.toHaveBeenCalled();
   });
 
   test('already sent property with the same value and another key', () => {
@@ -551,8 +551,8 @@ describe('Validator tests', () => {
 
     // then
     expect(res).toBeTruthy();
-    expect(logger.info).not.toBeCalled();
-    expect(logger.error).not.toBeCalled();
+    expect(logger.info).not.toHaveBeenCalled();
+    expect(logger.error).not.toHaveBeenCalled();
   });
 
   test('user property with invalid key', () => {
@@ -567,8 +567,8 @@ describe('Validator tests', () => {
 
     // then
     expect(res).toBeFalsy();
-    expect(logger.info).not.toBeCalled();
-    expect(logger.error).toBeCalledWith(expErrorMessage);
+    expect(logger.info).not.toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalledWith(expErrorMessage);
   });
 
   test('user property with invalid value', () => {
@@ -582,8 +582,8 @@ describe('Validator tests', () => {
 
     // then
     expect(res).toBeFalsy();
-    expect(logger.info).not.toBeCalled();
-    expect(logger.error).toBeCalledWith(expErrorMessage);
+    expect(logger.info).not.toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalledWith(expErrorMessage);
   });
 
   test('user property with invalid key and value', () => {
@@ -599,9 +599,9 @@ describe('Validator tests', () => {
 
     // then
     expect(res).toBeFalsy();
-    expect(logger.info).not.toBeCalled();
-    expect(logger.error).toBeCalledTimes(2);
-    expect(logger.error).toBeCalledWith(expKeyErrorMessage);
-    expect(logger.error).toBeCalledWith(expValueErrorMessage);
+    expect(logger.info).not.toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalledTimes(2);
+    expect(logger.error).toHaveBeenCalledWith(expKeyErrorMessage);
+    expect(logger.error).toHaveBeenCalledWith(expValueErrorMessage);
   });
 });
