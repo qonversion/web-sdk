@@ -87,11 +87,11 @@ training data remembers.
 appending `.md` to its URL, and [`llms.txt`](https://documentation.qonversion.io/llms.txt) lists every page.
 
 **Work on your project data as an agent.** The Qonversion MCP server at `https://mcp.qonversion.io/mcp`
-exposes the platform's resources as tools. Reading Apple Ads — campaign reports, time series and the
-connection status — is on for all accounts. **Changing campaigns — bids, budgets and campaign status
-— is a closed beta, switched on per account on request**; outside it those tools are not available,
-so ask support to enable it before wiring an agent to them. The agent authenticates as you over
-OAuth 2.1, each tool is gated by its own scope, and no Qonversion key is handed to the model.
+exposes the platform's resources as tools. The agent authenticates as you over OAuth 2.1, each tool
+is gated by its own scope, and no Qonversion key is handed to the model. Apple Ads tools need the
+feature on your account (404 otherwise); campaign changes additionally need the `apple_ads:write`
+scope and a team member with campaign-management permission — check
+`get_apple_ads_connection_status`.
 
 Destructive tools and Apple Ads changes that increase spend do not fire on the first call: they
 return a short-lived token addressed to the human operator, and completing the action requires
@@ -103,25 +103,25 @@ per-client setup and the scopes are in
 **Have an agent integrate this SDK.** Paste this into Claude Code, Cursor, Codex or any coding agent
 working in your app's repository:
 
-> Integrate the Qonversion SDK into this app.
+> Integrate the Qonversion Web SDK into this web app.
 >
 > Read the official documentation before writing any code. The docs expose an MCP server at `https://documentation.qonversion.io/mcp` — use it if you can. Otherwise fetch pages directly; any page is available as markdown by appending `.md` to its URL, and `https://documentation.qonversion.io/llms.txt` lists every page.
 >
 > Steps:
-> 1. Check with me that a Qonversion project exists and the app stores are connected — project key, App Store shared secret and App Store ID, Google Play service account key. This is step 2 of the quick start, I have to do it in the dashboard, and nothing validates until it is done. Google credentials can take up to 24 hours to start working.
-> 2. Read `https://documentation.qonversion.io/docs/quickstart.md` and decide with me between Analytics Mode and Subscription Management Mode. Do not pick one silently.
-> 3. Read the install page for this project's platform, linked from `https://documentation.qonversion.io/docs/install-sdk.md`. Use the SDK version the docs name, not one from memory.
-> 4. Install and configure the SDK. Ask me for the Qonversion project key; it is in the dashboard under Settings → Developer → Keys. Never commit it to the repository.
-> 5. Implement the mode we chose, following the documented method names exactly.
+> 1. Check with me that a Qonversion project exists and Stripe or Paddle is connected to it in the dashboard. Checkout stays with Stripe or Paddle; this SDK reports the completed purchases, and nothing arrives until the connection is done.
+> 2. Read `https://documentation.qonversion.io/docs/web-sdk.md` and follow its steps and method names. Take the SDK version from the latest release tag or the npm registry, not from memory — the docs page can name an older one; if they disagree, tell me.
+> 3. Install `@qonversion/web-sdk` and initialize it with the Qonversion project key. Ask me for the key; it is in the dashboard under Settings → Developer → Keys. Never commit it to the repository. The Web SDK has no launch modes — do not ask me to choose one.
+> 4. Call `identify` with the user id this app uses, so a purchase made on the web unlocks the same user in the mobile app.
+> 5. After a completed checkout, report it with `sendStripePurchase` or `sendPaddlePurchase`, then read `entitlements` to decide what the user can access.
 > 6. Show me the diff and tell me what you could not verify against the docs.
 
-Prefer to do it by hand? The steps are in the [quick start](https://documentation.qonversion.io/docs/quickstart).
+Prefer to do it by hand? The steps are on the [Web SDK](https://documentation.qonversion.io/docs/web-sdk) page.
 
 ## Sample app
 
-This package ships no sample app. End-to-end checkout examples are on the
-[Stripe](https://documentation.qonversion.io/docs/stripe-integration) and
-[Paddle](https://documentation.qonversion.io/docs/initiate-purchase-paddle) pages.
+This package ships no sample app. Examples of `sendStripePurchase` and `sendPaddlePurchase` are on the
+[Web SDK](https://documentation.qonversion.io/docs/web-sdk#purchases) page; the Paddle flow end to end
+is on [sending a Paddle purchase](https://documentation.qonversion.io/docs/initiate-purchase-paddle).
 
 ## Requirements
 

@@ -5,20 +5,21 @@ This file tells you how to work with it. Read it before you write code.
 
 ## What this SDK is
 
-Qonversion is the app growth system for people and agents. This package collects purchases inside
-the app, has them confirmed with the store, and resolves entitlements — the answer to "is this user
-premium right now". Everything else (analytics, Remote Configs, A/B tests, Apple Ads reporting)
-reads the same data server-side.
+Qonversion is the app growth system for people and agents. This package reports completed Stripe and
+Paddle purchases to Qonversion and returns entitlements — the answer to "is this user premium right
+now". Analytics, webhooks and integrations read the same data server-side.
 
 ## Get the current version — do not use one from memory
 
-Your training data is older than the latest release. Pick one:
+Your training data is older than the latest release. Take the version from:
 
-1. `https://documentation.qonversion.io/docs/web-sdk.md` — the install page as markdown.
-2. `gh api repos/qonversion/web-sdk/releases/latest --jq .tag_name`.
-3. `https://registry.npmjs.org/@qonversion/web-sdk` — `dist-tags.latest`.
+1. `gh api repos/qonversion/web-sdk/releases/latest --jq .tag_name` — the latest release tag.
+2. `https://registry.npmjs.org/@qonversion/web-sdk` — `dist-tags.latest` on npm.
 
-If the three disagree, the docs page wins and you say so to the human.
+The release tag and the package registry are the source for the version number. The install
+page, `https://documentation.qonversion.io/docs/web-sdk.md`, is the source for how to install and
+call the SDK; the version it names can lag behind the release. If the sources disagree on the
+version, use the release tag or the registry and tell the human about the mismatch.
 
 ## Install
 
@@ -75,12 +76,11 @@ customers, remote configurations, experiments, analytics, exports, and Apple Ads
 OAuth 2.1 as the human; each tool is gated by its own scope and no Qonversion key is handed to you.
 Setup per client: `https://documentation.qonversion.io/docs/mcp-server.md`.
 
-**Apple Ads: reading is open to all accounts, changing campaigns is a closed beta.** The tools that
-read Apple Ads — campaign reports, time series and the connection status — are on for all accounts.
-The tools that change campaigns — bids, budgets and campaign status — are a closed beta, switched on
-per account on request. Outside the beta those write tools are not available. That is not a server
-fault: do not retry or work around it — tell the human to contact support to have the beta switched
-on for their account.
+**Apple Ads: check access before you call the tools.** Apple Ads tools need the feature on your
+account (404 otherwise); campaign changes additionally need the `apple_ads:write` scope and a team
+member with campaign-management permission — check `get_apple_ads_connection_status`. A refused
+Apple Ads call means missing access, not a broken server: do not retry or work around it — tell the
+human.
 
 ## What you do not do without the human saying yes
 
@@ -102,5 +102,5 @@ No `engines` floor is declared. A connected Stripe or Paddle account is required
 ## When something does not work
 
 - `https://documentation.qonversion.io/docs/troubleshooting.md` — the errors you meet first.
-- `https://documentation.qonversion.io/docs/testing.md` — sandbox purchases.
+- `https://documentation.qonversion.io/docs/test-purchase-stripe.md` and `https://documentation.qonversion.io/docs/test-purchase-paddle.md` — test purchases in Stripe test mode and the Paddle sandbox.
 - Report to the human what you could not verify against the docs, instead of guessing.
