@@ -1,104 +1,141 @@
-<h1 align="center">
-    Qonversion
-</h1>
+<p align="center"><img src=".github/assets/sdk-header.png" width="100%" alt="Qonversion SDK"></p>
 
-Qonversion - In-app subscription monetization: implement subscriptions and grow your app’s revenue with A/B experiments 
+# Qonversion Web SDK
 
-* In-app subscription management SDK
-* API and webhooks to make your subscription data available where you need it
-* Seamless Stripe integration to enable cross-platform access management
-* Subscribers CRM with user-level transactions
-* Instant access to real-time subscription analytics
-* Built-in A/B experiments for subscription business model
+**Qonversion is the app growth system for people and agents.** It collects the revenue data of your
+subscription app and keeps it lined up with what Stripe and Paddle report, so entitlements and
+analytics run on the same numbers. This repository holds the Web SDK: the JavaScript part that runs
+in the browser and sends web purchases to Qonversion, so a user who paid on the web gets access in
+your mobile app too.
 
-<p align="center">
-     <a href="https://qonversion.io"><img width="90%" src="https://qcdn3.sfo3.digitaloceanspaces.com/github/qonversion_platform.png">
-     </a>
-</p>
-
-[![Release](https://img.shields.io/github/release/qonversion/web-sdk.svg?style=flat)](https://github.com/qonversion/web-sdk/releases)
+[![Version](https://img.shields.io/github/v/release/qonversion/web-sdk?label=version)](https://github.com/qonversion/web-sdk/releases)
+[![npm](https://img.shields.io/npm/v/%40qonversion%2Fweb-sdk)](https://www.npmjs.com/package/@qonversion/web-sdk)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Web-blue.svg?style=flat)](https://documentation.qonversion.io/docs/web-sdk)
 
+## Quickstart
 
-## In-App Subscription Implementation & Management
+Create a project in the [dashboard](https://dash.qonversion.io) and connect Stripe or Paddle first — nothing validates until then.
 
-<p align="center">
-    <a href="https://documentation.qonversion.io/docs/integrations-overview"><img width="90%" src="https://user-images.githubusercontent.com/13959241/161107203-8ef3ecee-86be-47a2-ac57-b21d3da19339.png">
-    </a>
-</p>
-
-1. Qonversion SDK provides three simple methods to manage subscriptions:
-	* Get in-app product details
-	* Make purchases
-	* Check subscription status to manage premium access
-2. Qonversion communicates with Apple or Google platforms both through SDK and server-side to process native in-app payments and keep subscription statuses up to date.
-3. You can use Qonversion webhooks and API in addition to SDK to get user-level data where you need it.
-
-See the [quick start guide documentation](https://documentation.qonversion.io/docs/quickstart).
-
-## Analytics
-
-Qonversion provides advanced subscription analytics out-of-the-box. You can monitor real-time metrics from new users and trial-to-paid conversions to revenue, MRR, ARR, cohort retention and more. Understand your customers and make better decisions with precise subscription analytics.
-
-<p align="center">
-     <a href="https://documentation.qonversion.io/docs/analytics"><img width="90%" src="https://files.readme.io/9a4fdf6-Analytics.png">
-     </a>
-</p>
-
-
-## Integrations
-
-Send user-level subscription data to your favorite platforms.
-
-* Amplitude
-* Mixpanel
-* Appsflyer
-* Adjust
-* Singular
-* CleverTap
-* [All other integrations here](https://qonversion.io/integrations)
-
-<p align="center">
-     <a href="https://documentation.qonversion.io/docs/integrations-overview"><img width="90%", src="https://qcdn3.sfo3.digitaloceanspaces.com/github/integrations.png">
-     </a>
-</p>
-
-## Why Qonversion?
-
-* **No headaches with Stripe, Apple's StoreKit & Google Billing.** Qonversion provides simple methods to handle Stripe, Apple StoreKit & Google Billing purchase flow.
-* **Receipt validation.** Qonversion validates user receipts with Apple, Google and Stripe to provide 100% accurate purchase information and subscription statuses. It also prevents unauthorized access to the premium features of your app.
-* **Track and increase your revenue.** Qonversion provides detailed real-time revenue analytics including cohort analysis, trial conversion rates, country segmentation, and much more.
-* **Integrations with the leading mobile platforms.** Qonversion allows sending data to platforms like AppsFlyer, Adjust, Branch, Tenjin, Facebook Ads, Amplitude, Mixpanel, and many others.
-* **Change promoted in-app products.** Change promoted in-app products anytime without app releases.
-* **A/B test** and identify winning in-app purchases, subscriptions or paywalls.
-* **Cross-device and cross-platform access management.** If you provide user authorization in your app, you can easily set Qonversion to provide premium access to authorized users across devices and operating systems.
-* **SDK caches the data.** Qonversion SDK caches purchase data including in-app products and entitlements, so the user experience is not affected even with the slow or interrupting network connection.
-* **Webhooks.** You can easily send all of the data to your server with Qonversion webhooks.
-* **Customer support.** You can always reach out to our customer support and get the help required.
-
-Convinced? Let's go!
-
-## Installation
-
-The SDK is published to npm as `@qonversion/web-sdk`:
+**1. Install**
 
 ```bash
 npm install @qonversion/web-sdk
 ```
 
-See the [Web SDK setup guide](https://documentation.qonversion.io/docs/web-sdk) for the full installation steps.
+**2. Initialize**
+
+```typescript
+import Qonversion, {QonversionConfigBuilder} from '@qonversion/web-sdk';
+
+const config = new QonversionConfigBuilder('your_project_key').build();
+const qonversion = Qonversion.initialize(config);
+```
+
+The project key is in the dashboard under **Settings → Developer → Keys**.
+
+**3. Check what the user has access to**
+
+```typescript
+await qonversion.identify('your_user_id');
+
+const entitlements = await qonversion.entitlements();
+
+if (entitlements.some(e => e.id === 'premium' && e.active)) {
+  // unlock premium features
+}
+```
+
+Full walk-through and the Stripe and Paddle setup: [Web SDK](https://documentation.qonversion.io/docs/web-sdk).
 
 ## Documentation
 
-Check the [full documentation](https://documentation.qonversion.io/docs/quickstart) to learn about implementation details and available features.
+* [Welcome](https://documentation.qonversion.io/docs/qonversion-platform) — what the platform does and the three ways to start.
+* [Web SDK setup](https://documentation.qonversion.io/docs/web-sdk) — full installation and configuration.
+* [Quick start](https://documentation.qonversion.io/docs/quickstart) — create a project, connect the stores.
+* [API reference](https://documentation.qonversion.io/reference/v4/overview) — REST API v4.
+* [For agents](https://documentation.qonversion.io/docs/for-agents) — MCP servers, machine-readable docs, ready-made prompts.
 
-#### Help us improve the documentation
+Payment providers: [Stripe](https://documentation.qonversion.io/docs/stripe-integration) ·
+[Paddle](https://documentation.qonversion.io/docs/paddle-integration) ·
+[sending a Paddle purchase](https://documentation.qonversion.io/docs/initiate-purchase-paddle).
 
-Whether you’re a core user or trying it out for the first time, you can make a valuable contribution to Qonversion by improving the documentation. Help us by:
+## What this SDK does
 
-* sending us feedback about something you thought was confusing or simply missing
-* sending us a pull request via GitHub
-* suggesting better wording or ways of explaining certain topics in the [Qonversion documentation](http://documentation.qonversion.io). Use `SUGGEST EDITS` button in the top right corner.
+* **Sends web purchases to Qonversion** — a completed Stripe or Paddle transaction, reported from the browser, becomes a purchase on the user's Qonversion profile.
+* **Resolves entitlements** — one answer to "is this user premium right now", the same answer the mobile SDKs give for the same user.
+* **Links the web user to your own user id** — `identify` and `logout`, so a purchase made on the web unlocks the app.
+* **Carries user properties** — attributes you can segment and forward to your analytics and marketing platforms.
+* **Feeds everything else** — analytics, cohorts, raw data export, webhooks and integrations read the same purchases.
+
+What happens when something fails — the standby service, fallback files and the uptime commitment
+behind the platform: [reliability](https://qonversion.io/reliability).
+
+> This SDK does not make purchases itself and does not talk to StoreKit or Google Play Billing —
+> the checkout stays with Stripe or Paddle, and the native purchase flow stays with the mobile SDKs.
+> Remote Configs, A/B tests and dashboard-built screens are mobile-side features and are not part
+> of this package.
+
+## For agents
+
+An agent can integrate this SDK end to end. The companion file [`AGENTS.md`](AGENTS.md) gives it the
+current version, the documented method names and the rules it must not break, instead of what its
+training data remembers.
+
+**Read these docs as an agent.** The documentation exposes an MCP server at
+`https://documentation.qonversion.io/mcp` — no account needed. Any page is available as markdown by
+appending `.md` to its URL, and [`llms.txt`](https://documentation.qonversion.io/llms.txt) lists every page.
+
+**Work on your project data as an agent.** The Qonversion MCP server at `https://mcp.qonversion.io/mcp`
+exposes the platform's resources as tools. The agent authenticates as you over OAuth 2.1, each tool
+is gated by its own scope, and no Qonversion key is handed to the model. Apple Ads tools need the
+feature on your account (404 otherwise); campaign changes additionally need the `apple_ads:write`
+scope and a team member with campaign-management permission — check
+`get_apple_ads_connection_status`.
+
+Destructive tools and Apple Ads changes that increase spend do not fire on the first call: they
+return a short-lived token addressed to the human operator, and completing the action requires
+echoing the resource id verbatim and giving a reason, which is recorded in the audit log. Pausing an
+entity or lowering a value is **not** parked — it applies immediately. The full tool list, the
+per-client setup and the scopes are in
+[MCP Server](https://documentation.qonversion.io/docs/mcp-server).
+
+**Have an agent integrate this SDK.** Paste this into Claude Code, Cursor, Codex or any coding agent
+working in your app's repository:
+
+> Integrate the Qonversion Web SDK into this web app.
+>
+> Read the official documentation before writing any code. The docs expose an MCP server at `https://documentation.qonversion.io/mcp` — use it if you can. Otherwise fetch pages directly; any page is available as markdown by appending `.md` to its URL, and `https://documentation.qonversion.io/llms.txt` lists every page.
+>
+> Steps:
+> 1. Check with me that a Qonversion project exists and Stripe or Paddle is connected to it in the dashboard. Checkout stays with Stripe or Paddle; this SDK reports the completed purchases, and nothing arrives until the connection is done.
+> 2. Read `https://documentation.qonversion.io/docs/web-sdk.md` and follow its steps and method names. Take the SDK version from the latest release tag or the npm registry, not from memory — the docs page can name an older one; if they disagree, tell me.
+> 3. Install `@qonversion/web-sdk` and initialize it with the Qonversion project key. Ask me for the key; it is in the dashboard under Settings → Developer → Keys. Never commit it to the repository. The Web SDK has no launch modes — do not ask me to choose one.
+> 4. Call `identify` with the user id this app uses, so a purchase made on the web unlocks the same user in the mobile app.
+> 5. After a completed checkout, report it with `sendStripePurchase` or `sendPaddlePurchase`, then read `entitlements` to decide what the user can access.
+> 6. Show me the diff and tell me what you could not verify against the docs.
+
+Prefer to do it by hand? The steps are on the [Web SDK](https://documentation.qonversion.io/docs/web-sdk) page.
+
+## Sample app
+
+This package ships no sample app. Examples of `sendStripePurchase` and `sendPaddlePurchase` are on the
+[Web SDK](https://documentation.qonversion.io/docs/web-sdk#purchases) page; the Paddle flow end to end
+is on [sending a Paddle purchase](https://documentation.qonversion.io/docs/initiate-purchase-paddle).
+
+## Requirements
+
+| | Minimum |
+|---|---|
+| Runtime | any modern browser bundle; the package ships a CommonJS build and TypeScript types |
+| Payment provider | a connected Stripe or Paddle account |
+
+The package declares no `engines` floor — see `package.json`.
+
+## Help
+
+Contact us via [issues on GitHub](https://github.com/qonversion/web-sdk/issues) or the
+[contact form](https://qonversion.io/contact-us) on our site.
 
 ## Contributing
 
@@ -110,11 +147,6 @@ Contributions are what make the open source community such an amazing place to l
 4. Push to the Branch (`git push origin feature/SuperFeature`)
 5. Open a Pull Request
 
-
-## Have a question?
-
-Contact us via [issues on GitHub](https://github.com/qonversion/web-sdk/issues) or the [contact form](https://qonversion.io/contact-us) on our site.
-
 ## License
 
-Qonversion SDK is available under the MIT license.
+Qonversion SDK is available under the MIT license. See [LICENSE](LICENSE).
