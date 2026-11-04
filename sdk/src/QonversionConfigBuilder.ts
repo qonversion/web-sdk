@@ -5,7 +5,7 @@ import {LogLevel} from './dto/LogLevel';
 import {LoggerConfig, NetworkConfig, PrimaryConfig, QonversionConfig} from './types';
 import {API_URL} from './internal/network';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const packageJson = require('../../package.json');
 const DEFAULT_LOG_TAG = "Qonversion";
 

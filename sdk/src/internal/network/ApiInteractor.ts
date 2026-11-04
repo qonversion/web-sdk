@@ -69,7 +69,9 @@ export class ApiInteractorImpl implements ApiInteractor {
       return ApiInteractorImpl.getErrorResponse(response, executionError);
     }
 
-    const shouldTryToRetry = (!!response && isInternalServerErrorResponse(response.code)) || !!executionError;
+    const shouldTryToRetry =
+      (!!response && isInternalServerErrorResponse(response.code)) ||
+      (!!executionError && this.shouldRetryExecutionError(executionError));
     if (shouldTryToRetry) {
        const retryConfig = this.prepareRetryConfig(retryPolicy, attemptIndex);
        if (retryConfig.shouldRetry) {
@@ -83,7 +85,7 @@ export class ApiInteractorImpl implements ApiInteractor {
 
   static getErrorResponse(response?: RawNetworkResponse, executionError?: Error): ApiResponseError {
     if (response) {
-      const apiError: ApiError = response.payload.error;
+      const apiError = ApiInteractorImpl.extractApiError(response);
       return {
         code: response.code,
         message: apiError.message,
@@ -97,6 +99,50 @@ export class ApiInteractorImpl implements ApiInteractor {
       // Unacceptable state.
       throw new Error('Unreachable code. Either response or executionError should be defined');
     }
+  }
+
+  /**
+   * Only a well-formed API error body is interpreted as an API error. The status code
+   * of any other body is not trusted: a proxy or a CDN can answer 404 or 401 with its
+   * own document, and reading that as "user not found" would make the SDK recreate
+   * the user or re-link the identity. Such responses surface as a backend error that
+   * carries the HTTP status. Optional fields are kept only when they have the declared type.
+   */
+  private static extractApiError(response: RawNetworkResponse): ApiError {
+    if (!ApiInteractorImpl.isApiErrorPayload(response.payload)) {
+      throw new QonversionError(
+        QonversionErrorCode.BackendError,
+        'Unexpected API error response',
+        undefined,
+        response.code,
+      );
+    }
+
+    const {message, type, code} = response.payload.error;
+    return {
+      message,
+      type: typeof type === 'string' ? type : undefined,
+      code: typeof code === 'string' ? code : undefined,
+    };
+  }
+
+  private static isApiErrorPayload(
+    payload: unknown,
+  ): payload is {error: {message: string; type?: unknown; code?: unknown}} {
+    if (!payload || typeof payload !== 'object' || !('error' in payload)) {
+      return false;
+    }
+
+    const error = (payload as {error: unknown}).error;
+    return !!error && typeof error === 'object' && typeof (error as {message?: unknown}).message === 'string';
+  }
+
+  private shouldRetryExecutionError(error: QonversionError): boolean {
+    if (error.responseCode !== undefined) {
+      return isInternalServerErrorResponse(error.responseCode);
+    }
+
+    return true;
   }
 
   prepareRetryConfig(retryPolicy: RetryPolicy, attemptIndex: number): NetworkRetryConfig {

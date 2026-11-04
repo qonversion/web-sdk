@@ -17,6 +17,15 @@ import {NetworkConfigHolder} from '../../../internal';
 import {QonversionError, QonversionErrorCode} from '../../../index';
 import * as NetworkUtils from '../../../internal/network/utils';
 
+const catchError = (fn: () => unknown): unknown => {
+  try {
+    fn();
+  } catch (e) {
+    return e;
+  }
+  return undefined;
+};
+
 let apiInteractor: ApiInteractorImpl;
 let delayCalculator: ExponentialDelayCalculator;
 let networkClient: NetworkClientImpl;
@@ -103,9 +112,9 @@ describe('execute tests', () => {
 
     // then
     expect(response).toStrictEqual(expResponse);
-    expect(networkClient.execute).toBeCalledWith(request);
-    expect(apiInteractor.prepareRetryConfig).not.toBeCalled();
-    expect(ApiInteractorImpl.getErrorResponse).not.toBeCalled();
+    expect(networkClient.execute).toHaveBeenCalledWith(request);
+    expect(apiInteractor.prepareRetryConfig).not.toHaveBeenCalled();
+    expect(ApiInteractorImpl.getErrorResponse).not.toHaveBeenCalled();
   });
 
   test('execute request with deny option on', () => {
@@ -150,8 +159,49 @@ describe('execute tests', () => {
       await apiInteractor.execute(request, new RetryPolicyExponential(retryCount));
     }).rejects.toThrow(expectedError);
 
-    expect(networkClient.execute).toBeCalledTimes(retryCount + 1);
-    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
+    expect(networkClient.execute).toHaveBeenCalledTimes(retryCount + 1);
+    expect(ApiInteractorImpl.getErrorResponse).toHaveBeenCalledTimes(1);
+  });
+
+  test('network client parse error with client response code is not retried', async () => {
+    // given
+    const expectedError = new QonversionError(
+      QonversionErrorCode.BackendError,
+      'Failed to parse JSON response',
+      undefined,
+      400,
+    );
+    networkClient.execute = jest.fn(() => {
+      throw expectedError;
+    });
+    ApiInteractorImpl.getErrorResponse = savedGetErrorResponse;
+
+    // when and then
+    await expect(apiInteractor.execute(request, new RetryPolicyExponential(3))).rejects.toBe(expectedError);
+    expect(networkClient.execute).toHaveBeenCalledTimes(1);
+    expect(apiInteractor.prepareRetryConfig).not.toHaveBeenCalled();
+  });
+
+  test('network client parse error with server response code is retried', async () => {
+    // given
+    const retryCount = 2;
+    const expectedError = new QonversionError(
+      QonversionErrorCode.BackendError,
+      'Failed to parse JSON response',
+      undefined,
+      500,
+    );
+    networkClient.execute = jest.fn(() => {throw expectedError});
+    ApiInteractorImpl.getErrorResponse = savedGetErrorResponse;
+    apiInteractor.prepareRetryConfig = jest.fn((retryPolicy, attemptIndex) => ({
+      attemptIndex: attemptIndex + 1,
+      delay: 1,
+      shouldRetry: attemptIndex < retryCount,
+    }));
+
+    // when and then
+    await expect(apiInteractor.execute(request, new RetryPolicyExponential(retryCount))).rejects.toBe(expectedError);
+    expect(networkClient.execute).toHaveBeenCalledTimes(retryCount + 1);
   });
 
   test('retryable error response without retry config', async () => {
@@ -163,8 +213,8 @@ describe('execute tests', () => {
     const response = await apiInteractor.execute(request);
 
     expect(response).toStrictEqual(errorResponse);
-    expect(networkClient.execute).toBeCalledTimes(1);
-    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
+    expect(networkClient.execute).toHaveBeenCalledTimes(1);
+    expect(ApiInteractorImpl.getErrorResponse).toHaveBeenCalledTimes(1);
   });
 
   test('error response with limited retries', async () => {
@@ -181,8 +231,8 @@ describe('execute tests', () => {
     const response = await apiInteractor.execute(request, new RetryPolicyExponential(retryCount));
 
     expect(response).toStrictEqual(errorResponse);
-    expect(networkClient.execute).toBeCalledTimes(retryCount + 1);
-    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
+    expect(networkClient.execute).toHaveBeenCalledTimes(retryCount + 1);
+    expect(ApiInteractorImpl.getErrorResponse).toHaveBeenCalledTimes(1);
   });
 
   test('error response which shouldn\'t be retried', async () => {
@@ -197,10 +247,10 @@ describe('execute tests', () => {
 
     // then
     expect(result).toStrictEqual(errorResponse);
-    expect(networkClient.execute).toBeCalledTimes(1);
-    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
-    expect(apiInteractor.prepareRetryConfig).not.toBeCalled();
-    expect(configHolderSpy).not.toBeCalled();
+    expect(networkClient.execute).toHaveBeenCalledTimes(1);
+    expect(ApiInteractorImpl.getErrorResponse).toHaveBeenCalledTimes(1);
+    expect(apiInteractor.prepareRetryConfig).not.toHaveBeenCalled();
+    expect(configHolderSpy).not.toHaveBeenCalled();
   });
 
   test('error response with code, blocking further executions', async () => {
@@ -215,10 +265,10 @@ describe('execute tests', () => {
 
     // then
     expect(result).toStrictEqual(errorResponse);
-    expect(networkClient.execute).toBeCalledTimes(1);
-    expect(ApiInteractorImpl.getErrorResponse).toBeCalledTimes(1);
-    expect(configHolderSpy).toBeCalledWith(false);
-    expect(apiInteractor.prepareRetryConfig).not.toBeCalled();
+    expect(networkClient.execute).toHaveBeenCalledTimes(1);
+    expect(ApiInteractorImpl.getErrorResponse).toHaveBeenCalledTimes(1);
+    expect(configHolderSpy).toHaveBeenCalledWith(false);
+    expect(apiInteractor.prepareRetryConfig).not.toHaveBeenCalled();
   });
 });
 
@@ -236,7 +286,7 @@ describe('prepareRetryConfig tests', () => {
 
     // then
     expect(retryConfig.shouldRetry).toBeFalsy();
-    expect(delayCalculator.countDelay).not.toBeCalled();
+    expect(delayCalculator.countDelay).not.toHaveBeenCalled();
   });
 
   test('no retry after several attempts for retry policy none', () => {
@@ -248,7 +298,7 @@ describe('prepareRetryConfig tests', () => {
 
     // then
     expect(retryConfig.shouldRetry).toBeFalsy();
-    expect(delayCalculator.countDelay).not.toBeCalled();
+    expect(delayCalculator.countDelay).not.toHaveBeenCalled();
   });
 
   test('retry after first attempt for infinite exponential retry policy', () => {
@@ -261,7 +311,7 @@ describe('prepareRetryConfig tests', () => {
     // then
     expect(retryConfig.shouldRetry).toBeTruthy();
     expect(retryConfig.attemptIndex).toBe(1);
-    expect(delayCalculator.countDelay).toBeCalledTimes(1);
+    expect(delayCalculator.countDelay).toHaveBeenCalledTimes(1);
   });
 
   test('retry after several attempts for infinite exponential retry policy', () => {
@@ -275,7 +325,7 @@ describe('prepareRetryConfig tests', () => {
     // then
     expect(retryConfig.shouldRetry).toBeTruthy();
     expect(retryConfig.attemptIndex).toBe(attemptIndex + 1);
-    expect(delayCalculator.countDelay).toBeCalledTimes(1);
+    expect(delayCalculator.countDelay).toHaveBeenCalledTimes(1);
   });
 
   test('no retry for infinite exponential retry policy with negative min delay', () => {
@@ -287,7 +337,7 @@ describe('prepareRetryConfig tests', () => {
 
     // then
     expect(retryConfig.shouldRetry).toBeFalsy();
-    expect(delayCalculator.countDelay).not.toBeCalled();
+    expect(delayCalculator.countDelay).not.toHaveBeenCalled();
   });
 
   test('retry after first attempt for exponential retry policy', () => {
@@ -300,7 +350,7 @@ describe('prepareRetryConfig tests', () => {
     // then
     expect(retryConfig.shouldRetry).toBeTruthy();
     expect(retryConfig.attemptIndex).toBe(1);
-    expect(delayCalculator.countDelay).toBeCalledTimes(1);
+    expect(delayCalculator.countDelay).toHaveBeenCalledTimes(1);
   });
 
   test('penultimate retry for exponential retry policy', () => {
@@ -314,7 +364,7 @@ describe('prepareRetryConfig tests', () => {
     // then
     expect(retryConfig.shouldRetry).toBeTruthy();
     expect(retryConfig.attemptIndex).toBe(attemptIndex + 1);
-    expect(delayCalculator.countDelay).toBeCalledTimes(1);
+    expect(delayCalculator.countDelay).toHaveBeenCalledTimes(1);
   });
 
   test('last retry for exponential retry policy', () => {
@@ -327,7 +377,7 @@ describe('prepareRetryConfig tests', () => {
 
     // then
     expect(retryConfig.shouldRetry).toBeFalsy();
-    expect(delayCalculator.countDelay).not.toBeCalled();
+    expect(delayCalculator.countDelay).not.toHaveBeenCalled();
   });
 
   test('no retry for exponential retry policy with negative min delay', () => {
@@ -339,7 +389,7 @@ describe('prepareRetryConfig tests', () => {
 
     // then
     expect(retryConfig.shouldRetry).toBeFalsy();
-    expect(delayCalculator.countDelay).not.toBeCalled();
+    expect(delayCalculator.countDelay).not.toHaveBeenCalled();
   });
 });
 
@@ -375,6 +425,64 @@ describe('getErrorResponse tests', () => {
     expect(result).toStrictEqual(expResult);
   });
 
+  test('get error from malformed api error object is not interpreted by status', () => {
+    // given
+    const networkResponse: RawNetworkResponse = {
+      code: 404,
+      payload: {status: 404},
+    };
+
+    // when
+    const thrown = catchError(() => ApiInteractorImpl.getErrorResponse(networkResponse));
+
+    // then
+    expect(thrown).toBeInstanceOf(QonversionError);
+    expect(thrown).toMatchObject({
+      code: QonversionErrorCode.BackendError,
+      details: 'Unexpected API error response',
+      responseCode: 404,
+    });
+  });
+
+  test('get error ignores non-string optional api error fields', () => {
+    // given
+    const networkResponse: RawNetworkResponse = {
+      code: 400,
+      payload: {error: {message: 'Bad request', code: 400, type: 123}},
+    };
+
+    // when
+    const result = ApiInteractorImpl.getErrorResponse(networkResponse)
+
+    // then
+    expect(result).toStrictEqual({
+      apiCode: undefined,
+      code: 400,
+      message: 'Bad request',
+      type: undefined,
+      isSuccess: false,
+    });
+  });
+
+  test('get error from string payload does not expose the payload', () => {
+    // given
+    const networkResponse: RawNetworkResponse = {
+      code: 503,
+      payload: 'service unavailable SENTINEL_SECRET',
+    };
+
+    // when
+    const thrown = catchError(() => ApiInteractorImpl.getErrorResponse(networkResponse));
+
+    // then
+    expect(thrown).toBeInstanceOf(QonversionError);
+    expect(thrown).toMatchObject({
+      code: QonversionErrorCode.BackendError,
+      responseCode: 503,
+    });
+    expect((thrown as QonversionError).message).not.toContain('SENTINEL_SECRET');
+  });
+
   test('get error from execution error', () => {
     // given
     const executionError = new Error('execution error');
@@ -385,7 +493,22 @@ describe('getErrorResponse tests', () => {
     }).toThrow(executionError);
   });
 
-  test('get error from execution error', () => {
+  test('get error from execution error with response code rethrows it', () => {
+    // given
+    const executionError = new QonversionError(
+      QonversionErrorCode.BackendError,
+      'Failed to parse JSON response',
+      undefined,
+      400,
+    );
+
+    // when and then
+    expect(() => {
+      ApiInteractorImpl.getErrorResponse(undefined, executionError);
+    }).toThrow(executionError);
+  });
+
+  test('throw when neither response nor execution error is provided', () => {
     // given
 
     // when and then

@@ -26,7 +26,7 @@ export class LocalStorageImpl implements LocalStorage {
     if (stringValue) {
       try {
         return JSON.parse(stringValue);
-      } catch (e) {
+      } catch {
         // do nothing.
       }
     }
@@ -37,7 +37,7 @@ export class LocalStorageImpl implements LocalStorage {
     try {
       const stringValue = JSON.stringify(value);
       this.putString(key, stringValue);
-    } catch (e) {
+    } catch {
       // do nothing.
     }
   }
