@@ -17,6 +17,15 @@ import {NetworkConfigHolder} from '../../../internal';
 import {QonversionError, QonversionErrorCode} from '../../../index';
 import * as NetworkUtils from '../../../internal/network/utils';
 
+const catchError = (fn: () => unknown): unknown => {
+  try {
+    fn();
+  } catch (e) {
+    return e;
+  }
+  return undefined;
+};
+
 let apiInteractor: ApiInteractorImpl;
 let delayCalculator: ExponentialDelayCalculator;
 let networkClient: NetworkClientImpl;
@@ -167,15 +176,8 @@ describe('execute tests', () => {
     });
     ApiInteractorImpl.getErrorResponse = savedGetErrorResponse;
 
-    // when
-    const response = await apiInteractor.execute(request, new RetryPolicyExponential(3));
-
-    // then
-    expect(response).toStrictEqual({
-      code: 400,
-      message: 'Failed to parse JSON response',
-      isSuccess: false,
-    });
+    // when and then
+    await expect(apiInteractor.execute(request, new RetryPolicyExponential(3))).rejects.toBe(expectedError);
     expect(networkClient.execute).toHaveBeenCalledTimes(1);
     expect(apiInteractor.prepareRetryConfig).not.toHaveBeenCalled();
   });
@@ -197,15 +199,8 @@ describe('execute tests', () => {
       shouldRetry: attemptIndex < retryCount,
     }));
 
-    // when
-    const response = await apiInteractor.execute(request, new RetryPolicyExponential(retryCount));
-
-    // then
-    expect(response).toStrictEqual({
-      code: 500,
-      message: 'Failed to parse JSON response',
-      isSuccess: false,
-    });
+    // when and then
+    await expect(apiInteractor.execute(request, new RetryPolicyExponential(retryCount))).rejects.toBe(expectedError);
     expect(networkClient.execute).toHaveBeenCalledTimes(retryCount + 1);
   });
 
@@ -430,23 +425,22 @@ describe('getErrorResponse tests', () => {
     expect(result).toStrictEqual(expResult);
   });
 
-  test('get error from malformed api error object', () => {
+  test('get error from malformed api error object is not interpreted by status', () => {
     // given
     const networkResponse: RawNetworkResponse = {
-      code: 502,
-      payload: {},
+      code: 404,
+      payload: {status: 404},
     };
 
     // when
-    const result = ApiInteractorImpl.getErrorResponse(networkResponse)
+    const thrown = catchError(() => ApiInteractorImpl.getErrorResponse(networkResponse));
 
     // then
-    expect(result).toStrictEqual({
-      apiCode: undefined,
-      code: 502,
-      message: 'Unexpected API error response',
-      type: undefined,
-      isSuccess: false,
+    expect(thrown).toBeInstanceOf(QonversionError);
+    expect(thrown).toMatchObject({
+      code: QonversionErrorCode.BackendError,
+      details: 'Unexpected API error response',
+      responseCode: 404,
     });
   });
 
@@ -470,45 +464,23 @@ describe('getErrorResponse tests', () => {
     });
   });
 
-  test('get error from plain text payload', () => {
+  test('get error from string payload does not expose the payload', () => {
     // given
     const networkResponse: RawNetworkResponse = {
       code: 503,
-      payload: 'service unavailable',
+      payload: 'service unavailable SENTINEL_SECRET',
     };
 
     // when
-    const result = ApiInteractorImpl.getErrorResponse(networkResponse)
+    const thrown = catchError(() => ApiInteractorImpl.getErrorResponse(networkResponse));
 
     // then
-    expect(result).toStrictEqual({
-      apiCode: undefined,
-      code: 503,
-      message: 'Unexpected API error response: service unavailable',
-      type: undefined,
-      isSuccess: false,
+    expect(thrown).toBeInstanceOf(QonversionError);
+    expect(thrown).toMatchObject({
+      code: QonversionErrorCode.BackendError,
+      responseCode: 503,
     });
-  });
-
-  test('get error from long plain text payload', () => {
-    // given
-    const payload = 'x'.repeat(130);
-    const networkResponse: RawNetworkResponse = {
-      code: 503,
-      payload,
-    };
-
-    // when
-    const result = ApiInteractorImpl.getErrorResponse(networkResponse)
-
-    // then
-    expect(result).toStrictEqual({
-      apiCode: undefined,
-      code: 503,
-      message: `Unexpected API error response: ${'x'.repeat(120)}...`,
-      type: undefined,
-      isSuccess: false,
-    });
+    expect((thrown as QonversionError).message).not.toContain('SENTINEL_SECRET');
   });
 
   test('get error from execution error', () => {
@@ -521,7 +493,7 @@ describe('getErrorResponse tests', () => {
     }).toThrow(executionError);
   });
 
-  test('get error from execution error with response code', () => {
+  test('get error from execution error with response code rethrows it', () => {
     // given
     const executionError = new QonversionError(
       QonversionErrorCode.BackendError,
@@ -530,15 +502,10 @@ describe('getErrorResponse tests', () => {
       400,
     );
 
-    // when
-    const result = ApiInteractorImpl.getErrorResponse(undefined, executionError);
-
-    // then
-    expect(result).toStrictEqual({
-      code: 400,
-      message: 'Failed to parse JSON response',
-      isSuccess: false,
-    });
+    // when and then
+    expect(() => {
+      ApiInteractorImpl.getErrorResponse(undefined, executionError);
+    }).toThrow(executionError);
   });
 
   test('throw when neither response nor execution error is provided', () => {

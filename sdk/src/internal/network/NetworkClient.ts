@@ -18,36 +18,28 @@ export class NetworkClientImpl implements NetworkClient {
 
     const response = await fetch(request.url, requestInit);
     const code = response.status;
-    const data = await this.parseResponseBody(response, code);
+    const data = await NetworkClientImpl.parseResponseBody(response, code);
     return {code, payload: data};
   }
 
-  private async parseResponseBody(response: Response, code: number): Promise<unknown> {
-    const responseText = await response.text();
-    const trimmedResponseText = responseText.trim();
-    if (!trimmedResponseText) {
-      return undefined;
-    }
-
-    const contentType = response.headers.get('content-type') ?? '';
-    if (!NetworkClientImpl.isJsonContentType(contentType)) {
-      return responseText;
+  /**
+   * Every API response the SDK consumes is a JSON document, whatever the status code.
+   * Anything else (an empty body, an HTML page from a proxy or a captive portal,
+   * a truncated document) is not an API response: it is reported as a backend error
+   * carrying the HTTP status, never interpreted by status code or returned as data.
+   * The body itself is not copied into the error message.
+   */
+  private static async parseResponseBody(response: Response, code: number): Promise<unknown> {
+    const responseText = (await response.text()).trim();
+    if (!responseText) {
+      throw new QonversionError(QonversionErrorCode.BackendError, 'Empty response body', undefined, code);
     }
 
     try {
-      return JSON.parse(trimmedResponseText);
-    } catch (cause) {
-      throw new QonversionError(
-        QonversionErrorCode.BackendError,
-        'Failed to parse JSON response',
-        cause instanceof Error ? cause : undefined,
-        code,
-      );
+      return JSON.parse(responseText);
+    } catch {
+      // The parser's own message quotes the start of the body, so it is not attached as cause.
+      throw new QonversionError(QonversionErrorCode.BackendError, 'Failed to parse JSON response', undefined, code);
     }
-  }
-
-  private static isJsonContentType(contentType: string): boolean {
-    const normalizedContentType = contentType.toLowerCase();
-    return normalizedContentType.includes('application/json') || normalizedContentType.includes('+json');
   }
 }

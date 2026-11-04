@@ -118,13 +118,38 @@ describe('execute test', () => {
       })
     );
 
-    // when
-    const result = await networkClient.execute(request);
+    // when and then
+    const execution = networkClient.execute(request);
+    await expect(execution).rejects.toBeInstanceOf(QonversionError);
+    await expect(execution).rejects.toMatchObject({
+      code: QonversionErrorCode.BackendError,
+      details: 'Empty response body',
+      responseCode: 204,
+    });
+  });
 
-    // then
-    expect(result).toStrictEqual({
-      code: 204,
-      payload: undefined,
+  test('execute with whitespace-only body', async () => {
+    // given
+    const request: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.GET,
+      url: testUrl
+    };
+    mockFetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        status: 200,
+        headers: {
+          get: (header: string) => header === 'content-type' ? 'application/json' : null,
+        },
+        text: () => Promise.resolve('\n  '),
+      })
+    );
+
+    // when and then
+    await expect(networkClient.execute(request)).rejects.toMatchObject({
+      code: QonversionErrorCode.BackendError,
+      details: 'Empty response body',
+      responseCode: 200,
     });
   });
 
@@ -145,13 +170,13 @@ describe('execute test', () => {
       })
     );
 
-    // when
-    const result = await networkClient.execute(request);
-
-    // then
-    expect(result).toStrictEqual({
-      code: 503,
-      payload: 'service unavailable',
+    // when and then
+    const execution = networkClient.execute(request);
+    await expect(execution).rejects.toBeInstanceOf(QonversionError);
+    await expect(execution).rejects.toMatchObject({
+      code: QonversionErrorCode.BackendError,
+      details: 'Failed to parse JSON response',
+      responseCode: 503,
     });
   });
 
@@ -182,7 +207,44 @@ describe('execute test', () => {
     });
   });
 
-  test('execute with whitespace-only json body', async () => {
+  test('execute with html success body fails without exposing the body', async () => {
+    // given
+    const request: NetworkRequest = {
+      headers: testHeaders,
+      type: RequestType.GET,
+      url: testUrl
+    };
+    const htmlBody = '<html><body>captive portal token=SENTINEL_SECRET</body></html>';
+    mockFetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        status: 200,
+        headers: {
+          get: (header: string) => header === 'content-type' ? 'text/html' : null,
+        },
+        text: () => Promise.resolve(htmlBody),
+      })
+    );
+
+    // when
+    let thrown: unknown;
+    try {
+      await networkClient.execute(request);
+    } catch (e) {
+      thrown = e;
+    }
+
+    // then
+    expect(thrown).toBeInstanceOf(QonversionError);
+    expect(thrown).toMatchObject({
+      code: QonversionErrorCode.BackendError,
+      details: 'Failed to parse JSON response',
+      responseCode: 200,
+    });
+    expect((thrown as QonversionError).message).not.toContain('SENTINEL_SECRET');
+    expect((thrown as QonversionError).message).not.toContain('<html');
+  });
+
+  test('execute parses json body regardless of content type', async () => {
     // given
     const request: NetworkRequest = {
       headers: testHeaders,
@@ -191,11 +253,11 @@ describe('execute test', () => {
     };
     mockFetch.mockImplementationOnce(() =>
       Promise.resolve({
-        status: 204,
+        status: testCode,
         headers: {
-          get: (header: string) => header === 'content-type' ? 'application/json' : null,
+          get: (header: string) => header === 'content-type' ? 'text/html' : null,
         },
-        text: () => Promise.resolve('\n  '),
+        text: () => Promise.resolve(JSON.stringify(testPayload)),
       })
     );
 
@@ -203,9 +265,6 @@ describe('execute test', () => {
     const result = await networkClient.execute(request);
 
     // then
-    expect(result).toStrictEqual({
-      code: 204,
-      payload: undefined,
-    });
+    expect(result).toStrictEqual(expResult);
   });
 });

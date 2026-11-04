@@ -17,7 +17,6 @@ import {delay, isInternalServerErrorResponse, isSuccessfulResponse} from './util
 import {ERROR_CODES_BLOCKING_FURTHER_EXECUTIONS} from './constants';
 
 export class ApiInteractorImpl implements ApiInteractor {
-  private static readonly MAX_ERROR_PAYLOAD_EXCERPT_LENGTH = 120;
   private readonly networkClient: NetworkClient;
   private readonly delayCalculator: RetryDelayCalculator;
   private readonly configHolder: NetworkConfigHolder;
@@ -86,7 +85,7 @@ export class ApiInteractorImpl implements ApiInteractor {
 
   static getErrorResponse(response?: RawNetworkResponse, executionError?: Error): ApiResponseError {
     if (response) {
-      const apiError = ApiInteractorImpl.extractApiError(response.payload);
+      const apiError = ApiInteractorImpl.extractApiError(response);
       return {
         code: response.code,
         message: apiError.message,
@@ -95,14 +94,6 @@ export class ApiInteractorImpl implements ApiInteractor {
         isSuccess: false,
       };
     } else if (executionError) {
-      if (executionError instanceof QonversionError && executionError.responseCode !== undefined) {
-        return {
-          code: executionError.responseCode,
-          message: executionError.details ?? executionError.message,
-          isSuccess: false,
-        };
-      }
-
       throw executionError;
     } else {
       // Unacceptable state.
@@ -110,29 +101,29 @@ export class ApiInteractorImpl implements ApiInteractor {
     }
   }
 
-  private static extractApiError(payload: unknown): ApiError {
-    if (ApiInteractorImpl.isApiErrorPayload(payload)) {
-      const {message, type, code} = payload.error;
-      return {
-        message,
-        type: typeof type === 'string' ? type : undefined,
-        code: typeof code === 'string' ? code : undefined,
-      };
+  /**
+   * Only a well-formed API error body is interpreted as an API error. The status code
+   * of any other body is not trusted: a proxy or a CDN can answer 404 or 401 with its
+   * own document, and reading that as "user not found" would make the SDK recreate
+   * the user or re-link the identity. Such responses surface as a backend error that
+   * carries the HTTP status. Optional fields are kept only when they have the declared type.
+   */
+  private static extractApiError(response: RawNetworkResponse): ApiError {
+    if (!ApiInteractorImpl.isApiErrorPayload(response.payload)) {
+      throw new QonversionError(
+        QonversionErrorCode.BackendError,
+        'Unexpected API error response',
+        undefined,
+        response.code,
+      );
     }
 
+    const {message, type, code} = response.payload.error;
     return {
-      message: typeof payload === 'string'
-        ? `Unexpected API error response: ${ApiInteractorImpl.getPayloadExcerpt(payload)}`
-        : 'Unexpected API error response',
+      message,
+      type: typeof type === 'string' ? type : undefined,
+      code: typeof code === 'string' ? code : undefined,
     };
-  }
-
-  private static getPayloadExcerpt(payload: string): string {
-    if (payload.length <= ApiInteractorImpl.MAX_ERROR_PAYLOAD_EXCERPT_LENGTH) {
-      return payload;
-    }
-
-    return `${payload.slice(0, ApiInteractorImpl.MAX_ERROR_PAYLOAD_EXCERPT_LENGTH)}...`;
   }
 
   private static isApiErrorPayload(
