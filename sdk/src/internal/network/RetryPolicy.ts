@@ -1,6 +1,6 @@
 import {DEFAULT_MIN_DELAY_MS, DEFAULT_RETRY_COUNT} from './constants';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export type RetryPolicy = {};
 
 export class RetryPolicyNone implements RetryPolicy {}
