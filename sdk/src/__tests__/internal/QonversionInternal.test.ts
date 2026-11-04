@@ -314,13 +314,13 @@ describe('PurchasesController usage tests', () => {
         type: 'subscription',
       };
       const promiseReturned = new Promise<UserPaddlePurchase>(() => responseData);
-      purchasesController.sendPaddlePurchase = jest.fn(async () => promiseReturned);
+      purchasesController.sendPaddlePurchase = jest.fn(() => promiseReturned);
 
       // when
       const res = qonversionInternal.sendPaddlePurchase(requestData);
 
       // then
-      expect(res).toStrictEqual(promiseReturned);
+      expect(res).toBe(promiseReturned);
       expect(purchasesController.sendPaddlePurchase).toHaveBeenCalledWith(requestData);
       expect(logger.verbose).toHaveBeenCalledWith('sendPaddlePurchase() call');
     });
