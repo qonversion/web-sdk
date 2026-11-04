@@ -33,20 +33,20 @@ export class RequestConfiguratorImpl implements RequestConfigurator {
   }
 
   configureUserRequest(id: string): NetworkRequest {
-    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${id}`;
+    const url = this.buildUrl(ApiEndpoint.Users, id);
 
     return this.configureRequest(url, RequestType.GET);
   }
 
   configureCreateUserRequest(id: string, environment: Environment): NetworkRequest {
-    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${id}`;
+    const url = this.buildUrl(ApiEndpoint.Users, id);
     const body = {environment};
 
     return this.configureRequest(url, RequestType.POST, body);
   }
 
   configureUserPropertiesSendRequest(userId: string, properties: UserPropertyData[]): NetworkRequest {
-    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${userId}/${ApiEndpoint.Properties}`;
+    const url = this.buildUrl(ApiEndpoint.Users, userId, ApiEndpoint.Properties);
     // The common User-Id header reflects the CURRENT user, which may differ
     // from the addressed one when pending properties are flushed for the
     // previous user on a user change — keep the header consistent with the URL.
@@ -54,31 +54,31 @@ export class RequestConfiguratorImpl implements RequestConfigurator {
   }
 
   configureUserPropertiesGetRequest(userId: string): NetworkRequest {
-    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${userId}/${ApiEndpoint.Properties}`;
+    const url = this.buildUrl(ApiEndpoint.Users, userId, ApiEndpoint.Properties);
     return this.configureRequest(url, RequestType.GET);
   }
 
   configureCreateIdentityRequest(qonversionId: string, identityId: string): NetworkRequest {
-    const url = `${this.baseUrl}/${ApiEndpoint.Identity}/${identityId}`;
+    const url = this.buildUrl(ApiEndpoint.Identity, identityId);
     const body = {user_id: qonversionId};
 
     return this.configureRequest(url, RequestType.POST, body);
   }
 
   configureIdentityRequest(identityId: string): NetworkRequest {
-    const url = `${this.baseUrl}/${ApiEndpoint.Identity}/${identityId}`;
+    const url = this.buildUrl(ApiEndpoint.Identity, identityId);
 
     return this.configureRequest(url, RequestType.GET);
   }
 
   configureEntitlementsRequest(userId: string): NetworkRequest {
-    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${userId}/entitlements`;
+    const url = this.buildUrl(ApiEndpoint.Users, userId, 'entitlements');
 
     return this.configureRequest(url, RequestType.GET);
   }
 
   configureStripePurchaseRequest(userId: string, data: PurchaseCoreData & StripeStoreData): NetworkRequest {
-    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${userId}/purchases`;
+    const url = this.buildUrl(ApiEndpoint.Users, userId, 'purchases');
     const body = {
       price: data.price,
       currency: data.currency,
@@ -93,7 +93,7 @@ export class RequestConfiguratorImpl implements RequestConfigurator {
   }
 
   configurePaddlePurchaseRequest(userId: string, data: PurchaseCoreData & PaddleStoreData): NetworkRequest {
-    const url = `${this.baseUrl}/${ApiEndpoint.Users}/${userId}/purchases`;
+    const url = this.buildUrl(ApiEndpoint.Users, userId, 'purchases');
     const paddleStoreData: RequestBody = {
       transaction_id: data.transactionId,
       product_id: data.productId,
@@ -131,6 +131,14 @@ export class RequestConfiguratorImpl implements RequestConfigurator {
       type,
       body,
     }
+  }
+
+  private buildUrl(basePath: string, ...pathSegments: string[]): string {
+    const encodedPath = pathSegments
+      .map(segment => encodeURIComponent(segment))
+      .join('/');
+
+    return encodedPath ? `${this.baseUrl}/${basePath}/${encodedPath}` : `${this.baseUrl}/${basePath}`;
   }
 }
 

@@ -101,7 +101,7 @@ describe('core log method', function () {
     logger['log'](LogLevel.Info, logMethod, testMessage, [someAdditionalParam]);
 
     // then
-    expect(logMethod).not.toBeCalled();
+    expect(logMethod).not.toHaveBeenCalled();
   });
 
   test('calling without additional params', () => {

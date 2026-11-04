@@ -69,8 +69,8 @@ describe('Send properties tests', () => {
 
     // then
     expect(result).toStrictEqual(expResult);
-    expect(requestConfigurator.configureUserPropertiesSendRequest).toBeCalledWith(testUserId, testPropertiesData);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureUserPropertiesSendRequest).toHaveBeenCalledWith(testUserId, testPropertiesData);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 
   test('send properties partial success', async () => {
@@ -96,8 +96,8 @@ describe('Send properties tests', () => {
 
     // then
     expect(result).toStrictEqual(expResult);
-    expect(requestConfigurator.configureUserPropertiesSendRequest).toBeCalledWith(testUserId, testPropertiesData);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureUserPropertiesSendRequest).toHaveBeenCalledWith(testUserId, testPropertiesData);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 
   test('send properties error', async () => {
@@ -117,8 +117,8 @@ describe('Send properties tests', () => {
     await expect(async () => {
       await userPropertiesService.sendProperties(testUserId, testProperties);
     }).rejects.toThrow(QonversionError);
-    expect(requestConfigurator.configureUserPropertiesSendRequest).toBeCalledWith(testUserId, testPropertiesData);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureUserPropertiesSendRequest).toHaveBeenCalledWith(testUserId, testPropertiesData);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 });
 
@@ -153,8 +153,8 @@ describe('Get properties tests', () => {
 
     // then
     expect(result).toStrictEqual(expResult);
-    expect(requestConfigurator.configureUserPropertiesGetRequest).toBeCalledWith(testUserId);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureUserPropertiesGetRequest).toHaveBeenCalledWith(testUserId);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 
   test('get properties error', async () => {
@@ -174,7 +174,7 @@ describe('Get properties tests', () => {
     await expect(async () => {
       await userPropertiesService.getProperties(testUserId);
     }).rejects.toThrow(QonversionError);
-    expect(requestConfigurator.configureUserPropertiesGetRequest).toBeCalledWith(testUserId);
-    expect(apiInteractor.execute).toBeCalledWith(testRequest);
+    expect(requestConfigurator.configureUserPropertiesGetRequest).toHaveBeenCalledWith(testUserId);
+    expect(apiInteractor.execute).toHaveBeenCalledWith(testRequest);
   });
 });

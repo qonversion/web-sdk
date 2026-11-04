@@ -87,7 +87,7 @@ describe('setters tests', function () {
 
     // then
     expect(internalConfig.primaryConfig).toStrictEqual(expPrimaryConfig);
-    expect(logger.verbose).toBeCalledWith('setEnvironment() call');
+    expect(logger.verbose).toHaveBeenCalledWith('setEnvironment() call');
   });
 
   test('set log level', () => {
@@ -100,7 +100,7 @@ describe('setters tests', function () {
 
     // then
     expect(internalConfig.loggerConfig).toStrictEqual(expLoggerConfig);
-    expect(logger.verbose).toBeCalledWith('setLogLevel() call');
+    expect(logger.verbose).toHaveBeenCalledWith('setLogLevel() call');
   });
 
   test('set log tag', () => {
@@ -113,7 +113,7 @@ describe('setters tests', function () {
 
     // then
     expect(internalConfig.loggerConfig).toStrictEqual(expLoggerConfig);
-    expect(logger.verbose).toBeCalledWith('setLogTag() call');
+    expect(logger.verbose).toHaveBeenCalledWith('setLogTag() call');
   });
 });
 
@@ -131,7 +131,7 @@ describe('finish tests', function () {
 
     // then
     expect(Qonversion['backingInstance']).toBeUndefined();
-    expect(logger.verbose).toBeCalledWith('finish() call');
+    expect(logger.verbose).toHaveBeenCalledWith('finish() call');
   });
 
   test('finish not shared instance', () => {
@@ -144,7 +144,7 @@ describe('finish tests', function () {
 
     // then
     expect(Qonversion['backingInstance']).toBe(anotherInstance);
-    expect(logger.verbose).toBeCalledWith('finish() call');
+    expect(logger.verbose).toHaveBeenCalledWith('finish() call');
   });
 });
 
@@ -153,29 +153,29 @@ describe('UserController usage tests', () => {
     // given
     const identityId = 'test identity id';
     const promiseReturned = new Promise<void>(() => {});
-    userController.identify = jest.fn(async () => promiseReturned);
+    userController.identify = jest.fn(() => promiseReturned);
 
     // when
     const res = qonversionInternal.identify(identityId);
 
     // then
-    expect(res).toStrictEqual(promiseReturned);
-    expect(userController.identify).toBeCalledWith(identityId);
-    expect(logger.verbose).toBeCalledWith('identify() call');
+    expect(res).toBe(promiseReturned);
+    expect(userController.identify).toHaveBeenCalledWith(identityId);
+    expect(logger.verbose).toHaveBeenCalledWith('identify() call');
   });
 
   test('logout', () => {
     // given
     const promiseReturned = new Promise<void>(() => {});
-    userController.logout = jest.fn(async () => promiseReturned);
+    userController.logout = jest.fn(() => promiseReturned);
 
     // when
     const res = qonversionInternal.logout();
 
     // then
-    expect(res).toStrictEqual(promiseReturned);
-    expect(userController.logout).toBeCalled();
-    expect(logger.verbose).toBeCalledWith('logout() call');
+    expect(res).toBe(promiseReturned);
+    expect(userController.logout).toHaveBeenCalled();
+    expect(logger.verbose).toHaveBeenCalledWith('logout() call');
   });
 });
 
@@ -190,8 +190,8 @@ describe('UserPropertiesController usage tests', () => {
     qonversionInternal.setCustomUserProperty(key, value);
 
     // then
-    expect(userPropertyController.setProperty).toBeCalledWith(key, value);
-    expect(logger.verbose).toBeCalledWith('setCustomUserProperty() call');
+    expect(userPropertyController.setProperty).toHaveBeenCalledWith(key, value);
+    expect(logger.verbose).toHaveBeenCalledWith('setCustomUserProperty() call');
   });
 
   test('setUserProperty', () => {
@@ -204,8 +204,8 @@ describe('UserPropertiesController usage tests', () => {
     qonversionInternal.setUserProperty(key, value);
 
     // then
-    expect(userPropertyController.setProperty).toBeCalledWith(key, value);
-    expect(logger.verbose).toBeCalledWith('setUserProperty() call');
+    expect(userPropertyController.setProperty).toHaveBeenCalledWith(key, value);
+    expect(logger.verbose).toHaveBeenCalledWith('setUserProperty() call');
   });
 
   test('setUserProperties', () => {
@@ -221,8 +221,8 @@ describe('UserPropertiesController usage tests', () => {
     qonversionInternal.setUserProperties(properties);
 
     // then
-    expect(userPropertyController.setProperties).toBeCalledWith(properties);
-    expect(logger.verbose).toBeCalledWith('setUserProperties() call');
+    expect(userPropertyController.setProperties).toHaveBeenCalledWith(properties);
+    expect(logger.verbose).toHaveBeenCalledWith('setUserProperties() call');
   });
 
   test('userProperties', async () => {
@@ -235,8 +235,8 @@ describe('UserPropertiesController usage tests', () => {
 
     // then
     expect(res).toEqual(response);
-    expect(userPropertyController.getProperties).toBeCalledWith();
-    expect(logger.verbose).toBeCalledWith('userProperties() call');
+    expect(userPropertyController.getProperties).toHaveBeenCalledWith();
+    expect(logger.verbose).toHaveBeenCalledWith('userProperties() call');
   });
 });
 
@@ -244,15 +244,15 @@ describe('EntitlementsController usage tests', () => {
   test('entitlements', () => {
     // given
     const promiseReturned = new Promise<Entitlement[]>(() => []);
-    entitlementsController.getEntitlements = jest.fn(async () => promiseReturned);
+    entitlementsController.getEntitlements = jest.fn(() => promiseReturned);
 
     // when
     const res = qonversionInternal.entitlements();
 
     // then
-    expect(res).toStrictEqual(promiseReturned);
-    expect(entitlementsController.getEntitlements).toBeCalled();
-    expect(logger.verbose).toBeCalledWith('entitlements() call');
+    expect(res).toBe(promiseReturned);
+    expect(entitlementsController.getEntitlements).toHaveBeenCalled();
+    expect(logger.verbose).toHaveBeenCalledWith('entitlements() call');
   });
 });
 
@@ -278,15 +278,15 @@ describe('PurchasesController usage tests', () => {
         subscriptionId: 'test subscription id',
       };
       const promiseReturned = new Promise<UserStripePurchase>(() => responseData);
-      purchasesController.sendStripePurchase = jest.fn(async () => promiseReturned);
+      purchasesController.sendStripePurchase = jest.fn(() => promiseReturned);
 
       // when
       const res = qonversionInternal.sendStripePurchase(requestData);
 
       // then
-      expect(res).toStrictEqual(promiseReturned);
-      expect(purchasesController.sendStripePurchase).toBeCalledWith(requestData);
-      expect(logger.verbose).toBeCalledWith('sendStripePurchase() call');
+      expect(res).toBe(promiseReturned);
+      expect(purchasesController.sendStripePurchase).toHaveBeenCalledWith(requestData);
+      expect(logger.verbose).toHaveBeenCalledWith('sendStripePurchase() call');
     });
 
   test('sendPaddlePurchase',
@@ -321,7 +321,7 @@ describe('PurchasesController usage tests', () => {
 
       // then
       expect(res).toStrictEqual(promiseReturned);
-      expect(purchasesController.sendPaddlePurchase).toBeCalledWith(requestData);
-      expect(logger.verbose).toBeCalledWith('sendPaddlePurchase() call');
+      expect(purchasesController.sendPaddlePurchase).toHaveBeenCalledWith(requestData);
+      expect(logger.verbose).toHaveBeenCalledWith('sendPaddlePurchase() call');
     });
 });
