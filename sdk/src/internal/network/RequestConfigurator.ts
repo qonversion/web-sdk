@@ -144,17 +144,18 @@ export class RequestConfiguratorImpl implements RequestConfigurator {
   }
 
   /**
-   * encodeURIComponent leaves "." as it is, and browsers normalise a "." or ".."
-   * segment away before the request leaves, so such an id would address a different
-   * route (the users collection instead of one user). Those ids are rejected;
-   * "a.b" or "...x" are ordinary ids and are encoded as usual.
+   * An empty id would drop its segment from the path, and encodeURIComponent leaves "."
+   * as it is while browsers normalise a "." or ".." segment away before the request
+   * leaves, so such an id would address a different route (the users collection instead
+   * of one user). Those ids are rejected; "a.b" or "...x" are ordinary ids and are
+   * encoded as usual.
    */
   private static encodePathSegment(segment: string): string {
     const trimmed = segment.trim();
-    if (trimmed === '.' || trimmed === '..') {
+    if (trimmed === '' || trimmed === '.' || trimmed === '..') {
       throw new QonversionError(
         QonversionErrorCode.InvalidArgument,
-        'An id of "." or ".." cannot be sent as a request path segment',
+        'An empty id, "." or ".." cannot be sent as a request path segment',
       );
     }
 

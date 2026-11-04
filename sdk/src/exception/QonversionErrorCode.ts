@@ -7,8 +7,8 @@ export enum QonversionErrorCode {
   UserNotFound = "Qonversion user not found",
   IdentityNotFound = "User with requested identity not found",
   /**
-   * An argument of an SDK call cannot be used: for example an id of "." or "..",
-   * which cannot be sent as a request path segment. Check the error details.
+   * An argument of an SDK call cannot be used: for example an empty id or an id of
+   * "." or "..", which cannot be sent as a request path segment. Check the error details.
    */
   InvalidArgument = "Invalid argument",
 }
