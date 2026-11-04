@@ -112,7 +112,12 @@ export class ApiInteractorImpl implements ApiInteractor {
 
   private static extractApiError(payload: unknown): ApiError {
     if (ApiInteractorImpl.isApiErrorPayload(payload)) {
-      return payload.error;
+      const {message, type, code} = payload.error;
+      return {
+        message,
+        type: typeof type === 'string' ? type : undefined,
+        code: typeof code === 'string' ? code : undefined,
+      };
     }
 
     return {
@@ -130,13 +135,15 @@ export class ApiInteractorImpl implements ApiInteractor {
     return `${payload.slice(0, ApiInteractorImpl.MAX_ERROR_PAYLOAD_EXCERPT_LENGTH)}...`;
   }
 
-  private static isApiErrorPayload(payload: unknown): payload is {error: ApiError} {
+  private static isApiErrorPayload(
+    payload: unknown,
+  ): payload is {error: {message: string; type?: unknown; code?: unknown}} {
     if (!payload || typeof payload !== 'object' || !('error' in payload)) {
       return false;
     }
 
     const error = (payload as {error: unknown}).error;
-    return !!error && typeof error === 'object' && 'message' in error && typeof (error as {message: unknown}).message === 'string';
+    return !!error && typeof error === 'object' && typeof (error as {message?: unknown}).message === 'string';
   }
 
   private shouldRetryExecutionError(error: QonversionError): boolean {

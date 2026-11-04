@@ -450,6 +450,26 @@ describe('getErrorResponse tests', () => {
     });
   });
 
+  test('get error ignores non-string optional api error fields', () => {
+    // given
+    const networkResponse: RawNetworkResponse = {
+      code: 400,
+      payload: {error: {message: 'Bad request', code: 400, type: 123}},
+    };
+
+    // when
+    const result = ApiInteractorImpl.getErrorResponse(networkResponse)
+
+    // then
+    expect(result).toStrictEqual({
+      apiCode: undefined,
+      code: 400,
+      message: 'Bad request',
+      type: undefined,
+      isSuccess: false,
+    });
+  });
+
   test('get error from plain text payload', () => {
     // given
     const networkResponse: RawNetworkResponse = {
