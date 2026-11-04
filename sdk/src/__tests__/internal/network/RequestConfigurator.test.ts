@@ -234,13 +234,14 @@ describe('RequestConfigurator tests', () => {
     expect(createIdentityRequest.url).toBe(`${testBaseUrl}/${ApiEndpoint.Identity}/${encodeURIComponent(unsafeIdentityId)}`);
   });
 
-  // encodeURIComponent keeps "." as it is, and a browser normalises a "." or ".."
-  // segment away, so such an id would address a different route.
-  test.each(['.', '..', ' . ', '.. '])('rejects the dot-only id %j', id => {
+  // An empty id drops its path segment, encodeURIComponent keeps "." as it is, and a
+  // browser normalises a "." or ".." segment away, so such an id would address a
+  // different route.
+  test.each(['', ' ', '.', '..', ' . ', '.. '])('rejects the id %j that cannot be a path segment', id => {
     // given
     const expError = new QonversionError(
       QonversionErrorCode.InvalidArgument,
-      'An id of "." or ".." cannot be sent as a request path segment',
+      'An empty id, "." or ".." cannot be sent as a request path segment',
     );
 
     // when and then
