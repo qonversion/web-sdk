@@ -13,6 +13,8 @@ import {UserDataProvider} from '../user';
 import {PaddleStoreData, PurchaseCoreData, StripeStoreData} from '../../dto/Purchase';
 import {Environment} from '../../dto/Environment';
 import {UserPropertyData} from '../userProperties';
+import {QonversionError} from '../../exception/QonversionError';
+import {QonversionErrorCode} from '../../exception/QonversionErrorCode';
 
 export class RequestConfiguratorImpl implements RequestConfigurator {
   private readonly headerBuilder: HeaderBuilder;
@@ -135,10 +137,28 @@ export class RequestConfiguratorImpl implements RequestConfigurator {
 
   private buildUrl(basePath: string, ...pathSegments: string[]): string {
     const encodedPath = pathSegments
-      .map(segment => encodeURIComponent(segment))
+      .map(segment => RequestConfiguratorImpl.encodePathSegment(segment))
       .join('/');
 
     return encodedPath ? `${this.baseUrl}/${basePath}/${encodedPath}` : `${this.baseUrl}/${basePath}`;
+  }
+
+  /**
+   * encodeURIComponent leaves "." as it is, and browsers normalise a "." or ".."
+   * segment away before the request leaves, so such an id would address a different
+   * route (the users collection instead of one user). Those ids are rejected;
+   * "a.b" or "...x" are ordinary ids and are encoded as usual.
+   */
+  private static encodePathSegment(segment: string): string {
+    const trimmed = segment.trim();
+    if (trimmed === '.' || trimmed === '..') {
+      throw new QonversionError(
+        QonversionErrorCode.InvalidArgument,
+        'An id of "." or ".." cannot be sent as a request path segment',
+      );
+    }
+
+    return encodeURIComponent(segment);
   }
 }
 

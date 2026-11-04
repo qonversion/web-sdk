@@ -10,7 +10,14 @@ import {
 import {PrimaryConfig} from '../../../types';
 import {PrimaryConfigProvider} from '../../../internal';
 import {UserDataProvider} from '../../../internal/user';
-import {PaddleStoreData, PurchaseCoreData, StripeStoreData, Environment} from '../../../index';
+import {
+  PaddleStoreData,
+  PurchaseCoreData,
+  StripeStoreData,
+  Environment,
+  QonversionError,
+  QonversionErrorCode,
+} from '../../../index';
 
 const testHeaders: RequestHeaders = {a: 'a'};
 const headerBuilder: HeaderBuilder = {
@@ -225,6 +232,38 @@ describe('RequestConfigurator tests', () => {
     // then
     expect(identityRequest.url).toBe(`${testBaseUrl}/${ApiEndpoint.Identity}/${encodeURIComponent(unsafeIdentityId)}`);
     expect(createIdentityRequest.url).toBe(`${testBaseUrl}/${ApiEndpoint.Identity}/${encodeURIComponent(unsafeIdentityId)}`);
+  });
+
+  // encodeURIComponent keeps "." as it is, and a browser normalises a "." or ".."
+  // segment away, so such an id would address a different route.
+  test.each(['.', '..', ' . ', '.. '])('rejects the dot-only id %j', id => {
+    // given
+    const expError = new QonversionError(
+      QonversionErrorCode.InvalidArgument,
+      'An id of "." or ".." cannot be sent as a request path segment',
+    );
+
+    // when and then
+    expect(() => requestConfigurator.configureUserRequest(id)).toThrow(expError);
+    expect(() => requestConfigurator.configureCreateUserRequest(id, Environment.Sandbox)).toThrow(expError);
+    expect(() => requestConfigurator.configureUserPropertiesGetRequest(id)).toThrow(expError);
+    expect(() => requestConfigurator.configureEntitlementsRequest(id)).toThrow(expError);
+    expect(() => requestConfigurator.configureIdentityRequest(id)).toThrow(expError);
+    expect(() => requestConfigurator.configureCreateIdentityRequest(testUserId, id)).toThrow(expError);
+  });
+
+  test.each(['a.b', '...x', '.hidden', 'x..'])('encodes the id %j containing dots as usual', id => {
+    // given
+    const encodedId = encodeURIComponent(id);
+
+    // when
+    const userRequest = requestConfigurator.configureUserRequest(id);
+    const identityRequest = requestConfigurator.configureIdentityRequest(id);
+
+    // then
+    expect(encodedId).toBe(id);
+    expect(userRequest.url).toBe(`${testBaseUrl}/${ApiEndpoint.Users}/${encodedId}`);
+    expect(identityRequest.url).toBe(`${testBaseUrl}/${ApiEndpoint.Identity}/${encodedId}`);
   });
 
   test('paddle subscription purchase request', () => {
