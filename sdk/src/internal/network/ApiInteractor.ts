@@ -65,7 +65,13 @@ export class ApiInteractorImpl implements ApiInteractor {
     }
 
     if (response && ERROR_CODES_BLOCKING_FURTHER_EXECUTIONS.includes(response.code)) {
-      this.configHolder.setCanSendRequests(false);
+      // Later requests are blocked only on a well-formed API error. A proxy can answer
+      // 401 with its own JSON document, and that must not deny every request for the
+      // rest of the session: getErrorResponse reports such a body as a backend error
+      // carrying the HTTP status, and the flag stays untouched.
+      if (ApiInteractorImpl.isApiErrorPayload(response.payload)) {
+        this.configHolder.setCanSendRequests(false);
+      }
       return ApiInteractorImpl.getErrorResponse(response, executionError);
     }
 

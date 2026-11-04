@@ -26,6 +26,15 @@ const catchError = (fn: () => unknown): unknown => {
   return undefined;
 };
 
+const rejectionOf = async (promise: Promise<unknown>): Promise<unknown> => {
+  try {
+    await promise;
+  } catch (e) {
+    return e;
+  }
+  throw new Error('Expected the promise to reject');
+};
+
 let apiInteractor: ApiInteractorImpl;
 let delayCalculator: ExponentialDelayCalculator;
 let networkClient: NetworkClientImpl;
@@ -33,6 +42,7 @@ let networkConfigHolder: NetworkConfigHolder;
 let canSendRequests = true;
 
 beforeEach(() => {
+  canSendRequests = true;
   networkClient = new NetworkClientImpl();
   delayCalculator = new ExponentialDelayCalculator();
 
@@ -256,7 +266,7 @@ describe('execute tests', () => {
   test('error response with code, blocking further executions', async () => {
     // given
     rawSuccessResponse = {
-      code: 402, payload: undefined
+      code: 402, payload: {error: {message: 'Payment required'}}
     };
     const configHolderSpy = jest.spyOn(networkConfigHolder, 'setCanSendRequests');
 
@@ -268,6 +278,24 @@ describe('execute tests', () => {
     expect(networkClient.execute).toHaveBeenCalledTimes(1);
     expect(ApiInteractorImpl.getErrorResponse).toHaveBeenCalledTimes(1);
     expect(configHolderSpy).toHaveBeenCalledWith(false);
+    expect(apiInteractor.prepareRetryConfig).not.toHaveBeenCalled();
+  });
+
+  test('error response with blocking code but without an api error body leaves the flag untouched', async () => {
+    // given
+    rawSuccessResponse = {
+      code: 402, payload: {status: 402}
+    };
+    const configHolderSpy = jest.spyOn(networkConfigHolder, 'setCanSendRequests');
+
+    // when
+    const result = await apiInteractor.execute(request);
+
+    // then
+    expect(result).toStrictEqual(errorResponse);
+    expect(networkClient.execute).toHaveBeenCalledTimes(1);
+    expect(ApiInteractorImpl.getErrorResponse).toHaveBeenCalledTimes(1);
+    expect(configHolderSpy).not.toHaveBeenCalled();
     expect(apiInteractor.prepareRetryConfig).not.toHaveBeenCalled();
   });
 });
@@ -515,5 +543,66 @@ describe('getErrorResponse tests', () => {
     expect(() => {
       ApiInteractorImpl.getErrorResponse();
     }).toThrow();
+  });
+});
+
+/**
+ * The blocking flag is session-wide: once set, every later request is denied without
+ * reaching the network. A proxy answering 401 with its own JSON document must not set
+ * it, so these tests run the real error handling and watch the NEXT execute() call.
+ */
+describe('blocking response codes', () => {
+  const request: NetworkRequest = {
+    headers: {},
+    type: RequestType.GET,
+    url: '',
+  };
+  const apiErrorPayload = {error: {message: 'Unauthorized', type: 'auth', code: 'unauthorized'}};
+  const successResponse: RawNetworkResponse = {code: 200, payload: {ok: true}};
+
+  beforeEach(() => {
+    canSendRequests = true;
+  });
+
+  test.each([401, 402, 418])('non-api body with status %i does not block the next request', async code => {
+    // given
+    networkClient.execute = jest.fn()
+      .mockResolvedValueOnce({code, payload: {status: code}})
+      .mockResolvedValueOnce(successResponse);
+
+    // when
+    const error = await rejectionOf(apiInteractor.execute(request));
+    const nextResponse = await apiInteractor.execute(request);
+
+    // then
+    expect(error).toBeInstanceOf(QonversionError);
+    expect(error).toMatchObject({code: QonversionErrorCode.BackendError, responseCode: code});
+    expect(nextResponse).toStrictEqual({code: 200, data: successResponse.payload, isSuccess: true});
+    expect(networkClient.execute).toHaveBeenCalledTimes(2);
+    expect(networkConfigHolder.canSendRequests()).toBe(true);
+  });
+
+  test.each([401, 402, 418])('api error with status %i denies the next request', async code => {
+    // given
+    networkClient.execute = jest.fn()
+      .mockResolvedValueOnce({code, payload: apiErrorPayload})
+      .mockResolvedValueOnce(successResponse);
+
+    // when
+    const response = await apiInteractor.execute(request);
+    const error = await rejectionOf(apiInteractor.execute(request));
+
+    // then
+    expect(response).toStrictEqual({
+      code,
+      message: 'Unauthorized',
+      type: 'auth',
+      apiCode: 'unauthorized',
+      isSuccess: false,
+    });
+    expect(error).toBeInstanceOf(QonversionError);
+    expect(error).toMatchObject({code: QonversionErrorCode.RequestDenied});
+    expect(networkClient.execute).toHaveBeenCalledTimes(1);
+    expect(networkConfigHolder.canSendRequests()).toBe(false);
   });
 });
